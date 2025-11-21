@@ -1,7 +1,8 @@
+import LandingPage from "./landing/page"; 
 export default function Home() {
   return (
     <div>
-      <h1 className="text-blue-400">Hello </h1>
+      <LandingPage />
     </div>
   );
 }
