@@ -1,0 +1,24 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "wallet": "Wallet",
+    "workspace": "Workspace",
+    "guidance": "Guidance",
+    "report": "Reports",
+    "settings": "Settings"
+  },
+  "general": {
+    "logout": "Logout",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "dashboard": {
+    "welcome": "Welcome back!",
+    "credits": "Credit Statistics",
+    "updates": "Latest Updates",
+    "market": "Market Overview",
+    "wallet_balance": "Wallet Balance"
+  }
+}

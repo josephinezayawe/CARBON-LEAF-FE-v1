@@ -90,7 +90,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-emerald-50 via-white to-emerald-25 text-slate-900">
+    <main className="min-h-screen bg-linear-to-b from-emerald-50 via-white to-emerald-50 text-slate-900">
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
@@ -326,16 +326,16 @@ export default function LandingPage() {
             animate={{ opacity: 1, rotate: -3 }}
             style={{ y: y2 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="absolute top-4 left-4 right-4 bottom-[-10px] bg-teal-50/80 rounded-[2.5rem] -z-20 border border-emerald-100"
+            className="absolute top-4 left-4 right-4 -bottom-2.5 bg-teal-50/80 rounded-4xl -z-20 border border-emerald-100"
           ></motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 20, y: 20, rotate: 0 }}
             animate={{ opacity: 1, x: 0, y: 0, rotate: -2 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-            className="relative aspect-square md:aspect-video lg:aspect-4/3 rounded-[2rem] shadow-2xl ring-4 ring-white group transform hover:rotate-0 transition-all duration-500"
+            className="relative aspect-square md:aspect-video lg:aspect-4/3 rounded-4xl shadow-2xl ring-4 ring-white group transform hover:rotate-0 transition-all duration-500"
           >
-            <div className="absolute inset-0 rounded-[2rem] overflow-hidden">
+            <div className="absolute inset-0 rounded-4xl overflow-hidden">
               <Image
                 src="/images/tree.png"
                 alt="Sustainable forestry project"
@@ -485,7 +485,7 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-12 relative">
             {/* Connecting Line (Desktop) */}
-            <div className="hidden md:block absolute top-8 left-1/6 right-1/6 h-0.5 bg-emerald-100 -z-0"></div>
+            <div className="hidden md:block absolute top-8 left-1/6 right-1/6 h-0.5 bg-emerald-100 z-0"></div>
 
             {[
               {
