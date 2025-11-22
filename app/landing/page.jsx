@@ -65,7 +65,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
           {['Features', 'How it works', 'Pricing'].map((item, i) => (
             <a 
@@ -85,7 +84,6 @@ export default function LandingPage() {
           </div>
         </nav>
         
-        {/* Mobile Menu Button */}
         <div className="md:hidden">
            <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -93,7 +91,6 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
@@ -125,7 +122,6 @@ export default function LandingPage() {
         )}
       </AnimatePresence>
 
-      {/* HERO */}
       <section className="max-w-7xl mx-auto px-6 py-12 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <motion.div
            initial={{ opacity: 0, x: -20 }}
@@ -151,7 +147,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-slate-900"
           >
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-500">Carborn Leaf</span> — Greening the future, One credit at a time.
+            Carborn Leaf <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-500">Greening </span> — the future.
           </motion.h2>
 
           <motion.p
@@ -160,7 +156,7 @@ export default function LandingPage() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="mt-6 text-lg text-slate-600 max-w-xl leading-relaxed"
           >
-            A digital platform that enables micro carbon credit projects (small farms, households, cooperatives, clean-cookstove users, tree-planters, biogas users, solar users to measure, verify, aggregate, and sell carbon credits through a web dashboard and mobile app.
+            A digital platform that enables micro carbon credit projects (small farms, households, cooperatives, clean-cookstove users, tree-planters, biogas users, solar users) to measure, verify, aggregate, and sell carbon credits through a website or mobile app.
           </motion.p>
 
           <motion.div 
@@ -184,7 +180,7 @@ export default function LandingPage() {
             className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg"
           >
             {[
-              { label: "Verified projects", val: "12k+" },
+              { label: "Verified growers", val: "12k+" },
               { label: "Credits minted", val: "320k" },
               { label: "Companies", val: "980" }
             ].map((stat, i) => (
@@ -200,9 +196,7 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
 
-        {/* Hero Image with Artistic Layering & Parallax */}
         <div className="relative perspective-1000">
-          {/* Decorative Background "Box" - Parallax Layer 1 */}
           <motion.div 
             initial={{ opacity: 0, rotate: 0 }}
             animate={{ opacity: 1, rotate: 6 }}
@@ -237,7 +231,6 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-80"></div>
             </div>
             
-            {/* Glass Card Overlay - Floating "Beyond the Box" */}
             <motion.div 
               initial={{ x: -20, y: 20, opacity: 0 }}
               animate={{ x: 0, y: 0, opacity: 1 }}
@@ -269,8 +262,33 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+      <section className="border-y border-emerald-100 bg-emerald-50/30">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center">
+                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+                    Officially Supervised & Regulated by
+                </p>
+                <div className="hidden md:block h-8 w-px bg-emerald-200"></div>
+                <motion.div 
+                    initial={{ opacity: 0, filter: "blur(10px)" }}
+                    whileInView={{ opacity: 1, filter: "blur(0px)" }}
+                    transition={{ duration: 0.8 }}
+                >
+                    <Image 
+                        src="/images/Rema_logo.png" 
+                        alt="REMA Rwanda" 
+                        width={180} 
+                        height={80} 
+                        className="h-12 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-500 cursor-pointer" 
+                    />
+                </motion.div>
+            </div>
+        </div>
+      </section>
 
+      {/* FEATURES */}
       <section id="features" className="max-w-7xl mx-auto px-6 py-16 lg:py-24 relative overflow-hidden">
+        {/* Background decoration with Parallax */}
         <motion.div style={{ y: blobY1 }} className="absolute top-40 left-0 w-72 h-72 bg-emerald-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10"></motion.div>
         <motion.div style={{ y: blobY2 }} className="absolute bottom-40 right-0 w-72 h-72 bg-teal-100 rounded-full mix-blend-multiply filter blur-3xl opacity-30 -z-10"></motion.div>
 
@@ -388,7 +406,7 @@ export default function LandingPage() {
               className="object-cover"
             />
             {/* Gradient Overlays for Text Readability */}
-            <div className="absolute inset-0 bg-linear-to-r from-emerald-800 via-emerald-800/90 to-emerald-900/60"></div>
+            <div className="absolute inset-0 bg-linear-to-r from-emerald-950 via-emerald-950/90 to-emerald-900/60"></div>
             <div className="absolute inset-0 bg-black/20"></div>
           </div>
           
@@ -405,6 +423,19 @@ export default function LandingPage() {
                     <span>Direct impact on communities</span>
                 </li>
             </ul>
+
+            <div className="mt-8 pt-8 border-t border-emerald-800/50">
+              <p className="text-xs text-emerald-300 font-semibold uppercase tracking-widest mb-3">Supervised by</p>
+              <div className=" p-3 rounded-xl inline-block">
+                <Image 
+                  src="/images/Rema_logo.png" 
+                  alt="REMA Rwanda" 
+                  width={140} 
+                  height={50} 
+                  className="h-10 w-auto object-contain" 
+                />
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-end relative z-10 mt-4 md:mt-0">
@@ -429,6 +460,19 @@ export default function LandingPage() {
                 <span className="font-bold text-xl text-slate-900">CarbonLeaf</span>
             </div>
             <p className="text-slate-500 max-w-sm leading-relaxed mb-6">Empowering land stewards and companies to act on climate — transparently, fairly, and effectively.</p>
+            
+            <div className="mt-8">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Supervised By</p>
+                <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl inline-block grayscale hover:grayscale-0 transition-all">
+                  <Image 
+                    src="/images/Rema_logo.png" 
+                    alt="REMA Rwanda" 
+                    width={120} 
+                    height={40} 
+                    className="h-8 w-auto object-contain" 
+                  />
+                </div>
+            </div>
           </div>
 
           <div>
