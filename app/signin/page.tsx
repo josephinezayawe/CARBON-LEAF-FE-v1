@@ -7,12 +7,14 @@ import { LoginData, LoginDataSchema, RegisterData, RegisterDataSchema } from "@/
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Login, Register } from "@/lib/actions"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import { AuthAPI } from "../api/authAPI"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 export default function SignIn() {
+  const router = useRouter()
   const form = useForm<LoginData>({
     resolver: zodResolver(LoginDataSchema),
     defaultValues: {
@@ -20,20 +22,29 @@ export default function SignIn() {
       password: '',
     }
   })
- 
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const data =form.getValues() as LoginData
-    const result = await AuthAPI.login(data)
-    console.log(result)
-    console.log("hello world");
+    try {
+      e.preventDefault()
+      const data = form.getValues() as LoginData
+      const result = await AuthAPI.login(data)
+      toast.success('Logged In Successfully')
+      if (result?.data.role === 'ADMIN') {
+        router.push('/admin')
+      } else if (result?.data.role === 'USER'){
+        router.push('/user')
+      }
+    } catch (error) {
+      toast.error('Failed To log you in')
+      console.log(error);
+    }
   }
 
   return (
     <Card>
       <CardTitle>Signup</CardTitle>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit((e) => onSubmit(e))} className="space-y-4">
+        <form onSubmit={((e) => onSubmit(e))} className="space-y-4">
 
           {/* Contact */}
           <FormField control={form.control} name="contact"

@@ -7,11 +7,12 @@ import { RegisterData, RegisterDataSchema } from "@/lib/dataSchemas"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Register } from "@/lib/actions"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 import axios from "axios"
 import { AuthAPI } from "../api/authAPI"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 // Rwanda hierarchy (simplified, expand as needed)
 const rwandaAdministrativeDivisions = [
@@ -137,6 +138,9 @@ const rwandaAdministrativeDivisions = [
 ];
 
 export default function Signup() {
+
+    const router = useRouter()
+
     const form = useForm<RegisterData>({
         resolver: zodResolver(RegisterDataSchema),
         defaultValues: {
@@ -167,12 +171,18 @@ export default function Signup() {
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const data = form.getValues() as RegisterData
-        const {confirmPassword, ...newData} = data
+        const { confirmPassword, ...newData } = data
         console.log("Form data:", data);
         try {
             const result = await AuthAPI.register(newData);
-            console.log("Result:", result);
+            toast.success('Registration successful!')            
+            if (result?.data.role === 'ADMIN') {
+                router.push('/admin')
+            } else if (result?.data.role === 'USER') {
+                router.push('/user')
+            }
         } catch (err) {
+            toast.error('Registration failed!')
             console.error("Error:", err);
         }
     };
@@ -428,7 +438,7 @@ export default function Signup() {
                             </FormItem>
                         )} />
 
-                    <button type="submit" className="w-full mt-2">Sign Up</button>
+                    <Button type="submit" className="w-full mt-2">Sign Up</Button>
 
                 </form>
             </Form>
