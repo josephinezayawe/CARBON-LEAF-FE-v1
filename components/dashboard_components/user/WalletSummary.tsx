@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Coins, Send, Wallet } from "lucide-react";
+import { Coins, Send } from "lucide-react";
 
 export default function WalletSummary() {
   return (

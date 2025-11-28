@@ -3,14 +3,7 @@ import { DashboardProvider } from "@/components/dashboard_components/global/dash
 import { AppSidebar } from "@/components/dashboard_components/user/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import DashboardBreadcrumb from "@/components/dashboard_components/user/DashboardBreadcrumb";
 import LanguageSwitcher from "@/components/global/language-switcher";
 import ThemeToggle from "@/components/global/theme-toggle";
 
@@ -24,19 +17,7 @@ export default function UserDashboardLayout({ children }: { children: React.Reac
             <div className="flex items-center gap-2">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/dashboard/user">
-                      Dashboard
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Overview</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
+              <DashboardBreadcrumb />
             </div>
             <div className="flex items-center gap-2">
               <LanguageSwitcher />

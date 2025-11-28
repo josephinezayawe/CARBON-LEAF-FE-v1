@@ -64,6 +64,7 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {photos.map((file, idx) => (
             <div key={idx} className="relative group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={URL.createObjectURL(file)}
                 alt="preview"

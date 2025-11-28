@@ -17,23 +17,23 @@ export default function UserSettings() {
       {/* System Fees */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-green-700 text-xl">
+          <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400 text-xl">
             <Percent className="w-5 h-5" />
             System Fees
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-2 text-gray-700">
-          <p>Platform Service Fee: <span className="font-semibold">2.5%</span></p>
-          <p>Withdrawal Processing Fee: <span className="font-semibold">1%</span></p>
-          <p>Credit Sale Fee: <span className="font-semibold">0.5%</span></p>
+        <CardContent className="space-y-2 text-muted-foreground">
+          <p>Platform Service Fee: <span className="font-semibold text-foreground">2.5%</span></p>
+          <p>Withdrawal Processing Fee: <span className="font-semibold text-foreground">1%</span></p>
+          <p>Credit Sale Fee: <span className="font-semibold text-foreground">0.5%</span></p>
         </CardContent>
       </Card>
 
       {/* Preferences */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl text-green-700">Preferences</CardTitle>
+          <CardTitle className="text-xl text-green-700 dark:text-green-400">Preferences</CardTitle>
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -41,7 +41,7 @@ export default function UserSettings() {
           {/* Theme Switch */}
           <div className="flex items-center justify-between">
             <Label className="flex items-center gap-2">
-              {theme === "light" ? <Sun className="w-5 h-5 text-yellow-600" /> : <Moon className="w-5 h-5 text-gray-600" />}
+              {theme === "light" ? <Sun className="w-5 h-5 text-yellow-600 dark:text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-600 dark:text-gray-400" />}
               Theme
             </Label>
 
@@ -54,7 +54,7 @@ export default function UserSettings() {
           {/* Language Selector */}
           <div>
             <Label className="flex items-center gap-2 mb-1">
-              <Languages className="w-5 h-5 text-blue-600" />
+              <Languages className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               Language
             </Label>
 
