@@ -148,7 +148,7 @@ export default function LandingPage() {
             ))}
             <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
               <a
-                href="/auth/login"
+                href="/signin"
                 className="text-sm font-medium hover:text-emerald-700 px-2 transition-colors"
               >
                 Log in
@@ -157,7 +157,7 @@ export default function LandingPage() {
                 asChild
                 className="shadow-emerald-200/50 shadow-lg hover:shadow-emerald-200/80 transition-all hover:-translate-y-0.5"
               >
-                <a href="/auth/register">Get Started</a>
+                <a href="/signup">Get Started</a>
               </Button>
             </div>
           </nav>
@@ -202,14 +202,14 @@ export default function LandingPage() {
               ))}
               <hr className="border-slate-100" />
               <a
-                href="/auth/login"
+                href="/signin"
                 className="text-base font-medium hover:text-emerald-700 py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Log in
               </a>
               <Button asChild className="w-full">
-                <a href="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                <a href="/signup" onClick={() => setIsMenuOpen(false)}>
                   Get Started
                 </a>
               </Button>
@@ -273,7 +273,7 @@ export default function LandingPage() {
               size="lg"
               className="h-12 px-8 text-base shadow-emerald-200 shadow-lg hover:shadow-xl hover:shadow-emerald-200/60 transition-all hover:-translate-y-1"
             >
-              <a href="/register">
+              <a href="/signup">
                 Start planting <ArrowRight className="ml-2 w-4 h-4" />
               </a>
             </Button>
@@ -607,7 +607,7 @@ export default function LandingPage() {
               className="h-14 px-8 text-lg border-emerald-700/50 bg-emerald-900/50 backdrop-blur-sm text-white hover:bg-emerald-800 hover:text-white hover:border-emerald-600 transition-all duration-300"
               asChild
             >
-              <a href="/register">Register as practioner</a>
+              <a href="/signup">Register as practioner</a>
             </Button>
           </div>
         </motion.div>

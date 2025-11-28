@@ -10,14 +10,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider>
           <LanguageProvider>
             {children}
+            <Toaster richColors />
           </LanguageProvider>
         </ThemeProvider>
-    <html lang="en">
-      <body
-      >
-        {children}
-        <Toaster richColors/>
       </body>
     </html>
-  );
+  )
 }
