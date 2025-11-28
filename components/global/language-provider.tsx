@@ -6,7 +6,6 @@ import fr from "../../locales/fr.json";
 import rw from "../../locales/rw.json";
 
 type Lang = "en" | "fr" | "rw";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const translations: Record<Lang, any> = { en, fr, rw };
 
 interface LanguageContextProps {
@@ -50,12 +49,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   if (!mounted) {
-    // Optional: Return null or a loader if you want to strictly block 
-    // untranslated content, but usually rendering default (en) is better 
-    // for SEO/Performance, effectively "hydrating" the language.
-    // However, if we change language in useEffect, we might get text content mismatch.
-    // A common pattern is to render children but we accept the flicker or use a different strategy.
-    // For now, we just render children with default "en".
+   //
   }
 
   return (

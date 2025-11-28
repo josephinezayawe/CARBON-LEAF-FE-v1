@@ -37,11 +37,11 @@ export default function GuidanceContent() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
-            <Info className="w-5 h-5 text-green-700" />
+            <Info className="w-5 h-5 text-green-700 dark:text-green-400" />
             How the System Works
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-gray-700 leading-relaxed">
+        <CardContent className="text-muted-foreground leading-relaxed">
           This platform connects environmental contributors with companies seeking
           certified carbon credits. If you grow crops or trees that help reduce
           air pollution, this system helps you earn money for your impact.
@@ -54,21 +54,21 @@ export default function GuidanceContent() {
           <Card key={index} className="p-4">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <step.icon className="w-6 h-6 text-green-600" />
+                <step.icon className="w-6 h-6 text-green-600 dark:text-green-400" />
                 <CardTitle className="text-lg">{step.title}</CardTitle>
               </div>
             </CardHeader>
 
-            <CardContent className="text-gray-600">{step.description}</CardContent>
+            <CardContent className="text-muted-foreground">{step.description}</CardContent>
           </Card>
         ))}
       </div>
 
       {/* Encouragement Section */}
-      <Card className="border-green-600 border">
+      <Card className="border-green-600 border dark:border-green-800">
         <CardContent className="py-6 px-4 flex items-center gap-4">
           <Sparkles className="w-6 h-6 text-yellow-500" />
-          <p className="text-gray-800 font-medium">
+          <p className="text-foreground font-medium">
             Your contribution matters. Every tree, every crop, every square meter
             of land helping reduce pollution is a step toward a greener future.
             Thank you for making a difference!

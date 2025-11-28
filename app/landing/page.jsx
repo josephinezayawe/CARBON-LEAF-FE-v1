@@ -596,7 +596,7 @@ export default function LandingPage() {
             <Button
               size="lg"
               variant="secondary"
-              className="h-14 px-8 text-lg text-emerald-950 font-bold hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
+              className="h-14 px-8 text-lg text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
               asChild
             >
               <a href="/marketplace">Explore Marketplace</a>

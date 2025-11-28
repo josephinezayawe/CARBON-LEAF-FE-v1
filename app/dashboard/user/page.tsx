@@ -3,12 +3,12 @@ import CreditStats from "@/components/dashboard_components/user/CreditStats";
 import Updates from "@/components/dashboard_components/user/Updates";
 import MarketSummary from "@/components/dashboard_components/user/MarketSummary";
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
 
 export default function UserDashboardHomePage() {
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+    <div className="flex flex-col gap-4">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -32,7 +32,7 @@ export default function UserDashboardHomePage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$12,234.89</div>
+            <div className="text-2xl font-bold">3,234</div>
             <p className="text-xs text-muted-foreground">
               +4% from last month
             </p>

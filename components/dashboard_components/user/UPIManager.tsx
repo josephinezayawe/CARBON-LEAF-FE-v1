@@ -25,7 +25,7 @@ export default function UPIManager() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">Land UPI Manager</CardTitle>
-          <MapPin className="w-5 h-5 text-green-700" />
+          <MapPin className="w-5 h-5 text-green-700 dark:text-green-400" />
         </div>
       </CardHeader>
 
@@ -51,12 +51,12 @@ export default function UPIManager() {
           {upiList.map((upi, index) => (
             <div
               key={index}
-              className="flex items-center justify-between p-3 bg-green-50 border border-green-100 rounded-lg"
+              className="flex items-center justify-between p-3 bg-green-50 border border-green-100 rounded-lg dark:bg-green-900/20 dark:border-green-800"
             >
-              <span className="font-medium text-green-800">{upi}</span>
+              <span className="font-medium text-green-800 dark:text-green-300">{upi}</span>
               <button
                 onClick={() => removeUPI(upi)}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
                 <Trash2 className="w-5 h-5" />
               </button>

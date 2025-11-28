@@ -5,8 +5,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { FileText, Download, TrendingUp, UploadCloud } from "lucide-react";
 
 const salesData = [
-  { date: "2025-01-14", credits: 40, amount: "$120" },
-  { date: "2025-01-08", credits: 20, amount: "$60" },
+  { date: "2025-01-14", credits: 40, amount: "8400 RWF" },
+  { date: "2025-01-08", credits: 20, amount: "4200 RWF" },
 ];
 
 const uploadActivity = [
@@ -22,14 +22,14 @@ export default function ReportsOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-green-700" />
+            <TrendingUp className="w-5 h-5 text-green-700 dark:text-green-400" />
             Credit Generation Summary
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-gray-700">
-          <p>Total Credits Earned: <span className="font-semibold">160</span></p>
-          <p>Total Credits Sold: <span className="font-semibold">60</span></p>
-          <p>Remaining Credits: <span className="font-semibold">100</span></p>
+        <CardContent className="space-y-2 text-muted-foreground">
+          <p>Total Credits Earned: <span className="font-semibold text-foreground">160</span></p>
+          <p>Total Credits Sold: <span className="font-semibold text-foreground">60</span></p>
+          <p>Remaining Credits: <span className="font-semibold text-foreground">100</span></p>
         </CardContent>
       </Card>
 
@@ -37,7 +37,7 @@ export default function ReportsOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-blue-600" />
+            <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             Sales History
           </CardTitle>
         </CardHeader>
@@ -69,7 +69,7 @@ export default function ReportsOverview() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <UploadCloud className="w-5 h-5 text-purple-600" />
+            <UploadCloud className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             Upload Activity
           </CardTitle>
         </CardHeader>
