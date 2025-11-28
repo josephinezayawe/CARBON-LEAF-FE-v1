@@ -1,0 +1,24 @@
+{
+  "navigation": {
+    "dashboard": "Tableau de bord",
+    "wallet": "Portefeuille",
+    "workspace": "Espace de travail",
+    "guidance": "Conseils",
+    "report": "Rapports",
+    "settings": "Paramètres"
+  },
+  "general": {
+    "logout": "Déconnexion",
+    "language": "Langue",
+    "theme": "Thème",
+    "light": "Clair",
+    "dark": "Sombre"
+  },
+  "dashboard": {
+    "welcome": "Bon retour !",
+    "credits": "Statistiques de crédits",
+    "updates": "Dernières mises à jour",
+    "market": "Aperçu du marché",
+    "wallet_balance": "Solde du portefeuille"
+  }
+}

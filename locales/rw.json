@@ -1,0 +1,24 @@
+{
+  "navigation": {
+    "dashboard": "Dashiboard",
+    "wallet": "Konti",
+    "workspace": "Ahakorerwa",
+    "guidance": "Inyigisho",
+    "report": "Raporo",
+    "settings": "Amagenamiterere"
+  },
+  "general": {
+    "logout": "Sohoka",
+    "language": "Ururimi",
+    "theme": "Imiterere",
+    "light": "Urumuri",
+    "dark": "Umukara"
+  },
+  "dashboard": {
+    "welcome": "Murakaza neza!",
+    "credits": "Ibaruramibare ry'amanota",
+    "updates": "Amakuru mashya",
+    "market": "Isoko",
+    "wallet_balance": "Umubare uri kuri Konti"
+  }
+}
