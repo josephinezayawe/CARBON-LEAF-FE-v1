@@ -15,6 +15,27 @@ interface UploadedPhoto {
   uploadedAt: string;
 }
 
+const MOCK_PHOTOS: UploadedPhoto[] = [
+  {
+    id: "1",
+    url: "/images/uploads/tree1.jpeg",
+    upi: "UP-001",
+    uploadedAt: "2024-01-15",
+  },
+  {
+    id: "2",
+    url: "/images/uploads/tree2.png",
+    upi: "UP-002",
+    uploadedAt: "2024-01-16",
+  },
+  {
+    id: "3",
+    url: "/images/uploads/tree3.jpg",
+    upi: "UP-001",
+    uploadedAt: "2024-01-17",
+  },
+];
+
 export default function PhotoGallery({
   upiList = [],
   photos = [],
@@ -26,9 +47,12 @@ export default function PhotoGallery({
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
+  const displayPhotos = photos.length > 0 ? photos : MOCK_PHOTOS;
+  const displayUPIs = upiList.length > 0 ? upiList : ["UP-001", "UP-002"];
+
   const filteredPhotos = filterUPI === "all" 
-    ? photos 
-    : photos.filter((p) => p.upi === filterUPI);
+    ? displayPhotos 
+    : displayPhotos.filter((p) => p.upi === filterUPI);
 
   const navigatePhoto = (direction: "prev" | "next") => {
     if (direction === "prev") {
@@ -89,7 +113,7 @@ export default function PhotoGallery({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All UPIs</SelectItem>
-              {upiList.map((upi, idx) => (
+              {displayUPIs.map((upi, idx) => (
                 <SelectItem key={idx} value={upi}>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3 h-3 text-emerald-600" />
@@ -150,6 +174,9 @@ export default function PhotoGallery({
                     src={photo.url}
                     alt={`Land ${photo.upi}`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    style={{ backgroundColor: '#f0f0f0' }}
+                    onError={() => console.error(`Image failed to load: ${photo.url}`)}
+                    onLoad={() => console.log(`Image loaded: ${photo.url}`)}
                   />
                   
                   {/* Overlay */}
