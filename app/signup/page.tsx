@@ -138,6 +138,9 @@ const rwandaAdministrativeDivisions = [
 ];
 
 export default function Signup() {
+    const conservationSectors = [
+        "FARMER",
+    ];
 
     const router = useRouter()
 
@@ -175,7 +178,7 @@ export default function Signup() {
         console.log("Form data:", data);
         try {
             const result = await AuthAPI.register(newData);
-            toast.success('Registration successful!')            
+            toast.success('Registration successful!')
             if (result?.data.role === 'ADMIN') {
                 router.push('/admin')
             } else if (result?.data.role === 'USER') {
@@ -437,7 +440,40 @@ export default function Signup() {
                                 <FormMessage />
                             </FormItem>
                         )} />
+                    <FormField
+                        control={form.control}
+                        name="conservationSector"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Conservation Sector</FormLabel>
+                                <FormControl>
+                                    <Select
+                                        {...field}
+                                        value={field.value || ""}
+                                        onValueChange={(val) => field.onChange(val)}
+                                    >
+                                        <SelectTrigger className="w-[220px]">
+                                            <SelectValue placeholder="Select Conservation Sector" />
+                                        </SelectTrigger>
 
+                                        <SelectContent>
+                                            <SelectGroup>
+                                                <SelectLabel>Available Sectors</SelectLabel>
+
+                                                {conservationSectors.map((sector) => (
+                                                    <SelectItem key={sector} value={sector}>
+                                                        {sector}
+                                                    </SelectItem>
+                                                ))}
+
+                                            </SelectGroup>
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                     <Button type="submit" className="w-full mt-2">Sign Up</Button>
 
                 </form>

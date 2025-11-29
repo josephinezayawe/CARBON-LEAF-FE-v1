@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -8,8 +8,27 @@ import { ImagePlus, Trash2, Upload, CloudUpload, X, CheckCircle2, MapPin, Image 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Account } from "@/lib/dataSchemas";
+import { getCurrentUser } from "@/lib/auth";
+import { toast } from "sonner";
+import { Workspace } from "@/app/api/workspace";
 
 export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) {
+  const [account, setAccount] = useState<Account>()
+    useEffect(() => {
+        async function userData() {
+            const user = await getCurrentUser()
+            if (!user?.id) {
+                return toast.error('User Not Found')
+            }  
+            if (user?.role !== 'USER') {
+                toast.error('UnAuthenticated User')
+                return window.location.href = '/signin'
+            }
+            setAccount(user)
+        }
+        userData()
+    }, [])
   const [selectedUPI, setSelectedUPI] = useState<string | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -48,8 +67,23 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
   const removePhoto = (index: number) => {
     setPhotos(photos.filter((_, i) => i !== index));
   };
+console.log(account);
 
   const handleSubmit = async () => {
+    const data = new FormData()
+    photos.forEach(photo => {
+      data.append('images', photo)
+    })
+    const sector = account?.conservationSector.toUpperCase() as string    
+    data.append('sector', sector)
+    const result = await Workspace.create(data)
+    if (result.success) {
+      toast.success('Photos Uploaded Successfully');
+    }else{
+      toast.error('Photos Upload Failed');
+      toast.error(result.message);
+    }
+    console.log(result)
     setIsUploading(true);
     setUploadProgress(0);
     
