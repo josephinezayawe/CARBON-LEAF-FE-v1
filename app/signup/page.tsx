@@ -211,7 +211,6 @@ export default function Signup() {
             <div className="flex items-center space-x-4">
                 {steps.map((step, index) => (
                     <div key={step.number} className="flex items-center">
-                        {/* Step Circle */}
                         <div className={`
                             flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200
                             ${step.completed 

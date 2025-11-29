@@ -137,7 +137,7 @@ export default function CreditStats() {
                         <div 
                           className="w-3 h-3 rounded-full"
                           style={{ 
-                            backgroundColor: chartConfig[name as keyof typeof chartConfig]?.color 
+                            backgroundColor: (chartConfig[name as keyof typeof chartConfig] as any)?.color || '#999' 
                           }}
                         />
                         <span className="font-semibold">{value}</span>
