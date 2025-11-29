@@ -26,7 +26,7 @@ export const RegisterDataSchema = z.object({
     village: z.string().min(1, "Select Village"),
     province: z.string().min(1, "Select Province"),
     sector: z.string().min(1, "Select Sector"),
-    confirmPassword: z.string().optional
+    confirmPassword: z.string().optional()
 }).superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {
         ctx.addIssue({
