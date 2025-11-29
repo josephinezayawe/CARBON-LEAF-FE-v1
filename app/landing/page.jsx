@@ -108,22 +108,17 @@ export default function LandingPage() {
               initial={{ rotate: -10, scale: 0.9 }}
               animate={{ rotate: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg border border-emerald-100 overflow-hidden"
+              className="w-18 h-18 rounded-xl flex items-center justify-center  overflow-hidden"
             >
               <Image
                 src="/images/logos/CARBON-LEAF-LOGO.png"
                 alt="Carbon Leaf Logo"
-                width={40}
-                height={40}
+                width={100}
+                height={100}
                 className="object-contain p-1"
               />
             </motion.div>
-            <div>
-              <h1 className="text-lg font-bold">CarbonLeaf</h1>
-              <p className="text-xs text-slate-600">
-                Restore nature. Reward owners. Offset pollution.
-              </p>
-            </div>
+            
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
