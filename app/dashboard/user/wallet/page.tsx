@@ -1,17 +1,58 @@
-import React from "react";
+"use client";
+
+import { Wallet, TrendingUp, ArrowUpRight, ArrowDownRight, History } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
 import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
 import WalletAccountSetup from "@/components/dashboard_components/user/WalletAccountSetup";
+import WalletTransactions from "@/components/dashboard_components/user/WalletTransactions";
 
 export default function WalletPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Wallet</h1>
-      <div className="grid gap-6 md:grid-cols-2">
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 p-6 md:p-8">
+        <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,rgba(255,255,255,0.5))]" />
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
+        
+        <div className="relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
+                  <Wallet className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                    Wallet
+                  </h1>
+                  <p className="text-purple-100 text-sm md:text-base">
+                    Manage your earnings and transactions
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5">
+                <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
+                +12.5% this month
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Balance & Summary */}
+      <div className="grid gap-6 lg:grid-cols-2">
         <WalletBalance />
         <WalletSummary />
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
+
+      {/* Transactions & Account Setup */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <WalletTransactions />
         <WalletAccountSetup />
       </div>
     </div>

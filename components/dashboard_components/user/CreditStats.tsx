@@ -1,6 +1,6 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
 
 import {
   Card,
@@ -15,12 +15,37 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { TrendingUp } from "lucide-react"
 
 const chartData = [
-  { category: "Conservation", credits: 120, fill: "var(--color-conservation)" },
-  { category: "Amount", credits: 300, fill: "var(--color-amount)" },
-  { category: "Used", credits: 80, fill: "var(--color-used)" },
-  { category: "Available", credits: 220, fill: "var(--color-available)" },
+  { 
+    category: "Conservation", 
+    credits: 120, 
+    fill: "var(--color-conservation)",
+    trend: 15,
+    description: "Credits saved through conservation efforts"
+  },
+  { 
+    category: "Total", 
+    credits: 300, 
+    fill: "var(--color-amount)",
+    trend: 8,
+    description: "Total credits available"
+  },
+  { 
+    category: "Used", 
+    credits: 80, 
+    fill: "var(--color-used)",
+    trend: -5,
+    description: "Credits consumed this period"
+  },
+  { 
+    category: "Available", 
+    credits: 220, 
+    fill: "var(--color-available)",
+    trend: 12,
+    description: "Remaining credits for use"
+  },
 ]
 
 const chartConfig = {
@@ -29,47 +54,146 @@ const chartConfig = {
   },
   conservation: {
     label: "Conservation",
-    color: "hsl(var(--chart-1))",
+    color: "hsl(142, 76%, 36%)", // Green
   },
   amount: {
-    label: "Amount",
-    color: "hsl(var(--chart-2))",
+    label: "Total",
+    color: "hsl(221, 83%, 53%)", // Blue
   },
   used: {
     label: "Used",
-    color: "hsl(var(--chart-3))",
+    color: "hsl(346, 84%, 61%)", // Red
   },
   available: {
     label: "Available",
-    color: "hsl(var(--chart-4))",
+    color: "hsl(215, 88%, 53%)", // Light blue
   },
 } satisfies ChartConfig
 
 export default function CreditStats() {
+  const totalCredits = chartData.find(item => item.category === "Total")?.credits || 0
+  const usedPercentage = ((chartData.find(item => item.category === "Used")?.credits || 0) / totalCredits * 100).toFixed(1)
+
   return (
-    <Card className="h-full shadow-sm">
-      <CardHeader>
-        <CardTitle>Credit Statistics</CardTitle>
-        <CardDescription>Overview of your credit distribution</CardDescription>
+    <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
+      <CardHeader className="pb-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+              Credit Statistics
+              <TrendingUp className="h-5 w-5 text-green-500 dark:text-green-400" />
+            </CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400 mt-2">
+              Comprehensive overview of your credit distribution and usage patterns
+            </CardDescription>
+          </div>
+          <div className="text-right">
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCredits}</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">Total Credits</div>
+          </div>
+        </div>
       </CardHeader>
-      <CardContent>
+      
+      <CardContent className="pt-4">
+        {/* Key Metrics */}
+        
+
+        {/* Chart */}
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(value) => value}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Bar dataKey="credits" radius={8} />
-          </BarChart>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              accessibilityLayer
+              data={chartData}
+              margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
+            >
+              <CartesianGrid 
+                vertical={false} 
+                className="stroke-gray-200 dark:stroke-gray-700"
+                strokeDasharray="3 3"
+              />
+              <XAxis
+                dataKey="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value}
+                className="fill-gray-600 dark:fill-gray-400"
+                tick={{ fontSize: 12, fontWeight: 500 }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                className="fill-gray-600 dark:fill-gray-400"
+                tick={{ fontSize: 12 }}
+                width={40}
+              />
+              <ChartTooltip
+                cursor={{ fill: 'hsl(220, 13%, 91%)', opacity: 0.3 }}
+                content={
+                  <ChartTooltipContent 
+                    hideLabel={false}
+                    formatter={(value, name) => [
+                      <div key={name} className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ 
+                            backgroundColor: chartConfig[name as keyof typeof chartConfig]?.color 
+                          }}
+                        />
+                        <span className="font-semibold">{value}</span>
+                        <span>credits</span>
+                      </div>,
+                      name
+                    ]}
+                    labelFormatter={(label) => {
+                      const item = chartData.find(d => d.category === label)
+                      return (
+                        <div className="text-center">
+                          <div className="font-bold text-gray-900 dark:text-gray-100">{label}</div>
+                          {item?.description && (
+                            <div className="text-xs text-gray-500 dark:text-gray-400 max-w-[200px]">
+                              {item.description}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    }}
+                  />
+                }
+              />
+              <Bar 
+                dataKey="credits" 
+                radius={[8, 8, 0, 0]}
+                maxBarSize={80}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </ChartContainer>
+
+        {/* Legend */}
+        <div className="flex flex-wrap justify-center gap-4 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
+          {chartData.map((item) => (
+            <div key={item.category} className="flex items-center gap-2">
+              <div 
+                className="w-3 h-3 rounded-full"
+                style={{ backgroundColor: item.fill }}
+              />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {item.category}
+              </span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                ({item.credits})
+              </span>
+              {item.trend && (
+                <span className={`text-xs font-medium ${
+                  item.trend > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                }`}>
+                  {item.trend > 0 ? '↑' : '↓'} {Math.abs(item.trend)}%
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   )

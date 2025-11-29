@@ -108,11 +108,15 @@ export default function LandingPage() {
               initial={{ rotate: -10, scale: 0.9 }}
               animate={{ rotate: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-600 to-emerald-400 flex items-center justify-center text-white shadow-lg"
+              className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg border border-emerald-100 overflow-hidden"
             >
-              <div>
-                <TreePine className="w-6 h-6" />
-              </div>
+              <Image
+                src="/images/logos/CARBON-LEAF-LOGO.png"
+                alt="Carbon Leaf Logo"
+                width={40}
+                height={40}
+                className="object-contain p-1"
+              />
             </motion.div>
             <div>
               <h1 className="text-lg font-bold">CarbonLeaf</h1>
@@ -618,8 +622,14 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white">
-                <TreePine className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-md border border-emerald-100 overflow-hidden">
+                <Image
+                  src="/images/logos/CARBON-LEAF-LOGO.png"
+                  alt="Carbon Leaf Logo"
+                  width={40}
+                  height={40}
+                  className="object-contain p-1"
+                />
               </div>
               <span className="font-bold text-xl text-slate-900">
                 CarbonLeaf
