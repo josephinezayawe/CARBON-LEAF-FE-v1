@@ -30,9 +30,9 @@ export default function WorkspacePage() {
   ]);
 
   const [uploadedPhotos] = useState<UploadedPhoto[]>([
-    { id: "1", url: "/images/sample-land-1.jpg", upi: "1/23/45/67", uploadedAt: "2024-03-01" },
-    { id: "2", url: "/images/sample-land-2.jpg", upi: "1/23/45/67", uploadedAt: "2024-03-02" },
-    { id: "3", url: "/images/sample-land-3.jpg", upi: "2/34/56/78", uploadedAt: "2024-03-05" },
+    { id: "1", url: "/images/uploads/tree1.jpeg", upi: "1/23/45/67", uploadedAt: "2024-03-01" },
+    { id: "2", url: "/images/uploads/tree2.png", upi: "1/23/45/67", uploadedAt: "2024-03-02" },
+    { id: "3", url: "/images/uploads/tree3.jpg", upi: "2/34/56/78", uploadedAt: "2024-03-05" },
   ]);
 
   const handleAddUPI = (upi: string, landName?: string) => {
@@ -137,7 +137,14 @@ export default function WorkspacePage() {
             </TabsContent>
 
             <TabsContent value="upload" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
-              <PhotoUploader upiList={upiList} />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <PhotoUploader upiList={upiList} />
+                </div>
+                <div>
+                  <PhotoGallery upiList={upiList} photos={uploadedPhotos} />
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="gallery" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
