@@ -8,8 +8,9 @@ import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
 
 export default function UserDashboardHomePage() {
   return (
-    <div className="flex flex-col gap-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="flex flex-col gap-4 w-full">
+      {/* Stats Cards - Responsive grid */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -18,7 +19,7 @@ export default function UserDashboardHomePage() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">320,450</div>
+            <div className="text-2xl font-bold">300</div>
             <p className="text-xs text-muted-foreground">
               +20.1% from last month
             </p>
@@ -65,19 +66,23 @@ export default function UserDashboardHomePage() {
           </CardContent>
         </Card>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-4">
+      
+      {/* Charts Row - Stack on mobile, side by side on larger screens */}
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4">
           <CreditStats />
         </div>
-        <div className="col-span-3">
+        <div className="lg:col-span-3">
           <WalletSummary />
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <div className="col-span-3">
+      
+      {/* Updates & Market - Stack on mobile, side by side on larger screens */}
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-3">
           <Updates />
         </div>
-        <div className="col-span-4">
+        <div className="lg:col-span-4">
           <MarketSummary />
         </div>
       </div>

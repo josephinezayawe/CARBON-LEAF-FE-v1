@@ -67,7 +67,6 @@ export default function GuidanceContent() {
       {/* Encouragement Section */}
       <Card className="border-green-600 border dark:border-green-800">
         <CardContent className="py-6 px-4 flex items-center gap-4">
-          <Sparkles className="w-6 h-6 text-yellow-500" />
           <p className="text-foreground font-medium">
             Your contribution matters. Every tree, every crop, every square meter
             of land helping reduce pollution is a step toward a greener future.
