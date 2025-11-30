@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function WalletAccountSetup() {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -34,13 +36,13 @@ export default function WalletAccountSetup() {
               <CreditCard className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Payment Methods</h3>
-              <p className="text-sm text-muted-foreground">Setup withdrawal accounts</p>
+              <h3 className="font-semibold text-lg">{t("wallet.payment_methods")}</h3>
+              <p className="text-sm text-muted-foreground">{t("wallet.setup_withdrawal")}</p>
             </div>
           </div>
           <Badge variant="outline" className="gap-1.5">
             <Shield className="w-3 h-3" />
-            Secure
+            {t("wallet.secure")}
           </Badge>
         </div>
       </div>
@@ -54,14 +56,14 @@ export default function WalletAccountSetup() {
               className="flex items-center gap-2 rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
             >
               <Banknote className="w-4 h-4" />
-              Bank Account
+              {t("wallet.bank_account")}
             </TabsTrigger>
             <TabsTrigger 
               value="mobile" 
               className="flex items-center gap-2 rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:shadow-sm"
             >
               <Smartphone className="w-4 h-4" />
-              Mobile Money
+              {t("wallet.mobile_money")}
             </TabsTrigger>
           </TabsList>
 
@@ -71,7 +73,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <Building2 className="w-3.5 h-3.5 text-muted-foreground" />
-                  Bank Name
+                  {t("wallet.bank_name")}
                 </Label>
                 <Input 
                   placeholder="e.g., Bank of Kigali" 
@@ -83,7 +85,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <CreditCard className="w-3.5 h-3.5 text-muted-foreground" />
-                  Account Number
+                  {t("wallet.account_number")}
                 </Label>
                 <Input 
                   placeholder="Enter account number" 
@@ -95,7 +97,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <User className="w-3.5 h-3.5 text-muted-foreground" />
-                  Account Holder Name
+                  {t("wallet.account_holder")}
                 </Label>
                 <Input 
                   placeholder="Full name as on account" 
@@ -107,7 +109,7 @@ export default function WalletAccountSetup() {
               {success && (
                 <div className="flex items-center gap-2 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300">
                   <CheckCircle2 className="w-5 h-5" />
-                  <span className="font-medium">Bank account saved successfully!</span>
+                  <span className="font-medium">{t("wallet.bank_saved")}</span>
                 </div>
               )}
 
@@ -119,12 +121,12 @@ export default function WalletAccountSetup() {
                 {loading ? (
                   <>
                     <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Saving...
+                    {t("wallet.saving")}
                   </>
                 ) : (
                   <>
                     <Banknote className="w-4 h-4 mr-2" />
-                    Save Bank Account
+                    {t("wallet.save_bank")}
                   </>
                 )}
               </Button>
@@ -137,7 +139,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <Smartphone className="w-3.5 h-3.5 text-muted-foreground" />
-                  Provider
+                  {t("wallet.provider")}
                 </Label>
                 <div className="grid grid-cols-2 gap-3">
                   {["MTN MoMo", "Airtel Money"].map((provider) => (
@@ -159,7 +161,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                  Phone Number
+                  {t("wallet.phone")}
                 </Label>
                 <Input 
                   placeholder="07XX XXX XXX" 
@@ -171,7 +173,7 @@ export default function WalletAccountSetup() {
               <div className="space-y-2">
                 <Label className="flex items-center gap-2 text-sm font-medium">
                   <User className="w-3.5 h-3.5 text-muted-foreground" />
-                  Account Name
+                  {t("wallet.account_name")}
                 </Label>
                 <Input 
                   placeholder="Registered name" 
@@ -193,17 +195,17 @@ export default function WalletAccountSetup() {
                 className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25"
               >
                 {loading ? (
-                  <>
-                    <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Smartphone className="w-4 h-4 mr-2" />
-                    Save Mobile Money
-                  </>
-                )}
-              </Button>
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      {t("wallet.saving")}
+                    </>
+                  ) : (
+                    <>
+                      <Smartphone className="w-4 h-4 mr-2" />
+                      {t("wallet.save_mobile_money")}
+                    </>
+                  )}
+                </Button>
             </form>
           </TabsContent>
         </Tabs>

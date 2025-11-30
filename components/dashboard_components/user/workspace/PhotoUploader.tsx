@@ -8,8 +8,10 @@ import { ImagePlus, Trash2, Upload, CloudUpload, X, CheckCircle2, MapPin, Image 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) {
+  const { t } = useLanguage();
   const [selectedUPI, setSelectedUPI] = useState<string | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -73,19 +75,19 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
             <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <Label className="font-medium">Select Land Parcel</Label>
-            <p className="text-xs text-muted-foreground">Choose which UPI these photos belong to</p>
+            <Label className="font-medium">{t("workspace.select_land_parcel")}</Label>
+            <p className="text-xs text-muted-foreground">{t("workspace.choose_upi_for_photos")}</p>
           </div>
         </div>
         
         <Select onValueChange={setSelectedUPI} value={selectedUPI || undefined}>
           <SelectTrigger className="h-11 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <SelectValue placeholder="Select a registered UPI..." />
+            <SelectValue placeholder={t("workspace.select_upi_placeholder")} />
           </SelectTrigger>
           <SelectContent>
             {upiList.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
-                No UPIs registered yet. Register a UPI first.
+                {t("workspace.no_upis_registered")}
               </div>
             ) : (
               upiList.map((upi, idx) => (
@@ -142,20 +144,20 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
         </div>
         
         <p className="font-semibold text-lg mb-1">
-          {isDragging ? "Drop photos here" : "Drag & drop photos"}
+          {isDragging ? t("workspace.drop_here") : t("workspace.drag_drop")}
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          or click to browse from your device
+          {t("workspace.or_click")}
         </p>
         
         <Badge variant="outline" className="text-xs">
-          Supports: JPG, PNG, WebP (Max 10MB each)
+          {t("workspace.file_support")}
         </Badge>
         
         {!selectedUPI && (
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-4 flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            Select a UPI first to enable upload
+            {t("workspace.select_upi_to_enable")}
           </p>
         )}
       </div>
@@ -166,10 +168,10 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
           <div className="flex items-center justify-between">
             <h4 className="font-semibold flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Selected Photos
+              {t("workspace.selected_photos")}
             </h4>
             <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-              {photos.length} {photos.length === 1 ? "photo" : "photos"}
+              {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
             </Badge>
           </div>
           
@@ -211,7 +213,7 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
             <div className="space-y-2 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                  Uploading photos...
+                  {t("workspace.uploading_photos")}
                 </span>
                 <span className="text-emerald-600 dark:text-emerald-400">{uploadProgress}%</span>
               </div>
@@ -229,24 +231,24 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
               {isUploading ? (
                 <>
                   <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Uploading...
+                  {t("workspace.uploading")}
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Submit {photos.length} {photos.length === 1 ? "Photo" : "Photos"}
+                  {t("workspace.submit")} {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
                 </>
               )}
             </Button>
             
             <Button 
-              variant="outline" 
-              onClick={() => setPhotos([])}
-              disabled={isUploading}
-              className="h-11"
-            >
-              Clear All
-            </Button>
+               variant="outline" 
+               onClick={() => setPhotos([])}
+               disabled={isUploading}
+               className="h-11"
+             >
+               {t("workspace.clear_all")}
+             </Button>
           </div>
         </div>
       )}
@@ -255,7 +257,7 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
       {photos.length === 0 && selectedUPI && (
         <div className="text-center py-8 text-muted-foreground text-sm">
           <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
-          Ready to upload photos for UPI: <span className="font-semibold text-foreground">{selectedUPI}</span>
+          {t("workspace.ready_to_upload")} <span className="font-semibold text-foreground">{selectedUPI}</span>
         </div>
       )}
     </div>

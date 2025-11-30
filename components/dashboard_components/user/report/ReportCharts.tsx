@@ -2,8 +2,10 @@
 
 import { TrendingUp, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function ReportCharts() {
+  const { t } = useLanguage();
   const monthlyData = [
     { month: "Aug", credits: 20, earnings: 4200 },
     { month: "Sep", credits: 35, earnings: 7350 },
@@ -26,8 +28,8 @@ export default function ReportCharts() {
               <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h3 className="font-semibold">Credits Generated</h3>
-              <p className="text-sm text-muted-foreground">Last 6 months</p>
+              <h3 className="font-semibold">{t("reports.credits_generated")}</h3>
+              <p className="text-sm text-muted-foreground">{t("reports.last_6_months")}</p>
             </div>
           </div>
         </div>
@@ -58,8 +60,8 @@ export default function ReportCharts() {
               <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold">Earnings (RWF)</h3>
-              <p className="text-sm text-muted-foreground">Last 6 months</p>
+              <h3 className="font-semibold">{t("reports.earnings_rwf")}</h3>
+              <p className="text-sm text-muted-foreground">{t("reports.last_6_months")}</p>
             </div>
           </div>
         </div>
