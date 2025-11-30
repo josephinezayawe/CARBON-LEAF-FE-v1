@@ -12,6 +12,7 @@ import { AuthAPI } from "../api/authAPI"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Loader2, UserPlus, MapPin, ArrowRight, ArrowLeft, Check } from "lucide-react"
+import { useLanguage } from "@/components/global/language-provider"
 
 // Rwanda hierarchy (simplified, expand as needed)
 const rwandaAdministrativeDivisions = [
@@ -119,6 +120,7 @@ type FormStep = 1 | 2 | 3;
 
 export default function Signup() {
     const router = useRouter()
+    const { lang, setLanguage } = useLanguage()
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -158,13 +160,15 @@ export default function Signup() {
         { number: 3, title: "Security", completed: currentStep > 3 }
     ]
 
+    const { t } = useLanguage()
+
     const onSubmit = async (data: RegisterData) => {
         setIsLoading(true)
         
         try {
             const { confirmPassword, ...newData } = data
             const result = await AuthAPI.register(newData)
-            toast.success('Account created successfully! Welcome!')
+            toast.success(t('auth.signup_success'))
             
             if (result?.data.role === 'ADMIN') {
                 router.push('/admin')
@@ -172,7 +176,7 @@ export default function Signup() {
                 router.push('/user')
             }
         } catch (error) {
-            toast.error('Registration failed. Please try again.')
+            toast.error(t('auth.signup_error'))
             console.error("Registration error:", error)
         } finally {
             setIsLoading(false)
@@ -250,6 +254,35 @@ export default function Signup() {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-green-100/20 dark:from-slate-950 dark:via-emerald-950/20 dark:to-green-950/10 px-4 py-8">
+            {/* Language Switcher */}
+            <div className="absolute top-6 right-6">
+                <div className="relative group">
+                    <button className="px-3 py-1.5 rounded-lg bg-white/80 border border-slate-200 text-slate-700 text-sm font-medium hover:bg-white transition-colors flex items-center gap-2 shadow-sm">
+                        {lang.toUpperCase()}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                    </button>
+                    <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                        {(["en", "fr", "rw"] as const).map((language) => (
+                            <button
+                                key={language}
+                                onClick={() => setLanguage(language)}
+                                className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                                    lang === language
+                                        ? "bg-emerald-600 text-white"
+                                        : "text-slate-700 hover:bg-slate-100"
+                                }`}
+                            >
+                                {language === "en" && "English"}
+                                {language === "fr" && "Français"}
+                                {language === "rw" && "Kinyarwanda"}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             <div className="w-full max-w-2xl">
                 {/* Header Section */}
                 <div className="text-center mb-8">
@@ -257,10 +290,10 @@ export default function Signup() {
                         <UserPlus className="w-6 h-6 text-white" />
                     </div>
                     <h1 className="text-2xl font-bold bg-gradient-to-br from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-                        Create Your Account
+                        {t('auth.signup_title')}
                     </h1>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-                        Step {currentStep} of {steps.length}
+                        {t('auth.signup_step').replace('{current}', currentStep.toString()).replace('{total}', steps.length.toString())}
                     </p>
                 </div>
 
@@ -278,10 +311,10 @@ export default function Signup() {
                                     <div className="text-center mb-6">
                                         <UserPlus className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
                                         <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                                            Personal Information
+                                            {t('auth.signup_personal')}
                                         </h2>
                                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                                            Tell us about yourself
+                                            {t('auth.signup_personal_desc')}
                                         </p>
                                     </div>
 
@@ -290,11 +323,11 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        First Name *
+                                                        {t('auth.first_name')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input 
-                                                            placeholder="Enter your first name" 
+                                                            placeholder={t('auth.enter_first_name')} 
                                                             {...field} 
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
@@ -308,11 +341,11 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Last Name *
+                                                        {t('auth.last_name')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input 
-                                                            placeholder="Enter your last name" 
+                                                            placeholder={t('auth.enter_last_name')} 
                                                             {...field} 
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
@@ -326,11 +359,11 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Email or Phone *
+                                                        {t('auth.email_or_phone')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input 
-                                                            placeholder="Enter your email or phone" 
+                                                            placeholder={t('auth.enter_email_or_phone')} 
                                                             {...field} 
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
@@ -344,11 +377,11 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        National ID *
-                                                    </FormLabel>
+                                                         {t('auth.national_id')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Input 
-                                                            placeholder="Enter your NID number" 
+                                                            placeholder={t('auth.enter_nid')} 
                                                             {...field} 
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
@@ -367,10 +400,10 @@ export default function Signup() {
                                     <div className="text-center mb-6">
                                         <MapPin className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
                                         <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                                            Location Information
+                                            {t('auth.signup_location')}
                                         </h2>
                                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                                            Where are you located?
+                                            {t('auth.signup_location_desc')}
                                         </p>
                                     </div>
 
@@ -379,8 +412,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Province *
-                                                    </FormLabel>
+                                                         {t('auth.province')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -397,7 +430,7 @@ export default function Signup() {
                                                             }}
                                                         >
                                                             <SelectTrigger className="w-full h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
-                                                                <SelectValue placeholder="Select Province" />
+                                                                <SelectValue placeholder={t('auth.select_province') || "Select Province"} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -420,8 +453,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        District *
-                                                    </FormLabel>
+                                                         {t('auth.district')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -437,7 +470,7 @@ export default function Signup() {
                                                             disabled={!selectedProvince}
                                                         >
                                                             <SelectTrigger className="w-full h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
-                                                                <SelectValue placeholder="Select District" />
+                                                                <SelectValue placeholder={t('auth.select_district') || "Select District"} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -460,8 +493,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Sector *
-                                                    </FormLabel>
+                                                         {t('auth.sector')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -475,7 +508,7 @@ export default function Signup() {
                                                             disabled={!selectedDistrict}
                                                         >
                                                             <SelectTrigger className="w-full h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
-                                                                <SelectValue placeholder="Select Sector" />
+                                                                <SelectValue placeholder={t('auth.select_sector') || "Select Sector"} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -498,8 +531,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Cell *
-                                                    </FormLabel>
+                                                         {t('auth.cell')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -511,7 +544,7 @@ export default function Signup() {
                                                             disabled={!selectedSector}
                                                         >
                                                             <SelectTrigger className="w-full h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
-                                                                <SelectValue placeholder="Select Cell" />
+                                                                <SelectValue placeholder={t('auth.select_cell') || "Select Cell"} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -532,8 +565,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Village *
-                                                    </FormLabel>
+                                                         {t('auth.village')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -541,7 +574,7 @@ export default function Signup() {
                                                             disabled={!selectedCell}
                                                         >
                                                             <SelectTrigger className="w-full h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors">
-                                                                <SelectValue placeholder="Select Village" />
+                                                                <SelectValue placeholder={t('auth.select_village') || "Select Village"} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectGroup>
@@ -569,10 +602,10 @@ export default function Signup() {
                                             <span className="w-4 h-4 bg-emerald-500 rounded-full"></span>
                                         </div>
                                         <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
-                                            Security Settings
+                                            {t('auth.signup_security')}
                                         </h2>
                                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                                            Create a secure password
+                                            {t('auth.signup_security_desc')}
                                         </p>
                                     </div>
 
@@ -581,17 +614,17 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Password *
-                                                    </FormLabel>
+                                                         {t('auth.password')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input 
-                                                                type={showPassword ? "text" : "password"}
-                                                                placeholder="Create a strong password" 
-                                                                autoComplete="new-password"
-                                                                {...field} 
-                                                                className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
-                                                            />
+                                                                 type={showPassword ? "text" : "password"}
+                                                                 placeholder={t('auth.create_strong_password')} 
+                                                                 autoComplete="new-password"
+                                                                 {...field} 
+                                                                 className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
+                                                             />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setShowPassword(!showPassword)}
@@ -614,17 +647,17 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                        Confirm Password *
-                                                    </FormLabel>
+                                                         {t('auth.confirm_password')} {t('auth.required')}
+                                                     </FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
                                                             <Input 
-                                                                type={showConfirmPassword ? "text" : "password"}
-                                                                placeholder="Confirm your password" 
-                                                                autoComplete="new-password"
-                                                                {...field} 
-                                                                className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
-                                                            />
+                                                                 type={showConfirmPassword ? "text" : "password"}
+                                                                 placeholder={t('auth.enter_confirm_password')} 
+                                                                 autoComplete="new-password"
+                                                                 {...field} 
+                                                                 className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
+                                                             />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -656,7 +689,7 @@ export default function Signup() {
                                     className="flex items-center gap-2 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                                 >
                                     <ArrowLeft className="w-4 h-4" />
-                                    Previous
+                                    {t('auth.signup_previous')}
                                 </Button>
 
                                 {currentStep < 3 ? (
@@ -665,7 +698,7 @@ export default function Signup() {
                                         onClick={nextStep}
                                         className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25"
                                     >
-                                        Next
+                                        {t('auth.signup_next')}
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 ) : (
@@ -677,12 +710,12 @@ export default function Signup() {
                                         {isLoading ? (
                                             <>
                                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                                Creating Account...
+                                                {t('auth.signup_creating')}
                                             </>
                                         ) : (
                                             <>
                                                 <UserPlus className="w-4 h-4" />
-                                                Create Account
+                                                {t('auth.signup_create')}
                                             </>
                                         )}
                                     </Button>
@@ -695,12 +728,12 @@ export default function Signup() {
                     <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
                         <div className="text-center">
                             <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Already have an account?{' '}
+                                {t('auth.signup_already')}{' '}
                                 <a 
                                     href="/signin" 
                                     className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
                                 >
-                                    Sign in
+                                    {t('auth.signin_button')}
                                 </a>
                             </p>
                         </div>

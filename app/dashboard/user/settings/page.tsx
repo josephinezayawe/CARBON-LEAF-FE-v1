@@ -1,12 +1,15 @@
 "use client";
 
 import { Settings, Shield } from "lucide-react";
+import { useLanguage } from "@/components/global/language-provider";
 import { Badge } from "@/components/ui/badge";
 import UserSettings from "@/components/dashboard_components/user/settings/UserSettings";
 import ProfileSettings from "@/components/dashboard_components/user/settings/ProfileSettings";
 import SecuritySettings from "@/components/dashboard_components/user/settings/SecuritySettings";
 
 export default function SettingsPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-8">
       {/* Header Section */}
@@ -24,10 +27,10 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                    Settings
+                    {t("settings.title")}
                   </h1>
                   <p className="text-gray-300 text-sm md:text-base">
-                    Manage your account preferences
+                    {t("settings.manage")}
                   </p>
                 </div>
               </div>
@@ -36,7 +39,7 @@ export default function SettingsPage() {
             <div className="flex items-center gap-3">
               <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5">
                 <Shield className="w-3.5 h-3.5 mr-1.5" />
-                Verified Account
+                {t("profile.verified_account")}
               </Badge>
             </div>
           </div>
