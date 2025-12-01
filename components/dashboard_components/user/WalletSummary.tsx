@@ -44,8 +44,11 @@ function StatItem({ label, value, subValue, icon, trend, trendValue }: StatItemP
     </div>
   );
 }
+interface WalletSummaryProps {
+  credits: number;
+}
 
-export default function WalletSummary() {
+export default function WalletSummary({ credits }: WalletSummaryProps) {
   const { t } = useLanguage();
   return (
     <div className="h-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
@@ -71,7 +74,7 @@ export default function WalletSummary() {
       <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
         <p className="text-sm text-muted-foreground mb-1">{t("credits.total_balance")}</p>
         <div className="flex items-baseline gap-3">
-          <span className="text-4xl font-bold">120,450</span>
+          <span className="text-4xl font-bold">{credits}</span>
           <span className="text-lg font-medium text-muted-foreground">C-Credits</span>
         </div>
         <div className="flex items-center gap-2 mt-2">

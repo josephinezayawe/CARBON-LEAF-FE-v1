@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLanguage } from "@/components/global/language-provider";
 import CreditStats from "@/components/dashboard_components/user/CreditStats";
 import Updates from "@/components/dashboard_components/user/Updates";
@@ -8,8 +8,41 @@ import MarketSummary from "@/components/dashboard_components/user/MarketSummary"
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
+import { WalletAPI } from "@/app/api/wallet";
+import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/auth";
+import { Account } from "@/lib/dataSchemas";
 
 export default function UserDashboardHomePage() {
+    const [account, setAccount] = useState<Account>()
+  const [credits, setCredits] = useState<number>(0)
+  useEffect(() => {
+    async function userData() {
+      const user = await getCurrentUser()
+      if (!user?.id) {
+        return toast.error('User Not Found')
+      }
+      if (user?.role !== 'USER') {
+        return toast.error('UnAuthenticated User')
+      }
+      setAccount(user)
+    }
+    userData()
+  }, [])
+  useEffect(() => {
+
+
+    const getWallet = async () => {
+      try {
+        if (!account?.id) return;
+        const res = await WalletAPI.getWallet()
+        setCredits(res.data.totalCredits);
+      } catch (error) {
+        toast.error('Failed to fetch wallet data')
+      }
+    }
+    getWallet()
+  }, [account])
   const { t } = useLanguage();
 
   return (
@@ -78,7 +111,7 @@ export default function UserDashboardHomePage() {
           <CreditStats />
         </div>
         <div className="lg:col-span-3">
-          <WalletSummary />
+          <WalletSummary  credits={credits}/>
         </div>
       </div>
       
