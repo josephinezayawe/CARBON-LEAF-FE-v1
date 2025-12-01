@@ -45,6 +45,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return String(current);
   };
 
+  if (!mounted) {
+    console.log(mounted)
+    // Optional: Return null or a loader if you want to strictly block 
+    // untranslated content, but usually rendering default (en) is better 
+    // for SEO/Performance, effectively "hydrating" the language.
+    // However, if we change language in useEffect, we might get text content mismatch.
+    // A common pattern is to render children but we accept the flicker or use a different strategy.
+    // For now, we just render children with default "en".
+  }
+
   return (
     <LanguageContext.Provider value={{ lang, t, setLanguage }}>
       {children}
