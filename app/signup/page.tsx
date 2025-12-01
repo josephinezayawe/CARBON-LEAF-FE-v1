@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { AuthAPI } from "../api/authAPI"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -134,7 +134,7 @@ export default function Signup() {
 
     const form = useForm<RegisterData>({
         resolver: zodResolver(RegisterDataSchema),
-        mode: 'onBlur',
+        mode: 'onSubmit',
         defaultValues: {
             firstName: '',
             lastName: '',
@@ -155,6 +155,11 @@ export default function Signup() {
     const [selectedDistrict, setSelectedDistrict] = useState('')
     const [selectedSector, setSelectedSector] = useState('')
     const [selectedCell, setSelectedCell] = useState('')
+    
+    // Clear form errors on mount to prevent showing errors before interaction
+    useEffect(() => {
+        form.clearErrors()
+    }, [form])
 
     const districts = rwandaAdministrativeDivisions.find(p => p.province === selectedProvince)?.districts || []
     const sectors = districts.find(d => d.district === selectedDistrict)?.sectors || []
