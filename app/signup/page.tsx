@@ -134,6 +134,7 @@ export default function Signup() {
 
     const form = useForm<RegisterData>({
         resolver: zodResolver(RegisterDataSchema),
+        mode: 'onBlur',
         defaultValues: {
             firstName: '',
             lastName: '',
