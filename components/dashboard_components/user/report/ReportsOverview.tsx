@@ -4,6 +4,7 @@ import { FileText, UploadCloud, TrendingUp, Download, Calendar, MapPin, Image, D
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 const salesData = [
   { date: "2025-01-14", credits: 40, amount: "8,400 RWF", status: "completed" },
@@ -18,6 +19,8 @@ const uploadActivity = [
 ];
 
 export default function ReportsOverview() {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
@@ -29,8 +32,8 @@ export default function ReportsOverview() {
                 <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-lg">Sales History</h3>
-                <p className="text-sm text-muted-foreground">Recent credit sales</p>
+                <h3 className="font-semibold text-lg">{t("reports.sales_history")}</h3>
+                <p className="text-sm text-muted-foreground">{t("reports.recent_sales")}</p>
               </div>
             </div>
           </div>
@@ -44,7 +47,7 @@ export default function ReportsOverview() {
                       <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{sale.credits} Credits Sold</p>
+                       <p className="font-medium">{sale.credits} {t("reports.credits_sold")}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Calendar className="w-3 h-3" />
                         {sale.date}
@@ -62,19 +65,19 @@ export default function ReportsOverview() {
                           : "text-amber-600 border-amber-200 bg-amber-50 dark:text-amber-400 dark:border-amber-800 dark:bg-amber-900/30"
                       )}
                     >
-                      {sale.status}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                      {sale.status === "completed" ? t("reports.completed") : t("reports.pending")}
+                      </Badge>
+                      </div>
+                      </div>
+                      </div>
+                      ))}
+                      </div>
 
-          <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-            <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
-              View All Sales
-            </Button>
-          </div>
+                      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                      <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
+                      {t("reports.view_all_sales")}
+                      </Button>
+                      </div>
         </div>
 
         {/* Upload Activity */}
@@ -82,12 +85,12 @@ export default function ReportsOverview() {
           <div className="p-6 border-b border-gray-100 dark:border-gray-800">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/50">
-                <UploadCloud className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Upload Activity</h3>
-                <p className="text-sm text-muted-foreground">Recent photo uploads</p>
-              </div>
+                 <UploadCloud className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+               </div>
+               <div>
+                 <h3 className="font-semibold text-lg">{t("reports.upload_activity")}</h3>
+                 <p className="text-sm text-muted-foreground">{t("reports.recent_uploads")}</p>
+               </div>
             </div>
           </div>
 
@@ -100,7 +103,7 @@ export default function ReportsOverview() {
                       <Image className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                     </div>
                     <div>
-                      <p className="font-medium">{act.photos} Photos Uploaded</p>
+                       <p className="font-medium">{act.photos} {t("reports.photos_uploaded")}</p>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <MapPin className="w-3 h-3" />
                         {act.land}
@@ -118,29 +121,29 @@ export default function ReportsOverview() {
                           : "text-amber-600 border-amber-200 bg-amber-50 dark:text-amber-400 dark:border-amber-800 dark:bg-amber-900/30"
                       )}
                     >
-                      {act.status}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                      {act.status === "verified" ? t("reports.completed") : t("reports.pending")}
+                      </Badge>
+                      </div>
+                      </div>
+                      </div>
+                      ))}
+                      </div>
 
-          <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-            <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
-              View All Uploads
-            </Button>
-          </div>
-        </div>
-      </div>
+                      <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                      <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
+                      {t("reports.view_all_uploads")}
+                      </Button>
+                      </div>
+                      </div>
+                      </div>
 
-      {/* Download Report Button */}
-      <div className="flex justify-center">
-        <Button className="h-12 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25">
-          <Download className="w-5 h-5 mr-2" />
-          Download Full Report (PDF)
-        </Button>
-      </div>
+                      {/* Download Report Button */}
+                      <div className="flex justify-center">
+                      <Button className="h-12 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25">
+                      <Download className="w-5 h-5 mr-2" />
+                      {t("reports.download_report")}
+                      </Button>
+                      </div>
     </div>
   );
 }

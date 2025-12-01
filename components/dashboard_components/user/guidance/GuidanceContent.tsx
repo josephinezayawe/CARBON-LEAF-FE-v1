@@ -2,35 +2,34 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Leaf, TreePine, UploadCloud, Wallet, Info, Sparkles } from "lucide-react";
-
-const steps = [
-  {
-    icon: TreePine,
-    title: "Register Your Land",
-    description:
-      "Add your UPI details to verify that the land is yours. This ensures transparency and trusted data.",
-  },
-  {
-    icon: UploadCloud,
-    title: "Capture & Upload Photos",
-    description:
-      "Take clear photos of your crops or trees that reduce carbon emissions. Upload them for verification.",
-  },
-  {
-    icon: Wallet,
-    title: "Earn Carbon Credits",
-    description:
-      "After review, your contributions to air conservation generate credits based on certified standards.",
-  },
-  {
-    icon: Leaf,
-    title: "Sell to Companies",
-    description:
-      "Companies purchase credits to offset emissions. You earn money directly through your connected wallet.",
-  },
-];
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function GuidanceContent() {
+  const { t } = useLanguage();
+
+  const steps = [
+    {
+      icon: TreePine,
+      title: t("guidance.step1"),
+      description: t("guidance.step1_description"),
+    },
+    {
+      icon: UploadCloud,
+      title: t("guidance.step2"),
+      description: t("guidance.step2_description"),
+    },
+    {
+      icon: Wallet,
+      title: t("guidance.step3"),
+      description: t("guidance.step3_description"),
+    },
+    {
+      icon: Leaf,
+      title: t("guidance.step4"),
+      description: t("guidance.step4_description"),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Introduction */}
@@ -38,13 +37,11 @@ export default function GuidanceContent() {
         <CardHeader>
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <Info className="w-5 h-5 text-green-700 dark:text-green-400" />
-            How the System Works
+            {t("guidance.how_works")}
           </CardTitle>
         </CardHeader>
         <CardContent className="text-muted-foreground leading-relaxed">
-          This platform connects environmental contributors with companies seeking
-          certified carbon credits. If you grow crops or trees that help reduce
-          air pollution, this system helps you earn money for your impact.
+          {t("guidance.introduction")}
         </CardContent>
       </Card>
 
@@ -68,9 +65,7 @@ export default function GuidanceContent() {
       <Card className="border-green-600 border dark:border-green-800">
         <CardContent className="py-6 px-4 flex items-center gap-4">
           <p className="text-foreground font-medium">
-            Your contribution matters. Every tree, every crop, every square meter
-            of land helping reduce pollution is a step toward a greener future.
-            Thank you for making a difference!
+            {t("guidance.contribution")}
           </p>
         </CardContent>
       </Card>

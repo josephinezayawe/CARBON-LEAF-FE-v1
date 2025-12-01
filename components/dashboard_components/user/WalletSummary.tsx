@@ -4,6 +4,7 @@ import { Coins, Send, TrendingUp, Clock, DollarSign, BarChart3 } from "lucide-re
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface StatItemProps {
   label: string;
@@ -45,6 +46,7 @@ function StatItem({ label, value, subValue, icon, trend, trendValue }: StatItemP
 }
 
 export default function WalletSummary() {
+  const { t } = useLanguage();
   return (
     <div className="h-full rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
       {/* Header */}
@@ -55,26 +57,26 @@ export default function WalletSummary() {
               <Coins className="w-5 h-5 text-amber-600 dark:text-amber-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Carbon Credits</h3>
-              <p className="text-sm text-muted-foreground">Your credit portfolio</p>
+              <h3 className="font-semibold text-lg">{t("credits.title")}</h3>
+              <p className="text-sm text-muted-foreground">{t("credits.your_portfolio")}</p>
             </div>
           </div>
           <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-0">
-            Active
+            {t("credits.active")}
           </Badge>
         </div>
       </div>
 
       {/* Main Balance */}
       <div className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20">
-        <p className="text-sm text-muted-foreground mb-1">Total Balance</p>
+        <p className="text-sm text-muted-foreground mb-1">{t("credits.total_balance")}</p>
         <div className="flex items-baseline gap-3">
           <span className="text-4xl font-bold">120,450</span>
           <span className="text-lg font-medium text-muted-foreground">C-Credits</span>
         </div>
         <div className="flex items-center gap-2 mt-2">
           <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-          <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">+2,450 this week</span>
+          <span className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{t("credits.this_week")}</span>
         </div>
       </div>
 
@@ -83,11 +85,11 @@ export default function WalletSummary() {
         <div className="grid grid-cols-2 gap-3">
           <Button className="h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-500/25">
             <Coins className="w-4 h-4 mr-2" />
-            Sell Credits
+            {t("credits.sell")}
           </Button>
           <Button variant="outline" className="h-12">
             <Send className="w-4 h-4 mr-2" />
-            Transfer
+            {t("credits.transfer")}
           </Button>
         </div>
       </div>
@@ -95,19 +97,19 @@ export default function WalletSummary() {
       {/* Stats Grid */}
       <div className="p-6 space-y-3">
         <StatItem 
-          label="Available"
+          label={t("credits.available")}
           value="85,250"
           icon={<Coins className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
           trend="up"
           trendValue="12%"
         />
         <StatItem 
-          label="Pending Verification"
+          label={t("wallet.pending_verification")}
           value="4,300"
           icon={<Clock className="w-4 h-4 text-amber-600 dark:text-amber-400" />}
         />
         <StatItem 
-          label="Estimated Value"
+          label={t("wallet.estimated_value")}
           value="$12,842"
           subValue="USD"
           icon={<DollarSign className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
@@ -115,7 +117,7 @@ export default function WalletSummary() {
           trendValue="8.5%"
         />
         <StatItem 
-          label="Total Sold"
+          label={t("wallet.total_sold")}
           value="35,200"
           icon={<BarChart3 className="w-4 h-4 text-purple-600 dark:text-purple-400" />}
         />

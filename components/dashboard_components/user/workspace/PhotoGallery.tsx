@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ImageIcon, ZoomIn, Download, Calendar, MapPin, Grid3X3, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface UploadedPhoto {
   id: string;
@@ -47,12 +48,14 @@ export default function PhotoGallery({
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
-  const displayPhotos = photos.length > 0 ? photos : MOCK_PHOTOS;
-  const displayUPIs = upiList.length > 0 ? upiList : ["UP-001", "UP-002"];
+  const { t } = useLanguage();
 
-  const filteredPhotos = filterUPI === "all" 
-    ? displayPhotos 
-    : displayPhotos.filter((p) => p.upi === filterUPI);
+     const displayPhotos = photos.length > 0 ? photos : MOCK_PHOTOS;
+     const displayUPIs = upiList.length > 0 ? upiList : ["UP-001", "UP-002"];
+
+     const filteredPhotos = filterUPI === "all" 
+       ? displayPhotos 
+       : displayPhotos.filter((p) => p.upi === filterUPI);
 
   const navigatePhoto = (direction: "prev" | "next") => {
     if (direction === "prev") {
@@ -71,9 +74,9 @@ export default function PhotoGallery({
             <ImageIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold">Photo Gallery</h3>
+            <h3 className="font-semibold">{t("workspace.photo_gallery")}</h3>
             <p className="text-xs text-muted-foreground">
-              {filteredPhotos.length} {filteredPhotos.length === 1 ? "photo" : "photos"} 
+              {filteredPhotos.length} {filteredPhotos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")} 
               {filterUPI !== "all" && ` for ${filterUPI}`}
             </p>
           </div>
@@ -109,10 +112,10 @@ export default function PhotoGallery({
           {/* UPI Filter */}
           <Select value={filterUPI} onValueChange={setFilterUPI}>
             <SelectTrigger className="w-[160px] h-10 bg-white dark:bg-gray-800">
-              <SelectValue placeholder="Filter by UPI" />
+              <SelectValue placeholder={t("workspace.filter_by_upi")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All UPIs</SelectItem>
+              <SelectItem value="all">{t("workspace.all_upis")}</SelectItem>
               {displayUPIs.map((upi, idx) => (
                 <SelectItem key={idx} value={upi}>
                   <div className="flex items-center gap-2">
@@ -132,11 +135,11 @@ export default function PhotoGallery({
           <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
             <ImageIcon className="w-10 h-10 text-gray-400" />
           </div>
-          <h3 className="font-semibold text-lg mb-1">No photos yet</h3>
+          <h3 className="font-semibold text-lg mb-1">{t("workspace.no_photos_yet")}</h3>
           <p className="text-muted-foreground text-sm text-center max-w-sm">
             {filterUPI !== "all" 
-              ? `No photos uploaded for UPI ${filterUPI}. Upload some photos to see them here.`
-              : "Upload photos for your registered land parcels to view them here."}
+              ? `${t("workspace.no_photos_desc")} ${filterUPI}`
+              : t("workspace.upload_photos_desc")}
           </p>
           {filterUPI !== "all" && (
             <Button 
@@ -144,7 +147,7 @@ export default function PhotoGallery({
               className="mt-4"
               onClick={() => setFilterUPI("all")}
             >
-              View All Photos
+              {t("workspace.view_all_photos")}
             </Button>
           )}
         </div>
@@ -256,14 +259,14 @@ export default function PhotoGallery({
                           </span>
                         </div>
                         <p className="text-white/80 text-sm flex items-center gap-2">
-                          <Calendar className="w-4 h-4" />
-                          Uploaded: {filteredPhotos[selectedIndex]?.uploadedAt || photo.uploadedAt}
-                        </p>
+                            <Calendar className="w-4 h-4" />
+                            {t("workspace.uploaded")}: {filteredPhotos[selectedIndex]?.uploadedAt || photo.uploadedAt}
+                          </p>
                       </div>
                       
                       <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
                         <Download className="w-4 h-4 mr-2" />
-                        Download
+                        {t("workspace.download")}
                       </Button>
                     </div>
                   </div>

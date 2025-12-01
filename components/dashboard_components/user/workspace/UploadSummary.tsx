@@ -2,6 +2,7 @@
 
 import { MapPin, Image as ImageIcon, FileCheck, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface StatCardProps {
   icon: React.ReactNode;
@@ -57,26 +58,28 @@ export default function UploadSummary({
   totalUPIs?: number;
   totalPhotos?: number;
 }) {
+  const { t } = useLanguage();
+  
   const stats: StatCardProps[] = [
     {
       icon: <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />,
       value: totalUPIs,
-      label: "Registered UPIs",
-      trend: "Active",
+      label: t("workspace.registered_upis"),
+      trend: t("workspace.active"),
       gradient: "bg-blue-500",
       iconBg: "bg-blue-100 dark:bg-blue-900/50",
     },
     {
       icon: <ImageIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />,
       value: totalPhotos,
-      label: "Uploaded Photos",
+      label: t("workspace.uploaded_photos"),
       gradient: "bg-emerald-500",
       iconBg: "bg-emerald-100 dark:bg-emerald-900/50",
     },
     {
       icon: <FileCheck className="w-5 h-5 text-amber-600 dark:text-amber-400" />,
       value: "100%",
-      label: "Compliance Rate",
+      label: t("workspace.compliance_rate"),
       gradient: "bg-amber-500",
       iconBg: "bg-amber-100 dark:bg-amber-900/50",
     },

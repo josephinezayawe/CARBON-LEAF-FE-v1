@@ -34,9 +34,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string) => {
-    // Return key if not mounted to avoid hydration mismatch on first render
-    // or handle it by just returning default language content.
-    // For simple consistency we use current state.
     const parts = key.split(".");
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let current: any = translations[lang];
@@ -47,10 +44,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
     return String(current);
   };
-
-  if (!mounted) {
-   //
-  }
 
   return (
     <LanguageContext.Provider value={{ lang, t, setLanguage }}>

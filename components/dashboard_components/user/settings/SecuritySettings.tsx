@@ -8,8 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function SecuritySettings() {
+  const { t } = useLanguage();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
@@ -29,8 +31,8 @@ export default function SecuritySettings() {
             <Shield className="w-5 h-5 text-red-600 dark:text-red-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-lg">Security Settings</h3>
-            <p className="text-sm text-muted-foreground">Manage your account security</p>
+            <h3 className="font-semibold text-lg">{t("settings_security.title")}</h3>
+            <p className="text-sm text-muted-foreground">{t("settings_security.manage_security")}</p>
           </div>
         </div>
       </div>
@@ -40,16 +42,16 @@ export default function SecuritySettings() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Key className="w-4 h-4 text-muted-foreground" />
-            <h4 className="font-medium">Change Password</h4>
+            <h4 className="font-medium">{t("settings_security.change_password")}</h4>
           </div>
 
           <div className="space-y-4 pl-6">
             <div className="space-y-2">
-              <Label className="text-sm">Current Password</Label>
+              <Label className="text-sm">{t("settings_security.current_password")}</Label>
               <div className="relative">
                 <Input 
                   type={showCurrentPassword ? "text" : "password"}
-                  placeholder="Enter current password"
+                  placeholder={t("settings_security.enter_current")}
                   className="h-11 pr-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                 />
                 <button
@@ -63,11 +65,11 @@ export default function SecuritySettings() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-sm">New Password</Label>
+              <Label className="text-sm">{t("settings_security.new_password")}</Label>
               <div className="relative">
                 <Input 
                   type={showNewPassword ? "text" : "password"}
-                  placeholder="Enter new password"
+                  placeholder={t("settings_security.enter_new")}
                   className="h-11 pr-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                 />
                 <button
@@ -86,7 +88,7 @@ export default function SecuritySettings() {
               className="h-10"
               disabled={saving}
             >
-              {saving ? "Updating..." : "Update Password"}
+              {saving ? t("settings_security.updating") : t("settings_security.update_password")}
             </Button>
           </div>
         </div>
@@ -110,21 +112,21 @@ export default function SecuritySettings() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium">Two-Factor Authentication</h4>
+                  <h4 className="font-medium">{t("settings_security.two_factor")}</h4>
                   {twoFactorEnabled ? (
                     <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-0">
                       <Check className="w-3 h-3 mr-1" />
-                      Enabled
+                      {t("settings_security.enabled")}
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-amber-600 border-amber-200 bg-amber-50 dark:text-amber-400 dark:border-amber-800 dark:bg-amber-900/30">
                       <AlertTriangle className="w-3 h-3 mr-1" />
-                      Disabled
+                      {t("settings_security.disabled")}
                     </Badge>
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Add an extra layer of security to your account
+                  {t("settings_security.two_factor_desc")}
                 </p>
               </div>
             </div>
@@ -137,7 +139,7 @@ export default function SecuritySettings() {
 
         {/* Active Sessions */}
         <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-          <h4 className="font-medium mb-4">Active Sessions</h4>
+          <h4 className="font-medium mb-4">{t("settings_security.active_sessions")}</h4>
           <div className="space-y-3">
             {[
               { device: "MacBook Pro", location: "Kigali, Rwanda", current: true },
@@ -152,7 +154,7 @@ export default function SecuritySettings() {
                     <p className="font-medium">{session.device}</p>
                     {session.current && (
                       <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 border-0 text-xs">
-                        Current
+                        {t("settings_security.current_session")}
                       </Badge>
                     )}
                   </div>
@@ -160,7 +162,7 @@ export default function SecuritySettings() {
                 </div>
                 {!session.current && (
                   <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
-                    Revoke
+                    {t("settings_security.revoke")}
                   </Button>
                 )}
               </div>

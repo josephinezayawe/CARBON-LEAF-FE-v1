@@ -1,4 +1,7 @@
+"use client";
+
 import React from "react";
+import { useLanguage } from "@/components/global/language-provider";
 import CreditStats from "@/components/dashboard_components/user/CreditStats";
 import Updates from "@/components/dashboard_components/user/Updates";
 import MarketSummary from "@/components/dashboard_components/user/MarketSummary";
@@ -7,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, CreditCard, DollarSign, Users } from "lucide-react";
 
 export default function UserDashboardHomePage() {
+  const { t } = useLanguage();
+
   return (
     <div className="flex flex-col gap-4 w-full">
       {/* Stats Cards - Responsive grid */}
@@ -14,54 +19,54 @@ export default function UserDashboardHomePage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Credits
+              {t("dashboard.total_credits")}
             </CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">300</div>
             <p className="text-xs text-muted-foreground">
-              +20.1% from last month
+              +20.1% {t("dashboard.from_last_month")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Wallet Balance
+              {t("dashboard.wallet_balance")}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3,234</div>
             <p className="text-xs text-muted-foreground">
-              +4% from last month
+              +4% {t("dashboard.from_last_month")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("dashboard.pending_sales")}</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+573</div>
             <p className="text-xs text-muted-foreground">
-              +201 since last hour
+              +201 {t("dashboard.since_last_hour")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Projects
+              {t("dashboard.active_projects")}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+12</div>
             <p className="text-xs text-muted-foreground">
-              +2 new projects
+              +2 {t("dashboard.new_projects")}
             </p>
           </CardContent>
         </Card>

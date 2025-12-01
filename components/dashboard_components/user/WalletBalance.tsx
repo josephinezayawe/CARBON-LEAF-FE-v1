@@ -4,8 +4,10 @@ import { Wallet, ArrowUpRight, ArrowDownRight, Eye, EyeOff, Sparkles } from "luc
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function WalletBalance() {
+  const { t } = useLanguage();
   const [showBalance, setShowBalance] = useState(true);
   const balance = 48250;
   const pendingBalance = 12500;
@@ -22,7 +24,7 @@ export default function WalletBalance() {
                <Wallet className="w-5 h-5 text-slate-600 dark:text-slate-200" />
              </div>
              <div>
-               <p className="text-slate-700 dark:text-slate-200 text-sm font-medium">Available Balance</p>
+               <p className="text-slate-700 dark:text-slate-200 text-sm font-medium">{t("wallet.available_balance")}</p>
              </div>
           </div>
           
@@ -53,36 +55,36 @@ export default function WalletBalance() {
                 <ArrowUpRight className="w-3 h-3" />
               </div>
               <span className="text-sm font-medium">+{change}%</span>
-              <span className="text-xs text-slate-500 dark:text-slate-500">vs last month</span>
+              <span className="text-xs text-slate-500 dark:text-slate-500">{t("general.loading")}</span>
             </div>
           </div>
         </div>
 
         {/* Pending Balance */}
-        <div className="p-4 bg-slate-200 dark:bg-slate-700/50 backdrop-blur-sm rounded-xl mb-6 border border-slate-300 dark:border-slate-600">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Pending</p>
-              <p className="text-slate-900 dark:text-slate-100 text-lg font-bold">
-                {showBalance ? `${pendingBalance.toLocaleString()} RWF` : "••••••"}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Processing</p>
-              <p className="text-slate-900 dark:text-slate-100 text-lg font-bold">2-3 days</p>
-            </div>
-          </div>
-        </div>
+         <div className="p-4 bg-slate-200 dark:bg-slate-700/50 backdrop-blur-sm rounded-xl mb-6 border border-slate-300 dark:border-slate-600">
+           <div className="flex items-center justify-between">
+             <div>
+               <p className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">{t("wallet.pending")}</p>
+               <p className="text-slate-900 dark:text-slate-100 text-lg font-bold">
+                 {showBalance ? `${pendingBalance.toLocaleString()} RWF` : "••••••"}
+               </p>
+             </div>
+             <div className="text-right">
+               <p className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">{t("wallet.processing")}</p>
+               <p className="text-slate-900 dark:text-slate-100 text-lg font-bold">2-3 days</p>
+             </div>
+           </div>
+         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Button 
-            className="flex-1 h-12 bg-slate-700 text-white hover:bg-slate-600 font-semibold shadow-lg dark:bg-slate-600 dark:text-slate-50 dark:hover:bg-slate-500"
-          >
-            <ArrowUpRight className="w-4 h-4 mr-2" />
-            Withdraw
-          </Button>
-        </div>
+         {/* Action Buttons */}
+         <div className="flex gap-3">
+           <Button 
+             className="flex-1 h-12 bg-slate-700 text-white hover:bg-slate-600 font-semibold shadow-lg dark:bg-slate-600 dark:text-slate-50 dark:hover:bg-slate-500"
+           >
+             <ArrowUpRight className="w-4 h-4 mr-2" />
+             {t("wallet.withdraw")}
+           </Button>
+         </div>
       </div>
     </div>
   );

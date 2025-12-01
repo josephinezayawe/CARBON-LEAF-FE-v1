@@ -2,6 +2,7 @@
 
 import { TrendingUp, TrendingDown, Coins, DollarSign, Upload, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface StatCardProps {
   title: string;
@@ -41,9 +42,11 @@ function StatCard({ title, value, change, changeType, icon, gradient }: StatCard
 }
 
 export default function ReportStats() {
+  const { t } = useLanguage();
+  
   const stats: StatCardProps[] = [
     {
-      title: "Total Credits Earned",
+      title: t("reports.total_credits_earned"),
       value: "160",
       change: "+12%",
       changeType: "up",
@@ -51,7 +54,7 @@ export default function ReportStats() {
       gradient: "bg-emerald-500",
     },
     {
-      title: "Credits Sold",
+      title: t("reports.credits_sold"),
       value: "60",
       change: "+8%",
       changeType: "up",
@@ -59,7 +62,7 @@ export default function ReportStats() {
       gradient: "bg-blue-500",
     },
     {
-      title: "Total Earnings",
+      title: t("reports.total_earnings"),
       value: "12,600 RWF",
       change: "+15%",
       changeType: "up",
@@ -67,7 +70,7 @@ export default function ReportStats() {
       gradient: "bg-amber-500",
     },
     {
-      title: "Photos Uploaded",
+      title: t("reports.photos_uploaded"),
       value: "22",
       change: "-3%",
       changeType: "down",
