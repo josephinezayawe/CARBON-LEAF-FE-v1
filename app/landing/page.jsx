@@ -24,8 +24,10 @@ import {
   useTransform,
 } from "framer-motion";
 import Image from "next/image";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function LandingPage() {
+  const { t, lang, setLanguage } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
@@ -89,6 +91,57 @@ export default function LandingPage() {
     show: { opacity: 1, y: 0 },
   };
 
+  const navItems = [
+    { label: t("landing.features"), id: "features" },
+    { label: t("landing.how_it_works"), id: "howitworks" },
+    { label: t("landing.explore"), id: "pricing" }
+  ];
+
+  const stats = [
+    { label: t("landing.verified_growers"), val: "12k+" },
+    { label: t("landing.credits_minted"), val: "320k" },
+    { label: t("landing.companies"), val: "980" },
+  ];
+
+  const features = [
+    {
+      icon: Leaf,
+      title: t("landing.nature_backed"),
+      desc: t("landing.nature_backed_desc"),
+    },
+    {
+      icon: UserCheck,
+      title: t("landing.grower_first"),
+      desc: t("landing.grower_first_desc"),
+    },
+    {
+      icon: ShoppingCart,
+      title: t("landing.market_grade"),
+      desc: t("landing.market_grade_desc"),
+    },
+  ];
+
+  const howWorks = [
+    {
+      step: "1",
+      title: t("landing.register_parcel"),
+      desc: t("landing.register_parcel_desc"),
+      icon: Globe,
+    },
+    {
+      step: "2",
+      title: t("landing.verify_quantify"),
+      desc: t("landing.verify_quantify_desc"),
+      icon: CheckCircle,
+    },
+    {
+      step: "3",
+      title: t("landing.buy_retire"),
+      desc: t("landing.buy_retire_desc"),
+      icon: TrendingUp,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-linear-to-b from-emerald-50 via-white to-emerald-50 text-slate-900">
       <header
@@ -118,15 +171,10 @@ export default function LandingPage() {
                 className="object-contain p-1"
               />
             </motion.div>
-            
           </div>
 
           <nav className="hidden md:flex items-center gap-6">
-            {[
-              { label: "Features", id: "features" },
-              { label: "How it works", id: "howitworks" },
-              { label: "Explore", id: "pricing" }
-            ].map((item) => (
+            {navItems.map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
@@ -146,17 +194,43 @@ export default function LandingPage() {
               </a>
             ))}
             <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
+              {/* Language Dropdown */}
+              <div className="relative group">
+                <button className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium hover:bg-slate-200 transition-colors flex items-center gap-2">
+                  {lang.toUpperCase()}
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </button>
+                <div className="absolute right-0 mt-2 w-32 bg-white border border-slate-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  {["en", "fr", "rw"].map((language) => (
+                    <button
+                      key={language}
+                      onClick={() => setLanguage(language)}
+                      className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                        lang === language
+                          ? "bg-emerald-600 text-white"
+                          : "text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      {language === "en" && "English"}
+                      {language === "fr" && "Français"}
+                      {language === "rw" && "Kinyarwanda"}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <a
                 href="/signin"
                 className="text-sm font-medium hover:text-emerald-700 px-2 transition-colors"
               >
-                Log in
+                {t("landing.log_in")}
               </a>
               <Button
                 asChild
                 className="shadow-emerald-200/50 shadow-lg hover:shadow-emerald-200/80 transition-all hover:-translate-y-0.5"
               >
-                <a href="/signup">Get Started</a>
+                <a href="/signup">{t("landing.get_started")}</a>
               </Button>
             </div>
           </nav>
@@ -188,28 +262,50 @@ export default function LandingPage() {
             className="md:hidden bg-white border-b border-emerald-100 shadow-lg overflow-hidden fixed top-[88px] left-0 right-0 z-40"
           >
             <nav className="flex flex-col p-6 gap-4">
-              {["Features", "How it works", "Pricing"].map((item) => (
+              {navItems.map((item) => (
                 <a
-                  key={item}
-                  href={`#${item.toLowerCase().replace(/\s+/g, "")}`}
+                  key={item.id}
+                  href={`#${item.id}`}
                   className="text-base font-medium text-slate-700 hover:text-emerald-700 py-2 flex items-center justify-between"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item}
+                  {item.label}
                   <ArrowRight className="w-4 h-4 opacity-50" />
                 </a>
               ))}
               <hr className="border-slate-100" />
+              {/* Mobile Language Switcher */}
+              <div className="space-y-2 py-2">
+                <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider px-2">Language</p>
+                {["en", "fr", "rw"].map((language) => (
+                  <button
+                    key={language}
+                    onClick={() => {
+                      setLanguage(language);
+                      setIsMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      lang === language
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    {language === "en" && "English"}
+                    {language === "fr" && "Français"}
+                    {language === "rw" && "Kinyarwanda"}
+                  </button>
+                ))}
+              </div>
               <a
                 href="/signin"
                 className="text-base font-medium hover:text-emerald-700 py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Log in
+                {t("landing.log_in")}
               </a>
               <Button asChild className="w-full">
                 <a href="/signup" onClick={() => setIsMenuOpen(false)}>
-                  Get Started
+                  {t("landing.get_started")}
                 </a>
               </Button>
             </nav>
@@ -233,7 +329,7 @@ export default function LandingPage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            Live Marketplace v2.0
+            {t("landing.live_marketplace")}
           </motion.div>
 
           <motion.h2
@@ -242,11 +338,7 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight text-slate-900"
           >
-            Carborn Leaf{" "}
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-500">
-              Greening{" "}
-            </span>{" "}
-            — the future.
+            {t("landing.hero_title")}
           </motion.h2>
 
           <motion.p
@@ -255,10 +347,7 @@ export default function LandingPage() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="mt-6 text-lg text-slate-600 max-w-xl leading-relaxed"
           >
-            A digital platform that enables micro carbon credit projects (small
-            farms, households, cooperatives, clean-cookstove users,
-            tree-planters, biogas users, solar users) to measure, verify,
-            aggregate, and sell carbon credits through a website or mobile app.
+            {t("landing.hero_description")}
           </motion.p>
 
           <motion.div
@@ -273,14 +362,14 @@ export default function LandingPage() {
               className="h-12 px-8 text-base shadow-emerald-200 shadow-lg hover:shadow-xl hover:shadow-emerald-200/60 transition-all hover:-translate-y-1"
             >
               <a href="/signup">
-                Start planting <ArrowRight className="ml-2 w-4 h-4" />
+                {t("landing.start_planting")} <ArrowRight className="ml-2 w-4 h-4" />
               </a>
             </Button>
             <a
               href="#how"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 hover:border-emerald-200 hover:text-emerald-700 transition-all"
             >
-              <Leaf className="w-4 h-4" /> Learn how it works
+              <Leaf className="w-4 h-4" /> {t("landing.learn_how")}
             </a>
           </motion.div>
 
@@ -290,11 +379,7 @@ export default function LandingPage() {
             animate="show"
             className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg"
           >
-            {[
-              { label: "Verified growers", val: "12k+" },
-              { label: "Credits minted", val: "320k" },
-              { label: "Companies", val: "980" },
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
               <motion.div
                 key={i}
                 variants={staggerItem}
@@ -359,16 +444,16 @@ export default function LandingPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] text-emerald-800 font-bold uppercase tracking-widest flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    Live Project
+                    {t("landing.live_project")}
                   </p>
                   <p className="text-sm font-bold text-slate-900 truncate">
-                    Riverbank Reforestation
+                    {t("landing.riverbank_reforestation")}
                   </p>
                   <div className="flex items-center gap-3 mt-1">
                     <div className="flex items-center gap-1">
                       <Leaf className="w-3 h-3 text-emerald-600" />
                       <span className="text-xs text-slate-600 font-medium">
-                        120 Trees
+                        120 {t("landing.trees")}
                       </span>
                     </div>
                   </div>
@@ -384,11 +469,12 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+      
       <section className="border-y border-emerald-100 bg-emerald-50/30">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center">
             <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
-              Officially Supervised & Regulated by
+              {t("landing.supervised_by")}
             </p>
             <div className="hidden md:block h-8 w-px bg-emerald-200"></div>
             <motion.div
@@ -425,32 +511,15 @@ export default function LandingPage() {
 
         <motion.div {...fadeInUp} className="text-center max-w-2xl mx-auto">
           <h3 className="text-3xl font-bold text-slate-900">
-            What makes CarbonLeaf different
+            {t("landing.what_makes_different")}
           </h3>
           <p className="mt-4 text-slate-600 text-lg">
-            We bridge the gap between small-scale land stewards and global
-            carbon markets with technology that ensures transparency.
+            {t("landing.bridge_gap")}
           </p>
         </motion.div>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              icon: Leaf,
-              title: "Nature-backed",
-              desc: "Credits are generated from real, verified sequestration models and on-ground audits, not just estimates.",
-            },
-            {
-              icon: UserCheck,
-              title: "Grower-first",
-              desc: "Fair pricing, transparent payouts, and capacity building for land stewards. We take the lowest fees in the industry.",
-            },
-            {
-              icon: ShoppingCart,
-              title: "Market-grade",
-              desc: "Audit-ready records, verifiable credits, and compliant marketplace tooling for enterprise buyers.",
-            },
-          ].map((feature, i) => (
+          {features.map((feature, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 20 }}
@@ -479,33 +548,14 @@ export default function LandingPage() {
       >
         <div className="max-w-6xl mx-auto px-6 py-16 lg:py-24">
           <motion.div {...fadeInUp} className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-slate-900">How it works</h3>
+            <h3 className="text-3xl font-bold text-slate-900">{t("landing.how_works_title")}</h3>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-12 relative">
             {/* Connecting Line (Desktop) */}
             <div className="hidden md:block absolute top-8 left-1/6 right-1/6 h-0.5 bg-emerald-100 z-0"></div>
 
-            {[
-              {
-                step: "1",
-                title: "Register parcel",
-                desc: "Projects register their carbon sequestration activities and their impact on the climate and earn credits",
-                icon: Globe,
-              },
-              {
-                step: "2",
-                title: "Verify & quantify",
-                desc: "We run modelled sequestration and optional field audits to mint credits.",
-                icon: CheckCircle,
-              },
-              {
-                step: "3",
-                title: "Buy & retire",
-                desc: "Companies buy credits and retire them against emissions on our platform.",
-                icon: TrendingUp,
-              },
-            ].map((item, i) => (
+            {howWorks.map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
@@ -553,31 +603,29 @@ export default function LandingPage() {
 
           <div className="relative z-10">
             <h3 className="text-3xl md:text-4xl font-bold leading-tight">
-              Ready to make a <br />
-              real impact?
+              {t("landing.ready_impact")}
             </h3>
             <p className="mt-6 text-emerald-100 text-lg max-w-md">
-              Join hundreds of companies and thousands of projects making a real
-              difference today.
+              {t("landing.join_hundreds")}
             </p>
             <ul className="mt-8 space-y-4">
               <li className="flex items-center gap-3 text-emerald-50 font-medium">
                 <div className="bg-emerald-800/50 p-1.5 rounded-full">
                   <Leaf className="w-4 h-4 text-emerald-300" />
                 </div>
-                <span>Verified Carbon Credits</span>
+                <span>{t("landing.verified_credits")}</span>
               </li>
               <li className="flex items-center gap-3 text-emerald-50 font-medium">
                 <div className="bg-emerald-800/50 p-1.5 rounded-full">
                   <UserCheck className="w-4 h-4 text-emerald-300" />
                 </div>
-                <span>Direct impact on communities</span>
+                <span>{t("landing.direct_impact")}</span>
               </li>
             </ul>
 
             <div className="mt-8 pt-8 border-t border-emerald-800/50">
               <p className="text-xs text-emerald-300 font-semibold uppercase tracking-widest mb-3">
-                Supervised by
+                {t("landing.supervised_by")}
               </p>
               <div className=" p-3 rounded-xl inline-block">
                 <Image
@@ -598,7 +646,7 @@ export default function LandingPage() {
               className="h-14 px-8 text-lg text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-50 hover:scale-105 transition-all duration-300"
               asChild
             >
-              <a href="/marketplace">Explore Marketplace</a>
+              <a href="/marketplace">{t("landing.explore_marketplace")}</a>
             </Button>
             <Button
               size="lg"
@@ -606,7 +654,7 @@ export default function LandingPage() {
               className="h-14 px-8 text-lg border-emerald-700/50 bg-emerald-900/50 backdrop-blur-sm text-white hover:bg-emerald-800 hover:text-white hover:border-emerald-600 transition-all duration-300"
               asChild
             >
-              <a href="/signup">Register as practioner</a>
+              <a href="/signup">{t("landing.register_practioner")}</a>
             </Button>
           </div>
         </motion.div>
@@ -631,13 +679,12 @@ export default function LandingPage() {
               </span>
             </div>
             <p className="text-slate-500 max-w-sm leading-relaxed mb-6">
-              Empowering land stewards and companies to act on climate —
-              transparently, fairly, and effectively.
+              {t("landing.empower_land")}
             </p>
 
             <div className="mt-8">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-                Supervised By
+                {t("landing.supervised_by")}
               </p>
               <div className="bg-slate-50 border border-slate-100 p-3 rounded-xl inline-block grayscale hover:grayscale-0 transition-all">
                 <Image
@@ -652,14 +699,14 @@ export default function LandingPage() {
           </div>
 
           <div>
-            <h5 className="font-bold text-slate-900 mb-6">Product</h5>
+            <h5 className="font-bold text-slate-900 mb-6">{t("landing.product")}</h5>
             <ul className="space-y-4 text-slate-600">
               <li>
                 <a
                   href="#features"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Features
+                  {t("landing.features")}
                 </a>
               </li>
               <li>
@@ -667,7 +714,7 @@ export default function LandingPage() {
                   href="#how"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  How it works
+                  {t("landing.how_it_works")}
                 </a>
               </li>
               <li>
@@ -675,7 +722,7 @@ export default function LandingPage() {
                   href="/dashboard"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Dashboard
+                  {t("landing.dashboard")}
                 </a>
               </li>
               <li>
@@ -683,21 +730,21 @@ export default function LandingPage() {
                   href="/marketplace"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Marketplace
+                  {t("landing.marketplace")}
                 </a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h5 className="font-bold text-slate-900 mb-6">Company</h5>
+            <h5 className="font-bold text-slate-900 mb-6">{t("landing.company")}</h5>
             <ul className="space-y-4 text-slate-600">
               <li>
                 <a
                   href="#"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  About us
+                  {t("landing.about_us")}
                 </a>
               </li>
               <li>
@@ -705,7 +752,7 @@ export default function LandingPage() {
                   href="#"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Privacy Policy
+                  {t("landing.privacy_policy")}
                 </a>
               </li>
               <li>
@@ -713,7 +760,7 @@ export default function LandingPage() {
                   href="#"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Terms of Service
+                  {t("landing.terms_service")}
                 </a>
               </li>
               <li>
@@ -721,7 +768,7 @@ export default function LandingPage() {
                   href="#"
                   className="hover:text-emerald-600 transition-colors block"
                 >
-                  Contact
+                  {t("landing.contact")}
                 </a>
               </li>
             </ul>

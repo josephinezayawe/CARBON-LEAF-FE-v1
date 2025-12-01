@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface Transaction {
   id: string;
@@ -65,23 +66,24 @@ const statusConfig = {
     icon: CheckCircle2,
     color: "text-emerald-600 dark:text-emerald-400",
     bg: "bg-emerald-100 dark:bg-emerald-900/50",
-    label: "Completed",
+    labelKey: "wallet.completed",
   },
   pending: {
     icon: Clock,
     color: "text-amber-600 dark:text-amber-400",
     bg: "bg-amber-100 dark:bg-amber-900/50",
-    label: "Pending",
+    labelKey: "wallet.pending",
   },
   failed: {
     icon: XCircle,
     color: "text-red-600 dark:text-red-400",
     bg: "bg-red-100 dark:bg-red-900/50",
-    label: "Failed",
+    labelKey: "wallet.failed",
   },
 };
 
 export default function WalletTransactions() {
+  const { t } = useLanguage();
   return (
     <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm overflow-hidden">
       {/* Header */}
@@ -92,14 +94,14 @@ export default function WalletTransactions() {
               <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Recent Transactions</h3>
-              <p className="text-sm text-muted-foreground">Your latest activity</p>
+              <h3 className="font-semibold text-lg">{t("wallet.recent_transactions")}</h3>
+              <p className="text-sm text-muted-foreground">{t("wallet.latest_activity")}</p>
             </div>
           </div>
           
           <Button variant="outline" size="sm" className="gap-2">
             <Filter className="w-4 h-4" />
-            Filter
+            {t("general.filter")}
           </Button>
         </div>
       </div>
@@ -135,12 +137,12 @@ export default function WalletTransactions() {
                   <div className="flex items-center gap-2">
                     <p className="font-medium truncate">{tx.description}</p>
                     <Badge 
-                      variant="outline" 
-                      className={cn("text-xs shrink-0", status.color, status.bg, "border-0")}
-                    >
-                      <StatusIcon className="w-3 h-3 mr-1" />
-                      {status.label}
-                    </Badge>
+                       variant="outline" 
+                       className={cn("text-xs shrink-0", status.color, status.bg, "border-0")}
+                     >
+                       <StatusIcon className="w-3 h-3 mr-1" />
+                       {t(status.labelKey)}
+                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground">
                     {tx.date} • {tx.time}
@@ -165,7 +167,7 @@ export default function WalletTransactions() {
       {/* Footer */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
         <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
-          View All Transactions
+          {t("wallet.view_all")}
         </Button>
       </div>
     </div>

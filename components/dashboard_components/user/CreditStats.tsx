@@ -16,24 +16,25 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { TrendingUp } from "lucide-react"
+import { useLanguage } from "@/components/global/language-provider"
 
-const chartData = [
+const getChartData = (t: (key: string) => string) => [
   { 
-    category: "Conservation", 
+    category: t("statistics.conservation"), 
     credits: 120, 
     fill: "var(--color-conservation)",
     trend: 15,
     description: "Credits saved through conservation efforts"
   },
   { 
-    category: "Total", 
+    category: t("statistics.total"), 
     credits: 300, 
     fill: "var(--color-amount)",
     trend: 8,
     description: "Total credits available"
   },
   { 
-    category: "Used", 
+    category: t("statistics.used"), 
     credits: 80, 
     fill: "var(--color-used)",
     trend: -5,
@@ -71,8 +72,10 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export default function CreditStats() {
-  const totalCredits = chartData.find(item => item.category === "Total")?.credits || 0
-  const usedPercentage = ((chartData.find(item => item.category === "Used")?.credits || 0) / totalCredits * 100).toFixed(1)
+  const { t } = useLanguage()
+  const chartData = getChartData(t)
+  const totalCredits = chartData.find(item => item.credits === 300)?.credits || 0
+  const usedPercentage = ((chartData.find(item => item.credits === 80)?.credits || 0) / totalCredits * 100).toFixed(1)
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
@@ -80,16 +83,16 @@ export default function CreditStats() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              Credit Statistics
+              {t("dashboard.credits")}
               <TrendingUp className="h-5 w-5 text-green-500 dark:text-green-400" />
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400 mt-2">
-              Comprehensive overview of your credit distribution and usage patterns
+              {t("statistics.comprehensive")}
             </CardDescription>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCredits}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Total Credits</div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">{t("dashboard.total_credits")}</div>
           </div>
         </div>
       </CardHeader>
@@ -137,7 +140,7 @@ export default function CreditStats() {
                         <div 
                           className="w-3 h-3 rounded-full"
                           style={{ 
-                            backgroundColor: chartConfig[name as keyof typeof chartConfig]?.color 
+                            backgroundColor: (chartConfig[name as keyof typeof chartConfig] as any)?.color || '#999' 
                           }}
                         />
                         <span className="font-semibold">{value}</span>

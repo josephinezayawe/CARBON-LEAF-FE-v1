@@ -20,14 +20,15 @@ export const Workspace = {
 
 
     },
-    get: async (id: string) => {
+    get: async () => {
         try {
-            const result = await api.get(`/workspace/${id}`)
+            const result = await api.get(`/user/workspace/`)            
             return {
                 success: true,
                 message: 'Done successfully',
-                data: result.data as string[]
+                data: result.data as any
             }
+            
         } catch (error) {
             return {
                 success: false,

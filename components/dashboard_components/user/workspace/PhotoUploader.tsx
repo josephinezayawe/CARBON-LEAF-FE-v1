@@ -8,33 +8,20 @@ import { ImagePlus, Trash2, Upload, CloudUpload, X, CheckCircle2, MapPin, Image 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Account } from "@/lib/dataSchemas";
+import { useLanguage } from "@/components/global/language-provider";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { Workspace } from "@/app/api/workspace";
 
 export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) {
-  const [account, setAccount] = useState<Account>()
-    useEffect(() => {
-        async function userData() {
-            const user = await getCurrentUser()
-            if (!user?.id) {
-                return toast.error('User Not Found')
-            }  
-            if (user?.role !== 'USER') {
-                toast.error('UnAuthenticated User')
-                return window.location.href = '/signin'
-            }
-            setAccount(user)
-        }
-        userData()
-    }, [])
+  const { t } = useLanguage();
   const [selectedUPI, setSelectedUPI] = useState<string | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [account, setAccount] = useState<any>();
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -55,10 +42,10 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     if (!selectedUPI) return;
-    
-    const files = Array.from(e.dataTransfer.files).filter(file => 
+
+    const files = Array.from(e.dataTransfer.files).filter(file =>
       file.type.startsWith('image/')
     );
     setPhotos(prev => [...prev, ...files]);
@@ -67,32 +54,43 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
   const removePhoto = (index: number) => {
     setPhotos(photos.filter((_, i) => i !== index));
   };
-console.log(account);
+  useEffect(() => {
+    async function userData() {
+      const user = await getCurrentUser();
+      if (!user?.id) {
+        toast.error("User Not Found");
+        return;
+      }
+      setAccount(user);
+    }
+    userData();
+  }, []);
+  console.log(account);
 
   const handleSubmit = async () => {
     const data = new FormData()
     photos.forEach(photo => {
       data.append('images', photo)
     })
-    const sector = account?.conservationSector.toUpperCase() as string    
+    const sector = account?.conservationSector.toUpperCase() as string
     data.append('sector', sector)
     const result = await Workspace.create(data)
     if (result.success) {
       toast.success('Photos Uploaded Successfully');
-    }else{
+    } else {
       toast.error('Photos Upload Failed');
       toast.error(result.message);
     }
     console.log(result)
     setIsUploading(true);
     setUploadProgress(0);
-    
+
     // Simulate upload progress
     for (let i = 0; i <= 100; i += 10) {
       await new Promise(resolve => setTimeout(resolve, 200));
       setUploadProgress(i);
     }
-    
+
     setIsUploading(false);
     setPhotos([]);
     setUploadProgress(0);
@@ -107,19 +105,19 @@ console.log(account);
             <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <Label className="font-medium">Select Land Parcel</Label>
-            <p className="text-xs text-muted-foreground">Choose which UPI these photos belong to</p>
+            <Label className="font-medium">{t("workspace.select_land_parcel")}</Label>
+            <p className="text-xs text-muted-foreground">{t("workspace.choose_upi_for_photos")}</p>
           </div>
         </div>
-        
+
         <Select onValueChange={setSelectedUPI} value={selectedUPI || undefined}>
           <SelectTrigger className="h-11 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <SelectValue placeholder="Select a registered UPI..." />
+            <SelectValue placeholder={t("workspace.select_upi_placeholder")} />
           </SelectTrigger>
           <SelectContent>
             {upiList.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
-                No UPIs registered yet. Register a UPI first.
+                {t("workspace.no_upis_registered")}
               </div>
             ) : (
               upiList.map((upi, idx) => (
@@ -145,51 +143,51 @@ console.log(account);
           "relative rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer",
           "flex flex-col items-center justify-center py-12 px-6",
           !selectedUPI && "opacity-50 cursor-not-allowed",
-          isDragging 
-            ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20" 
+          isDragging
+            ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
             : "border-gray-300 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 bg-gray-50/50 dark:bg-gray-900/50"
         )}
       >
-        <input 
+        <input
           ref={fileInputRef}
-          id="photo-upload" 
-          type="file" 
-          accept="image/*" 
-          multiple 
-          className="hidden" 
+          id="photo-upload"
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
           onChange={handleUpload}
           disabled={!selectedUPI}
         />
-        
+
         <div className={cn(
           "w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors",
-          isDragging 
-            ? "bg-emerald-100 dark:bg-emerald-900/50" 
+          isDragging
+            ? "bg-emerald-100 dark:bg-emerald-900/50"
             : "bg-gray-100 dark:bg-gray-800"
         )}>
           <CloudUpload className={cn(
             "w-8 h-8 transition-colors",
-            isDragging 
-              ? "text-emerald-600 dark:text-emerald-400" 
+            isDragging
+              ? "text-emerald-600 dark:text-emerald-400"
               : "text-gray-400"
           )} />
         </div>
-        
+
         <p className="font-semibold text-lg mb-1">
-          {isDragging ? "Drop photos here" : "Drag & drop photos"}
+          {isDragging ? t("workspace.drop_here") : t("workspace.drag_drop")}
         </p>
         <p className="text-sm text-muted-foreground mb-4">
-          or click to browse from your device
+          {t("workspace.or_click")}
         </p>
-        
+
         <Badge variant="outline" className="text-xs">
-          Supports: JPG, PNG, WebP (Max 10MB each)
+          {t("workspace.file_support")}
         </Badge>
-        
+
         {!selectedUPI && (
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-4 flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            Select a UPI first to enable upload
+            {t("workspace.select_upi_to_enable")}
           </p>
         )}
       </div>
@@ -200,17 +198,17 @@ console.log(account);
           <div className="flex items-center justify-between">
             <h4 className="font-semibold flex items-center gap-2">
               <ImageIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Selected Photos
+              {t("workspace.selected_photos")}
             </h4>
             <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-              {photos.length} {photos.length === 1 ? "photo" : "photos"}
+              {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
             </Badge>
           </div>
-          
+
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {photos.map((file, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="group relative aspect-square rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -219,9 +217,9 @@ console.log(account);
                   alt={`Preview ${idx + 1}`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105"
                 />
-                
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
@@ -231,7 +229,7 @@ console.log(account);
                 >
                   <X className="w-4 h-4" />
                 </button>
-                
+
                 <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   <p className="text-xs text-white truncate font-medium">{file.name}</p>
                   <p className="text-xs text-white/70">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
@@ -245,7 +243,7 @@ console.log(account);
             <div className="space-y-2 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800">
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium text-emerald-700 dark:text-emerald-300">
-                  Uploading photos...
+                  {t("workspace.uploading_photos")}
                 </span>
                 <span className="text-emerald-600 dark:text-emerald-400">{uploadProgress}%</span>
               </div>
@@ -255,7 +253,7 @@ console.log(account);
 
           {/* Submit Button */}
           <div className="flex items-center gap-3 pt-2">
-            <Button 
+            <Button
               onClick={handleSubmit}
               disabled={isUploading}
               className="h-11 px-6 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
@@ -263,23 +261,23 @@ console.log(account);
               {isUploading ? (
                 <>
                   <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Uploading...
+                  {t("workspace.uploading")}
                 </>
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Submit {photos.length} {photos.length === 1 ? "Photo" : "Photos"}
+                  {t("workspace.submit")} {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
                 </>
               )}
             </Button>
-            
-            <Button 
-              variant="outline" 
+
+            <Button
+              variant="outline"
               onClick={() => setPhotos([])}
               disabled={isUploading}
               className="h-11"
             >
-              Clear All
+              {t("workspace.clear_all")}
             </Button>
           </div>
         </div>
@@ -289,7 +287,7 @@ console.log(account);
       {photos.length === 0 && selectedUPI && (
         <div className="text-center py-8 text-muted-foreground text-sm">
           <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
-          Ready to upload photos for UPI: <span className="font-semibold text-foreground">{selectedUPI}</span>
+          {t("workspace.ready_to_upload")} <span className="font-semibold text-foreground">{selectedUPI}</span>
         </div>
       )}
     </div>

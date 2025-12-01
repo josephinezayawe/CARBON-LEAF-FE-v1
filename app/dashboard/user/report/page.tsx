@@ -1,6 +1,7 @@
 "use client";
 
 import { BarChart2, Download, TrendingUp, Calendar, FileText } from "lucide-react";
+import { useLanguage } from "@/components/global/language-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import ReportsOverview from "@/components/dashboard_components/user/report/ReportsOverview";
@@ -8,6 +9,8 @@ import ReportStats from "@/components/dashboard_components/user/report/ReportSta
 import ReportCharts from "@/components/dashboard_components/user/report/ReportCharts";
 
 export default function ReportPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-8">
       {/* Header Section */}
@@ -25,10 +28,10 @@ export default function ReportPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                    Reports & Analytics
+                    {t("reports.title")}
                   </h1>
                   <p className="text-blue-100 text-sm md:text-base">
-                    Track your carbon credit performance
+                    {t("reports.track_performance")}
                   </p>
                 </div>
               </div>
@@ -41,7 +44,7 @@ export default function ReportPage() {
               </Badge>
               <Button className="bg-white text-indigo-700 hover:bg-white/90 shadow-lg">
                 <Download className="w-4 h-4 mr-2" />
-                Export
+                {t("reports.export")}
               </Button>
             </div>
           </div>

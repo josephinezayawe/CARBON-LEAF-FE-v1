@@ -23,9 +23,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/global/language-provider";
 import { Workspace } from "@/app/api/workspace";
-import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/auth";
 
 interface PhotoItem {
   id: string;
@@ -35,6 +36,7 @@ interface PhotoItem {
 }
 
 export default function PhotoGallery() {
+  const { t } = useLanguage();
   const [filterUPI, setFilterUPI] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
@@ -59,26 +61,23 @@ export default function PhotoGallery() {
     async function getPhotos() {
       if (!account?.id) return;
 
-      const result = await Workspace.get(
-        "8efb1839-fd3d-449d-8509-819d2213948c"
-      );
+      const result = await Workspace.get();
 
       if (!result.success) {
         toast.error(result.message);
         return;
       }
 
-      const item = result.data;
-      if (!item?.data?.imageAssets) return;
+      const workspaces = result?.data?.data?.workspaces ?? [];
 
-      // Give each image its own unique ID
-      const transformed: PhotoItem[] = item.data.imageAssets.map(
-        (url: string, index: number) => ({
-          id: `${item.id}-${index}`,
+      // Transform and flatten all images from all workspaces
+      const transformed: PhotoItem[] = workspaces.flatMap((ws: any) =>
+        ws.imageAssets?.map((url: string, index: number) => ({
+          id: `${ws.id}-${index}`,
           url,
-          uploadedAt: item.uploadDate ?? "",
-          upi: item.userId,
-        })
+          uploadedAt: ws.uploadDate ?? "",
+          upi: ws.userId,
+        })) ?? []
       );
 
       setPhotos(transformed);
@@ -112,14 +111,14 @@ export default function PhotoGallery() {
 
   return (
     <div className="space-y-6">
-    
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-purple-100">
             <ImageIcon className="w-4 h-4 text-purple-600" />
           </div>
           <div>
-            <h3 className="font-semibold">Photo Gallery</h3>
+            <h3 className="font-semibold">{t("workspace.photo_gallery")}</h3>
             <p className="text-xs text-muted-foreground">
               {filteredPhotos.length} photos
             </p>
@@ -127,7 +126,7 @@ export default function PhotoGallery() {
         </div>
 
         <div className="flex items-center gap-3">
-        
+
           <div className="flex items-center bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode("grid")}
@@ -150,14 +149,14 @@ export default function PhotoGallery() {
             </button>
           </div>
 
-        
+
           <Select onValueChange={setFilterUPI}>
             <SelectTrigger className="w-[160px]">
               <SelectValue placeholder="Filter by UPI" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All UPIs</SelectItem>
-              {upiList.map((upi,index) => (
+              {upiList.map((upi, index) => (
                 <SelectItem key={index} value={upi}>
                   {upi}
                 </SelectItem>
@@ -167,7 +166,7 @@ export default function PhotoGallery() {
         </div>
       </div>
 
-    
+
       <div
         className={cn(
           "grid gap-4",
@@ -190,7 +189,7 @@ export default function PhotoGallery() {
         ))}
       </div>
 
-    
+
       {selectedIndex !== null && filteredPhotos[selectedIndex] && (
         <Dialog open={true} onOpenChange={() => setSelectedIndex(null)}>
           <DialogContent className="max-w-5xl p-0 bg-black/95">

@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/global/language-provider";
 
 export default function ProfileSettings() {
+  const { t } = useLanguage();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -30,8 +32,8 @@ export default function ProfileSettings() {
             <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-lg">Profile Information</h3>
-            <p className="text-sm text-muted-foreground">Update your personal details</p>
+            <h3 className="font-semibold text-lg">{t("settings_profile.title")}</h3>
+            <p className="text-sm text-muted-foreground">{t("settings_profile.update_details")}</p>
           </div>
         </div>
       </div>
@@ -64,7 +66,7 @@ export default function ProfileSettings() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <User className="w-3.5 h-3.5 text-muted-foreground" />
-              Full Name
+              {t("settings_profile.full_name")}
             </Label>
             <Input 
               defaultValue="John Doe"
@@ -75,7 +77,7 @@ export default function ProfileSettings() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <Mail className="w-3.5 h-3.5 text-muted-foreground" />
-              Email Address
+              {t("settings_profile.email_address")}
             </Label>
             <Input 
               type="email"
@@ -87,7 +89,7 @@ export default function ProfileSettings() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-              Phone Number
+              {t("settings_profile.phone_number")}
             </Label>
             <Input 
               defaultValue="+250 788 123 456"
@@ -98,7 +100,7 @@ export default function ProfileSettings() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-              Location
+              {t("settings_profile.location")}
             </Label>
             <Input 
               defaultValue="Kigali, Rwanda"
@@ -115,21 +117,21 @@ export default function ProfileSettings() {
             className="h-11 px-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25"
           >
             {saving ? (
-              <>
-                <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Saving...
-              </>
-            ) : saved ? (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Saved!
-              </>
-            ) : (
-              "Save Changes"
-            )}
+               <>
+                 <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                 {t("settings_profile.saving")}
+               </>
+             ) : saved ? (
+               <>
+                 <Check className="w-4 h-4 mr-2" />
+                 {t("settings_profile.saved")}
+               </>
+             ) : (
+               t("settings_profile.save_changes")
+             )}
           </Button>
           <Button variant="outline" className="h-11">
-            Cancel
+            {t("settings_profile.cancel")}
           </Button>
         </div>
       </div>

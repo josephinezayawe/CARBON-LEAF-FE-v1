@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { MapPin, Plus, Trash2, Check, AlertCircle, Calendar, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/components/global/language-provider";
 
 interface RegisteredUPI {
   id: string;
@@ -24,6 +25,7 @@ export default function UPIRegistration({
   onAddUPI?: (upi: string, landName?: string) => void;
   onRemoveUPI?: (id: string) => void;
 }) {
+  const { t } = useLanguage();
   const [upiInput, setUpiInput] = useState("");
   const [landName, setLandName] = useState("");
   const [error, setError] = useState("");
@@ -40,17 +42,17 @@ export default function UPIRegistration({
     setSuccess(false);
 
     if (!upiInput.trim()) {
-      setError("Please enter a UPI number");
+      setError(t("workspace.upi_required_error"));
       return;
     }
 
     if (!validateUPI(upiInput)) {
-      setError("Invalid UPI format. Use format: X/XX/XX/XX");
+      setError(t("workspace.upi_format_error"));
       return;
     }
 
     if (registeredUPIs.some((r) => r.upi === upiInput)) {
-      setError("This UPI is already registered");
+      setError(t("workspace.upi_duplicate_error"));
       return;
     }
 
@@ -74,8 +76,8 @@ export default function UPIRegistration({
               <Plus className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Register New Land Parcel</h3>
-              <p className="text-sm text-muted-foreground">Add a new UPI to your workspace</p>
+              <h3 className="font-semibold text-lg">{t("workspace.register_new_parcel")}</h3>
+              <p className="text-sm text-muted-foreground">{t("workspace.add_new_upi")}</p>
             </div>
           </div>
 
@@ -83,13 +85,13 @@ export default function UPIRegistration({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2">
                 <Label htmlFor="upi" className="text-sm font-medium flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
-                  UPI Number
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="upi"
-                  placeholder="e.g., 1/23/45/67"
+                   <MapPin className="w-3.5 h-3.5 text-muted-foreground" />
+                   {t("workspace.upi_number")}
+                   <span className="text-red-500">*</span>
+                 </Label>
+                 <Input
+                   id="upi"
+                   placeholder={t("workspace.upi_placeholder")}
                   value={upiInput}
                   onChange={(e) => {
                     setUpiInput(e.target.value);
@@ -104,13 +106,13 @@ export default function UPIRegistration({
               </div>
               <div className="space-y-2">
                 <Label htmlFor="landName" className="text-sm font-medium flex items-center gap-2">
-                  <Tag className="w-3.5 h-3.5 text-muted-foreground" />
-                  Land Name
-                  <span className="text-muted-foreground text-xs">(Optional)</span>
-                </Label>
-                <Input
-                  id="landName"
-                  placeholder="e.g., Farm Plot A"
+                   <Tag className="w-3.5 h-3.5 text-muted-foreground" />
+                   {t("workspace.land_name")}
+                   <span className="text-muted-foreground text-xs">{t("workspace.optional")}</span>
+                 </Label>
+                 <Input
+                   id="landName"
+                   placeholder={t("workspace.land_name_placeholder")}
                   value={landName}
                   onChange={(e) => setLandName(e.target.value)}
                   className="h-11 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
@@ -128,7 +130,7 @@ export default function UPIRegistration({
             {success && (
               <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 rounded-lg">
                 <Check className="w-4 h-4 shrink-0" />
-                UPI registered successfully!
+                {t("workspace.upi_success")}
               </div>
             )}
 
@@ -137,7 +139,7 @@ export default function UPIRegistration({
               className="h-11 px-6 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Register UPI
+              {t("workspace.register_upi_button")}
             </Button>
           </form>
         </div>
@@ -145,16 +147,16 @@ export default function UPIRegistration({
 
       {/* Registered UPIs List */}
       {registeredUPIs.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h4 className="font-semibold flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Registered Land Parcels
-            </h4>
-            <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-              {registeredUPIs.length} {registeredUPIs.length === 1 ? "parcel" : "parcels"}
-            </Badge>
-          </div>
+         <div className="space-y-4">
+           <div className="flex items-center justify-between">
+             <h4 className="font-semibold flex items-center gap-2">
+               <MapPin className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+               {t("workspace.registered_parcels")}
+             </h4>
+             <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+               {registeredUPIs.length} {registeredUPIs.length === 1 ? t("workspace.parcel_singular") : t("workspace.parcel_plural")}
+             </Badge>
+           </div>
           
           <div className="grid gap-3">
             {registeredUPIs.map((item, index) => (
@@ -180,11 +182,11 @@ export default function UPIRegistration({
                   
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-semibold">{item.upi}</p>
-                      <Badge variant="outline" className="text-xs px-2 py-0 h-5 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300">
-                        Verified
-                      </Badge>
-                    </div>
+                       <p className="font-semibold">{item.upi}</p>
+                       <Badge variant="outline" className="text-xs px-2 py-0 h-5 border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300">
+                         {t("workspace.verified")}
+                       </Badge>
+                     </div>
                     <div className="flex items-center gap-3 text-sm text-muted-foreground">
                       {item.landName && (
                         <span className="flex items-center gap-1">
@@ -216,16 +218,16 @@ export default function UPIRegistration({
 
       {/* Empty State */}
       {registeredUPIs.length === 0 && (
-        <div className="text-center py-12 px-6 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-            <MapPin className="w-7 h-7 text-gray-400" />
-          </div>
-          <h3 className="font-semibold text-lg mb-1">No UPIs registered yet</h3>
-          <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-            Register your first land parcel using the form above to start managing your workspace.
-          </p>
-        </div>
-      )}
+         <div className="text-center py-12 px-6 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800">
+           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+             <MapPin className="w-7 h-7 text-gray-400" />
+           </div>
+           <h3 className="font-semibold text-lg mb-1">{t("workspace.no_upis")}</h3>
+           <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+             {t("workspace.no_upis_desc")}
+           </p>
+         </div>
+       )}
     </div>
   );
 }

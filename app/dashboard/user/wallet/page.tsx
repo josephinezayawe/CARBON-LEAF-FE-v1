@@ -1,6 +1,7 @@
 "use client";
 
 import { Wallet, TrendingUp, ArrowUpRight, ArrowDownRight, History } from "lucide-react";
+import { useLanguage } from "@/components/global/language-provider";
 import { Badge } from "@/components/ui/badge";
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
 import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
@@ -8,6 +9,8 @@ import WalletAccountSetup from "@/components/dashboard_components/user/WalletAcc
 import WalletTransactions from "@/components/dashboard_components/user/WalletTransactions";
 
 export default function WalletPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="space-y-8">
       {/* Header Section */}
@@ -25,10 +28,10 @@ export default function WalletPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                    Wallet
+                    {t("wallet.title")}
                   </h1>
                   <p className="text-purple-100 text-sm md:text-base">
-                    Manage your earnings and transactions
+                    {t("wallet.manage")}
                   </p>
                 </div>
               </div>
@@ -37,7 +40,7 @@ export default function WalletPage() {
             <div className="flex items-center gap-3">
               <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5">
                 <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-                +12.5% this month
+                {t("credits.this_week")}
               </Badge>
             </div>
           </div>

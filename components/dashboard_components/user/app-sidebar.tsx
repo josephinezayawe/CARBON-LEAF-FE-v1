@@ -31,13 +31,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
+import { useLanguage } from "@/components/global/language-provider"
 import { useEffect, useState } from "react"
 import { Account } from "@/lib/dataSchemas"
 import { getCurrentUser } from "@/lib/auth"
 import { toast } from "sonner"
-const menuItems = [
+
+const getMenuItems = (t: (key: string) => string) => [
   {
-    title: "Dashboard",
+    title: t("navigation.dashboard"),
     url: "/dashboard/user",
     icon: LayoutDashboard,
     description: "Overview & insights",
@@ -45,13 +47,13 @@ const menuItems = [
     badgeVariant: "success" as const,
   },
   {
-    title: "Wallet",
+    title: t("navigation.wallet"),
     url: "/dashboard/user/wallet",
     icon: Wallet,
     description: "Manage finances",
   },
   {
-    title: "Workspace",
+    title: t("navigation.workspace"),
     url: "/dashboard/user/workspace",
     icon: FolderKanban,
     description: "Your projects",
@@ -59,19 +61,19 @@ const menuItems = [
     badgeVariant: "info" as const,
   },
   {
-    title: "Guidance",
+    title: t("navigation.guidance"),
     url: "/dashboard/user/guidance",
     icon: BookOpen,
     description: "Learn & grow",
   },
   {
-    title: "Reports",
+    title: t("navigation.report"),
     url: "/dashboard/user/report",
     icon: BarChart2,
     description: "Analytics & data",
   },
   {
-    title: "Settings",
+    title: t("navigation.settings"),
     url: "/dashboard/user/settings",
     icon: Settings,
     description: "Preferences",
@@ -79,6 +81,8 @@ const menuItems = [
 ]
 
 export function AppSidebar() {
+  const { t } = useLanguage()
+  const menuItems = getMenuItems(t)
   const pathname = usePathname()
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
