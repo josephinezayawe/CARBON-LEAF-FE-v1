@@ -5,8 +5,6 @@ import api from "./api"
 export const AuthAPI = {
 
     register: async (data: any) => {
-        console.log('hello', data);
-
         try {
             const result = await api.post('register/', {
                 data

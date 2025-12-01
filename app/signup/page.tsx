@@ -119,6 +119,9 @@ const rwandaAdministrativeDivisions = [
 type FormStep = 1 | 2 | 3;
 
 export default function Signup() {
+    const conservationSectors = [
+        "FARMER",
+    ];
     const router = useRouter()
     const { lang, setLanguage } = useLanguage()
     const [isLoading, setIsLoading] = useState(false)
@@ -164,12 +167,12 @@ export default function Signup() {
 
     const onSubmit = async (data: RegisterData) => {
         setIsLoading(true)
-        
+
         try {
             const { confirmPassword, ...newData } = data
             const result = await AuthAPI.register(newData)
             toast.success(t('auth.signup_success'))
-            
+
             if (result?.data.role === 'ADMIN') {
                 router.push('/admin')
             } else if (result?.data.role === 'USER') {
@@ -187,7 +190,7 @@ export default function Signup() {
         // Validate current step before proceeding
         const fields = getStepFields(currentStep)
         const isValid = await form.trigger(fields)
-        
+
         if (isValid) {
             setCurrentStep(prev => Math.min(prev + 1, 3) as FormStep)
         }
@@ -217,11 +220,11 @@ export default function Signup() {
                     <div key={step.number} className="flex items-center">
                         <div className={`
                             flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-200
-                            ${step.completed 
-                                ? 'bg-emerald-500 border-emerald-500 text-white' 
+                            ${step.completed
+                                ? 'bg-emerald-500 border-emerald-500 text-white'
                                 : step.number === currentStep
-                                ? 'border-emerald-500 bg-white text-emerald-500'
-                                : 'border-slate-300 text-slate-400'
+                                    ? 'border-emerald-500 bg-white text-emerald-500'
+                                    : 'border-slate-300 text-slate-400'
                             }
                         `}>
                             {step.completed ? (
@@ -230,7 +233,7 @@ export default function Signup() {
                                 <span className="text-sm font-semibold">{step.number}</span>
                             )}
                         </div>
-                        
+
                         {/* Step Title */}
                         <span className={`
                             ml-3 text-sm font-medium hidden sm:block
@@ -268,11 +271,10 @@ export default function Signup() {
                             <button
                                 key={language}
                                 onClick={() => setLanguage(language)}
-                                className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors first:rounded-t-lg last:rounded-b-lg ${
-                                    lang === language
-                                        ? "bg-emerald-600 text-white"
-                                        : "text-slate-700 hover:bg-slate-100"
-                                }`}
+                                className={`w-full text-left px-4 py-2 text-sm font-medium transition-colors first:rounded-t-lg last:rounded-b-lg ${lang === language
+                                    ? "bg-emerald-600 text-white"
+                                    : "text-slate-700 hover:bg-slate-100"
+                                    }`}
                             >
                                 {language === "en" && "English"}
                                 {language === "fr" && "Français"}
@@ -304,7 +306,7 @@ export default function Signup() {
                 <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl shadow-slate-200/20 dark:shadow-slate-900/20 p-8">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" autoComplete="off">
-                            
+
                             {/* Step 1: Personal Information */}
                             {currentStep === 1 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
@@ -326,15 +328,15 @@ export default function Signup() {
                                                         {t('auth.first_name')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
-                                                        <Input 
-                                                            placeholder={t('auth.enter_first_name')} 
-                                                            {...field} 
+                                                        <Input
+                                                            placeholder={t('auth.enter_first_name')}
+                                                            {...field}
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="lastName"
@@ -344,15 +346,15 @@ export default function Signup() {
                                                         {t('auth.last_name')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
-                                                        <Input 
-                                                            placeholder={t('auth.enter_last_name')} 
-                                                            {...field} 
+                                                        <Input
+                                                            placeholder={t('auth.enter_last_name')}
+                                                            {...field}
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="contact"
@@ -362,33 +364,33 @@ export default function Signup() {
                                                         {t('auth.email_or_phone')} {t('auth.required')}
                                                     </FormLabel>
                                                     <FormControl>
-                                                        <Input 
-                                                            placeholder={t('auth.enter_email_or_phone')} 
-                                                            {...field} 
+                                                        <Input
+                                                            placeholder={t('auth.enter_email_or_phone')}
+                                                            {...field}
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="nid"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.national_id')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.national_id')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
-                                                        <Input 
-                                                            placeholder={t('auth.enter_nid')} 
-                                                            {...field} 
+                                                        <Input
+                                                            placeholder={t('auth.enter_nid')}
+                                                            {...field}
                                                             className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                                                         />
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -412,8 +414,8 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.province')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.province')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -446,15 +448,15 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="district"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.district')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.district')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -486,15 +488,15 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="sector"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.sector')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.sector')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -524,15 +526,15 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="cell"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.cell')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.cell')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -558,15 +560,15 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="village"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.village')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.village')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <Select
                                                             value={field.value || ""}
@@ -588,7 +590,7 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -614,17 +616,17 @@ export default function Signup() {
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.password')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.password')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input 
-                                                                 type={showPassword ? "text" : "password"}
-                                                                 placeholder={t('auth.create_strong_password')} 
-                                                                 autoComplete="new-password"
-                                                                 {...field} 
-                                                                 className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
-                                                             />
+                                                            <Input
+                                                                type={showPassword ? "text" : "password"}
+                                                                placeholder={t('auth.create_strong_password')}
+                                                                autoComplete="new-password"
+                                                                {...field}
+                                                                className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
+                                                            />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setShowPassword(!showPassword)}
@@ -640,24 +642,24 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
                                         />
 
                                         <FormField control={form.control} name="confirmPassword"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                         {t('auth.confirm_password')} {t('auth.required')}
-                                                     </FormLabel>
+                                                        {t('auth.confirm_password')} {t('auth.required')}
+                                                    </FormLabel>
                                                     <FormControl>
                                                         <div className="relative">
-                                                            <Input 
-                                                                 type={showConfirmPassword ? "text" : "password"}
-                                                                 placeholder={t('auth.enter_confirm_password')} 
-                                                                 autoComplete="new-password"
-                                                                 {...field} 
-                                                                 className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
-                                                             />
+                                                            <Input
+                                                                type={showConfirmPassword ? "text" : "password"}
+                                                                placeholder={t('auth.enter_confirm_password')}
+                                                                autoComplete="new-password"
+                                                                {...field}
+                                                                className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors pr-10"
+                                                            />
                                                             <button
                                                                 type="button"
                                                                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -673,7 +675,41 @@ export default function Signup() {
                                                     </FormControl>
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
-                                            )} 
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="conservationSector"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Conservation Sector</FormLabel>
+                                                    <FormControl>
+                                                        <Select
+                                                            {...field}
+                                                            value={field.value || ""}
+                                                            onValueChange={(val) => field.onChange(val)}
+                                                        >
+                                                            <SelectTrigger className="w-[220px]">
+                                                                <SelectValue placeholder="Select Conservation Sector" />
+                                                            </SelectTrigger>
+
+                                                            <SelectContent>
+                                                                <SelectGroup>
+                                                                    <SelectLabel>Available Sectors</SelectLabel>
+
+                                                                    {conservationSectors.map((sector) => (
+                                                                        <SelectItem key={sector} value={sector}>
+                                                                            {sector}
+                                                                        </SelectItem>
+                                                                    ))}
+
+                                                                </SelectGroup>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
                                         />
                                     </div>
                                 </div>
@@ -702,8 +738,8 @@ export default function Signup() {
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 ) : (
-                                    <Button 
-                                        type="submit" 
+                                    <Button
+                                        type="submit"
                                         disabled={isLoading}
                                         className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25 disabled:opacity-50"
                                     >
@@ -729,8 +765,8 @@ export default function Signup() {
                         <div className="text-center">
                             <p className="text-sm text-slate-600 dark:text-slate-400">
                                 {t('auth.signup_already')}{' '}
-                                <a 
-                                    href="/signin" 
+                                <a
+                                    href="/signin"
                                     className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
                                 >
                                     {t('auth.signin_button')}

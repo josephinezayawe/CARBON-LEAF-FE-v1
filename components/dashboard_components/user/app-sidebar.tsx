@@ -32,6 +32,10 @@ import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { useLanguage } from "@/components/global/language-provider"
+import { useEffect, useState } from "react"
+import { Account } from "@/lib/dataSchemas"
+import { getCurrentUser } from "@/lib/auth"
+import { toast } from "sonner"
 
 const getMenuItems = (t: (key: string) => string) => [
   {
@@ -82,15 +86,32 @@ export function AppSidebar() {
   const pathname = usePathname()
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
+
+
+  const [account, setAccount] = useState<Account>()
+  useEffect(() => {
+    async function userData() {
+      const user = await getCurrentUser()
+      if (!user?.id) {
+        return toast.error('User Not Found')
+      }
+      if (user?.role !== 'USER') {
+        toast.error('UnAuthenticated User')
+        return window.location.href = '/signin'
+      }
+      setAccount(user)
+    }
+    userData()
+  }, [])
   return (
-    <Sidebar 
-      collapsible="icon" 
+    <Sidebar
+      collapsible="icon"
       className="border-r-0 overflow-hidden"
     >
       {/* Glassmorphism Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/80 via-white to-green-50/50 dark:from-gray-900 dark:via-gray-900 dark:to-emerald-950/20 -z-10" />
       <div className="absolute inset-0 backdrop-blur-xl -z-10" />
-      
+
       {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-green-300/10 rounded-full blur-3xl -z-10" />
       <div className="absolute bottom-20 left-0 w-24 h-24 bg-gradient-to-tr from-green-400/15 to-teal-300/10 rounded-full blur-2xl -z-10" />
@@ -102,10 +123,10 @@ export function AppSidebar() {
           isCollapsed ? "justify-center" : "gap-3"
         )}>
           <div className="flex items-center justify-center w-full overflow-hidden">
-            <Image 
-              src="/images/logos/CARBON-LEAF-LOGO.png" 
-              alt="Logo" 
-              width={isCollapsed ? 32 : 82} 
+            <Image
+              src="/images/logos/CARBON-LEAF-LOGO.png"
+              alt="Logo"
+              width={isCollapsed ? 32 : 82}
               height={isCollapsed ? 32 : 32}
               className={cn(
                 "transition-all duration-300 object-contain",
@@ -130,15 +151,15 @@ export function AppSidebar() {
                 const isActive = pathname === item.url
                 return (
                   <SidebarMenuItem key={item.title} className={cn(isCollapsed && "flex justify-center w-full")}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       isActive={isActive}
                       tooltip={isCollapsed ? item.title : undefined}
                       className={cn(
                         "group/item relative transition-all duration-200",
                         "rounded-xl border border-transparent",
-                        isCollapsed 
-                          ? "h-10 w-10 p-0 flex items-center justify-center" 
+                        isCollapsed
+                          ? "h-10 w-10 p-0 flex items-center justify-center"
                           : "h-10",
                         "hover:bg-gradient-to-r hover:from-emerald-50 hover:to-green-50/50 dark:hover:from-emerald-950/40 dark:hover:to-green-950/20",
                         "hover:border-emerald-200/50 dark:hover:border-emerald-800/30",
@@ -158,25 +179,25 @@ export function AppSidebar() {
                         {isActive && !isCollapsed && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-gradient-to-b from-emerald-500 to-green-500 rounded-r-full shadow-lg shadow-emerald-500/50" />
                         )}
-                        
+
                         {/* Icon Container */}
                         <div className={cn(
                           "flex items-center justify-center rounded-lg transition-all duration-200",
                           isCollapsed ? "size-8" : "size-8",
-                          isActive 
-                            ? "bg-gradient-to-br from-emerald-500 to-green-500 text-white shadow-md shadow-emerald-500/30" 
+                          isActive
+                            ? "bg-gradient-to-br from-emerald-500 to-green-500 text-white shadow-md shadow-emerald-500/30"
                             : "bg-muted/50 text-muted-foreground group-hover/item:bg-emerald-100 dark:group-hover/item:bg-emerald-900/50 group-hover/item:text-emerald-600 dark:group-hover/item:text-emerald-400"
                         )}>
                           <item.icon className="size-4" />
                         </div>
-                        
+
                         {!isCollapsed && (
                           <div className="flex flex-1 items-center justify-between min-w-0">
                             <div className="flex flex-col min-w-0">
                               <span className={cn(
                                 "font-semibold text-sm truncate transition-colors",
-                                isActive 
-                                  ? "text-emerald-700 dark:text-emerald-300" 
+                                isActive
+                                  ? "text-emerald-700 dark:text-emerald-300"
                                   : "text-foreground/80 group-hover/item:text-emerald-700 dark:group-hover/item:text-emerald-300"
                               )}>
                                 {item.title}
@@ -185,9 +206,9 @@ export function AppSidebar() {
                                 {item.description}
                               </span>
                             </div>
-                            
+
                             {item.badge && (
-                              <Badge 
+                              <Badge
                                 variant="outline"
                                 className={cn(
                                   "ml-2 text-[10px] font-bold px-1.5 py-0 h-5 border-0",
@@ -211,17 +232,17 @@ export function AppSidebar() {
         </SidebarGroup>
 
         {/* Upgrade Card */}
-        
+
       </SidebarContent>
 
       {/* Footer */}
       <SidebarFooter className={cn("p-3 mt-auto", isCollapsed && "p-2")}>
-        
+
         {/* User Profile */}
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton 
-              size="lg" 
+            <SidebarMenuButton
+              size="lg"
               asChild
               tooltip={isCollapsed ? "User Profile" : undefined}
               className={cn(
@@ -248,12 +269,12 @@ export function AppSidebar() {
                     isCollapsed ? "-bottom-0.5 -right-0.5 size-2.5" : "-bottom-0.5 -right-0.5 size-3.5"
                   )} />
                 </div>
-                
+
                 {!isCollapsed && (
                   <>
                     <div className="flex flex-col flex-1 min-w-0">
-                      <span className="font-semibold text-sm truncate">John Doe</span>
-                      <span className="text-[11px] text-muted-foreground truncate">john@carbonleaf.com</span>
+                      <span className="font-semibold text-sm truncate">{account && `${account.firstName} ${account.lastName}`} </span>
+                      <span className="text-[11px] text-muted-foreground truncate">{account && account.contact}</span>
                     </div>
                     <LogOut className="size-4 text-muted-foreground hover:text-red-500 transition-colors shrink-0" />
                   </>
@@ -262,7 +283,7 @@ export function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        
+
         {!isCollapsed && (
           <div className="mt-3 pt-3 border-t border-border/30">
             <div className="flex items-center justify-between text-[10px] text-muted-foreground/60 px-1">
@@ -271,7 +292,7 @@ export function AppSidebar() {
           </div>
         )}
       </SidebarFooter>
-      
+
       <SidebarRail className="hover:after:bg-emerald-500/50" />
     </Sidebar>
   )

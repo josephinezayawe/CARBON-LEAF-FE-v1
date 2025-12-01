@@ -1,127 +1,164 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { ImageIcon, ZoomIn, Download, Calendar, MapPin, Grid3X3, LayoutGrid, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  ImageIcon,
+  ZoomIn,
+  Download,
+  Calendar,
+  MapPin,
+  Grid3X3,
+  LayoutGrid,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/global/language-provider";
+import { Workspace } from "@/app/api/workspace";
+import { toast } from "sonner";
+import { getCurrentUser } from "@/lib/auth";
 
-interface UploadedPhoto {
+interface PhotoItem {
   id: string;
   url: string;
-  upi: string;
   uploadedAt: string;
+  upi: string;
 }
 
-const MOCK_PHOTOS: UploadedPhoto[] = [
-  {
-    id: "1",
-    url: "/images/uploads/tree1.jpeg",
-    upi: "UP-001",
-    uploadedAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    url: "/images/uploads/tree2.png",
-    upi: "UP-002",
-    uploadedAt: "2024-01-16",
-  },
-  {
-    id: "3",
-    url: "/images/uploads/tree3.jpg",
-    upi: "UP-001",
-    uploadedAt: "2024-01-17",
-  },
-];
-
-export default function PhotoGallery({
-  upiList = [],
-  photos = [],
-}: {
-  upiList?: string[];
-  photos?: UploadedPhoto[];
-}) {
+export default function PhotoGallery() {
+  const { t } = useLanguage();
   const [filterUPI, setFilterUPI] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [photos, setPhotos] = useState<PhotoItem[]>([]);
+  const [account, setAccount] = useState<any>();
 
-  const { t } = useLanguage();
+  // Fetch user
+  useEffect(() => {
+    async function userData() {
+      const user = await getCurrentUser();
+      if (!user?.id) {
+        toast.error("User Not Found");
+        return;
+      }
+      setAccount(user);
+    }
+    userData();
+  }, []);
 
-     const displayPhotos = photos.length > 0 ? photos : MOCK_PHOTOS;
-     const displayUPIs = upiList.length > 0 ? upiList : ["UP-001", "UP-002"];
+  // Fetch workspace photos
+  useEffect(() => {
+    async function getPhotos() {
+      if (!account?.id) return;
 
-     const filteredPhotos = filterUPI === "all" 
-       ? displayPhotos 
-       : displayPhotos.filter((p) => p.upi === filterUPI);
+      const result = await Workspace.get();
+
+      if (!result.success) {
+        toast.error(result.message);
+        return;
+      }
+
+      const workspaces = result?.data?.data?.workspaces ?? [];
+
+      // Transform and flatten all images from all workspaces
+      const transformed: PhotoItem[] = workspaces.flatMap((ws: any) =>
+        ws.imageAssets?.map((url: string, index: number) => ({
+          id: `${ws.id}-${index}`,
+          url,
+          uploadedAt: ws.uploadDate ?? "",
+          upi: ws.userId,
+        })) ?? []
+      );
+
+      setPhotos(transformed);
+    }
+
+    getPhotos();
+  }, [account]);
+
+  const filteredPhotos =
+    filterUPI === "all" ? photos : photos.filter((p) => p.upi === filterUPI);
+
+  const upiList = [...new Set(photos.map((p) => p.upi))];
+
+  const openPhoto = (index: number) => {
+    setSelectedIndex(index);
+  };
 
   const navigatePhoto = (direction: "prev" | "next") => {
+    if (selectedIndex === null) return;
+
     if (direction === "prev") {
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : filteredPhotos.length - 1));
+      setSelectedIndex(
+        selectedIndex > 0 ? selectedIndex - 1 : filteredPhotos.length - 1
+      );
     } else {
-      setSelectedIndex((prev) => (prev < filteredPhotos.length - 1 ? prev + 1 : 0));
+      setSelectedIndex(
+        selectedIndex < filteredPhotos.length - 1 ? selectedIndex + 1 : 0
+      );
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Header Controls */}
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/50">
-            <ImageIcon className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <div className="p-2 rounded-lg bg-purple-100">
+            <ImageIcon className="w-4 h-4 text-purple-600" />
           </div>
           <div>
             <h3 className="font-semibold">{t("workspace.photo_gallery")}</h3>
             <p className="text-xs text-muted-foreground">
-              {filteredPhotos.length} {filteredPhotos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")} 
-              {filterUPI !== "all" && ` for ${filterUPI}`}
+              {filteredPhotos.length} photos
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* View Mode Toggle */}
-          <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+
+          <div className="flex items-center bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode("grid")}
               className={cn(
-                "p-2 rounded-md transition-colors",
-                viewMode === "grid" 
-                  ? "bg-white dark:bg-gray-700 shadow-sm" 
-                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                "p-2 rounded-md",
+                viewMode === "grid" && "bg-white shadow-sm"
               )}
             >
               <LayoutGrid className="w-4 h-4" />
             </button>
+
             <button
               onClick={() => setViewMode("compact")}
               className={cn(
-                "p-2 rounded-md transition-colors",
-                viewMode === "compact" 
-                  ? "bg-white dark:bg-gray-700 shadow-sm" 
-                  : "hover:bg-gray-200 dark:hover:bg-gray-700"
+                "p-2 rounded-md",
+                viewMode === "compact" && "bg-white shadow-sm"
               )}
             >
               <Grid3X3 className="w-4 h-4" />
             </button>
           </div>
 
-          {/* UPI Filter */}
-          <Select value={filterUPI} onValueChange={setFilterUPI}>
-            <SelectTrigger className="w-[160px] h-10 bg-white dark:bg-gray-800">
-              <SelectValue placeholder={t("workspace.filter_by_upi")} />
+
+          <Select onValueChange={setFilterUPI}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Filter by UPI" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{t("workspace.all_upis")}</SelectItem>
-              {displayUPIs.map((upi, idx) => (
-                <SelectItem key={idx} value={upi}>
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-3 h-3 text-emerald-600" />
-                    {upi}
-                  </div>
+              <SelectItem value="all">All UPIs</SelectItem>
+              {upiList.map((upi, index) => (
+                <SelectItem key={index} value={upi}>
+                  {upi}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -129,152 +166,71 @@ export default function PhotoGallery({
         </div>
       </div>
 
-      {/* Gallery Content */}
-      {filteredPhotos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 px-6 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50">
-          <div className="w-20 h-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-            <ImageIcon className="w-10 h-10 text-gray-400" />
-          </div>
-          <h3 className="font-semibold text-lg mb-1">{t("workspace.no_photos_yet")}</h3>
-          <p className="text-muted-foreground text-sm text-center max-w-sm">
-            {filterUPI !== "all" 
-              ? `${t("workspace.no_photos_desc")} ${filterUPI}`
-              : t("workspace.upload_photos_desc")}
-          </p>
-          {filterUPI !== "all" && (
-            <Button 
-              variant="outline" 
-              className="mt-4"
-              onClick={() => setFilterUPI("all")}
-            >
-              {t("workspace.view_all_photos")}
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className={cn(
+
+      <div
+        className={cn(
           "grid gap-4",
-          viewMode === "grid" 
-            ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" 
+          viewMode === "grid"
+            ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"
             : "grid-cols-3 sm:grid-cols-4 lg:grid-cols-6"
-        )}>
-          {filteredPhotos.map((photo, index) => (
-            <Dialog key={photo.id}>
-              <DialogTrigger asChild>
-                <div 
-                  className={cn(
-                    "group relative cursor-pointer rounded-xl overflow-hidden",
-                    "border border-gray-200 dark:border-gray-700",
-                    "hover:border-emerald-500 dark:hover:border-emerald-500",
-                    "hover:shadow-lg hover:shadow-emerald-500/10",
-                    "transition-all duration-300",
-                    viewMode === "grid" ? "aspect-[4/3]" : "aspect-square"
-                  )}
-                  onClick={() => setSelectedIndex(index)}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={photo.url}
-                    alt={`Land ${photo.upi}`}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    style={{ backgroundColor: '#f0f0f0' }}
-                    onError={() => console.error(`Image failed to load: ${photo.url}`)}
-                    onLoad={() => console.log(`Image loaded: ${photo.url}`)}
-                  />
-                  
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300" />
-                  
-                  {/* Zoom Icon */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <ZoomIn className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* Info Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <div className="flex items-center justify-between">
-                      <Badge variant="secondary" className="bg-white/20 text-white text-xs backdrop-blur-sm border-0">
-                        <MapPin className="w-3 h-3 mr-1" />
-                        {photo.upi}
-                      </Badge>
-                      {viewMode === "grid" && (
-                        <span className="text-xs text-white/80 flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {photo.uploadedAt}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </DialogTrigger>
-              
-              {/* Lightbox Modal */}
-              <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black/95 border-gray-800">
-                <div className="relative">
-                  {/* Navigation Arrows */}
+        )}
+      >
+        {filteredPhotos.map((photo, index) => (
+          <div
+            key={photo.id}
+            className={cn(
+              "group relative cursor-pointer rounded-xl overflow-hidden border border-gray-200",
+              viewMode === "grid" ? "aspect-[4/3]" : "aspect-square"
+            )}
+            onClick={() => openPhoto(index)}
+          >
+            <img src={photo.url} className="w-full h-full object-cover" />
+          </div>
+        ))}
+      </div>
+
+
+      {selectedIndex !== null && filteredPhotos[selectedIndex] && (
+        <Dialog open={true} onOpenChange={() => setSelectedIndex(null)}>
+          <DialogContent className="max-w-5xl p-0 bg-black/95">
+            <DialogTitle></DialogTitle>
+            <div className="relative">
+              {filteredPhotos.length > 1 && (
+                <>
                   {filteredPhotos.length > 1 && (
                     <>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigatePhoto("prev");
-                        }}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
+                      <button
+                        key="prev"
+                        onClick={() => navigatePhoto("prev")}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white"
                       >
-                        <ChevronLeft className="w-6 h-6 text-white" />
+                        <ChevronLeft className="w-10 h-10" />
                       </button>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigatePhoto("next");
-                        }}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
+
+                      <button
+                        key="next"
+                        onClick={() => navigatePhoto("next")}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
                       >
-                        <ChevronRight className="w-6 h-6 text-white" />
+                        <ChevronRight className="w-10 h-10" />
                       </button>
                     </>
                   )}
-                  
-                  {/* Main Image */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={filteredPhotos[selectedIndex]?.url || photo.url}
-                    alt={`Land ${filteredPhotos[selectedIndex]?.upi || photo.upi}`}
-                    className="w-full h-auto max-h-[85vh] object-contain"
-                  />
-                  
-                  {/* Info Bar */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6">
-                    <div className="flex items-end justify-between">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Badge className="bg-emerald-500/80 text-white border-0">
-                            <MapPin className="w-3 h-3 mr-1" />
-                            {filteredPhotos[selectedIndex]?.upi || photo.upi}
-                          </Badge>
-                          <span className="text-sm text-white/60">
-                            {selectedIndex + 1} of {filteredPhotos.length}
-                          </span>
-                        </div>
-                        <p className="text-white/80 text-sm flex items-center gap-2">
-                            <Calendar className="w-4 h-4" />
-                            {t("workspace.uploaded")}: {filteredPhotos[selectedIndex]?.uploadedAt || photo.uploadedAt}
-                          </p>
-                      </div>
-                      
-                      <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                        <Download className="w-4 h-4 mr-2" />
-                        {t("workspace.download")}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
-          ))}
-        </div>
+
+                </>
+              )}
+
+              <img
+                src={filteredPhotos[selectedIndex].url}
+                className="w-full max-h-[85vh] object-contain"
+              />
+
+              <div className="p-5 text-white">
+                <p>{filteredPhotos[selectedIndex].uploadedAt}</p>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </div>
   );
