@@ -170,6 +170,14 @@ export default function Signup() {
     const { t } = useLanguage()
 
     const onSubmit = async (data: RegisterData) => {
+        // Validate final step before submission
+        const fields = getStepFields(4)
+        const isValid = await form.trigger(fields)
+        
+        if (!isValid) {
+            return
+        }
+
         setIsLoading(true)
 
         try {
