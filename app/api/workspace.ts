@@ -5,7 +5,7 @@ export const Workspace = {
     
     create: async (uploadData: any) => {
         try {
-            const result = await api.post('/uploadmultiple', uploadData)
+            const result = await api.post('/api/uploadmultiple', uploadData)
             return {
                 success: true,
                 message: 'Done successfully',
@@ -22,7 +22,7 @@ export const Workspace = {
     },
     get: async () => {
         try {
-            const result = await api.get(`/user/workspace/`)            
+            const result = await api.get(`/api/user/workspace/`)            
             return {
                 success: true,
                 message: 'Done successfully',
