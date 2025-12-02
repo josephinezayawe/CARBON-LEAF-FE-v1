@@ -28,6 +28,16 @@ export const AuthAPI = {
             throw new Error(error as string)
         }
 
+    },
+    logout: async () => {
+        try {
+            const result = await api.post('logout/')
+            return result.data
+        }
+        catch (error) {
+            throw new Error(error as string)
+        }
+
     }
 
 }

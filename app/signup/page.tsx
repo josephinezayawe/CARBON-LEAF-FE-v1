@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Loader2, UserPlus, MapPin, ArrowRight, ArrowLeft, Check } from "lucide-react"
 import { useLanguage } from "@/components/global/language-provider"
+import { useAuth } from "@/context/authContext"
 
 // Rwanda hierarchy (simplified, expand as needed)
 const rwandaAdministrativeDivisions = [
@@ -121,9 +122,9 @@ type FormStep = 1 | 2 | 3 | 4;
 export default function Signup() {
     const conservationSectors = [
         "FARMER",
-        "HYBRID CAR OWNER",
-        "ECO FRIENDLY STOVES",
-        "COMMERCIAL BUILDING"
+        "HYBRID_CAR_OWNER",
+        "ECO_FRIENDLY_STOVES",
+        "COMMERCIAL_BUILDING"
     ];
     const router = useRouter()
     const { lang, setLanguage } = useLanguage()
@@ -169,18 +170,20 @@ export default function Signup() {
 
     const { t } = useLanguage()
 
-    const onSubmit = async (data: RegisterData) => {
-        setIsLoading(true)
 
+    const onSubmit = async (data: RegisterData) => {
+        if (data.password !== data.confirmPassword) {
+            toast.error(t('auth.password_mismatch'));
+            return;
+        }
         try {
             const { confirmPassword, ...newData } = data
             const result = await AuthAPI.register(newData)
             toast.success(t('auth.signup_success'))
-
             if (result?.data.role === 'ADMIN') {
-                router.push('/admin')
+                window.location.href = '/dashboard/admin'
             } else if (result?.data.role === 'USER') {
-                router.push('/user')
+                window.location.href = '/dashboard/user'
             }
         } catch (error) {
             toast.error(t('auth.signup_error'))
@@ -189,7 +192,6 @@ export default function Signup() {
             setIsLoading(false)
         }
     }
-
     const nextStep = async () => {
         // Validate current step before proceeding
         const fields = getStepFields(currentStep)
@@ -773,7 +775,7 @@ export default function Signup() {
                                                     <FormMessage className="text-xs" />
                                                 </FormItem>
                                             )}
-                                            />
+                                        />
                                     </div>
                                 </div>
                             )}
@@ -791,35 +793,39 @@ export default function Signup() {
                                      {t('auth.signup_previous')}
                                  </Button>
 
-                                 {currentStep < 4 ? (
-                                     <Button
-                                         type="button"
-                                         onClick={nextStep}
-                                         className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25"
-                                     >
-                                         {t('auth.signup_next')}
-                                         <ArrowRight className="w-4 h-4" />
-                                     </Button>
-                                 ) : (
-                                     <Button
-                                         type="submit"
-                                         disabled={isLoading}
-                                         className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25 disabled:opacity-50"
-                                     >
-                                         {isLoading ? (
-                                             <>
-                                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                                 {t('auth.signup_creating')}
-                                             </>
-                                         ) : (
-                                             <>
-                                                 <UserPlus className="w-4 h-4" />
-                                                 {t('auth.signup_create')}
-                                             </>
-                                         )}
-                                     </Button>
-                                 )}
-                             </div>
+                                {currentStep !== 4 ? (
+                                    <Button
+                                        type="button"
+                                        onClick={nextStep}
+                                        className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25"
+                                    >
+                                        {t('auth.signup_next')}{currentStep}
+                                        <ArrowRight className="w-4 h-4" />
+                                    </Button>
+                                ) : (
+                                    <>
+                                        <Button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25 disabled:opacity-50"
+                                        >
+                                            {isLoading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                    {t('auth.signup_creating')}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UserPlus className="w-4 h-4" />
+                                                    {t('auth.signup_create')}
+                                                </>
+                                            )}
+                                        </Button>
+                                    </>
+
+
+                                )}
+                            </div>
                         </form>
                     </Form>
 

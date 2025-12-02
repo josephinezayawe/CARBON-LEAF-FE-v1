@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react"
 import { useLanguage } from "@/components/global/language-provider"
+import { useAuth } from "@/context/authContext"
 
 export default function SignIn() {
   const router = useRouter()
@@ -35,10 +36,11 @@ export default function SignIn() {
     try {
       const result = await AuthAPI.login(data)
       toast.success(t('auth.signin_success'))
-      
+     
       // Navigate based on role
-      const route = result?.data.role === 'ADMIN' ? '/admin' : '/user'
-      router.push(route)
+      const route = result?.data.role === 'ADMIN' ? '/dashboard/admin' : '/dashboard/user'
+     return window.location.href = route
+      // router.push(route)
     } catch (error) {
       toast.error(t('auth.signin_error'))
       console.error('Sign in error:', error)

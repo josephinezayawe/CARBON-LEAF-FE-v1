@@ -36,6 +36,7 @@ import { useEffect, useState } from "react"
 import { Account } from "@/lib/dataSchemas"
 import { getCurrentUser } from "@/lib/auth"
 import { toast } from "sonner"
+import { useAuth } from "@/context/authContext"
 
 const getMenuItems = (t: (key: string) => string) => [
   {
@@ -87,22 +88,7 @@ export function AppSidebar() {
   const { state } = useSidebar()
   const isCollapsed = state === "collapsed"
 
-
-  const [account, setAccount] = useState<Account>()
-  useEffect(() => {
-    async function userData() {
-      const user = await getCurrentUser()
-      if (!user?.id) {
-        return toast.error('User Not Found')
-      }
-      if (user?.role !== 'USER') {
-        toast.error('UnAuthenticated User')
-        return window.location.href = '/signin'
-      }
-      setAccount(user)
-    }
-    userData()
-  }, [])
+  const { user, signOut } = useAuth();
   return (
     <Sidebar
       collapsible="icon"
@@ -273,10 +259,10 @@ export function AppSidebar() {
                 {!isCollapsed && (
                   <>
                     <div className="flex flex-col flex-1 min-w-0">
-                      <span className="font-semibold text-sm truncate">{account && `${account.firstName} ${account.lastName}`} </span>
-                      <span className="text-[11px] text-muted-foreground truncate">{account && account.contact}</span>
+                      <span className="font-semibold text-sm truncate">{user && `${user.firstName} ${user.lastName}`} </span>
+                      <span className="text-[11px] text-muted-foreground truncate">{user && user.contact}</span>
                     </div>
-                    <LogOut className="size-4 text-muted-foreground hover:text-red-500 transition-colors shrink-0" />
+                    <LogOut className="size-4 text-muted-foreground hover:text-red-500 transition-colors shrink-0" onClick={signOut} />
                   </>
                 )}
               </a>
