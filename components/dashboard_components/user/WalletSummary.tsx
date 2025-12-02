@@ -83,19 +83,7 @@ export default function WalletSummary({ credits }: WalletSummaryProps) {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="p-6 border-b border-gray-100 dark:border-gray-800">
-        <div className="grid grid-cols-2 gap-3">
-          <Button className="h-12 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-500/25">
-            <Coins className="w-4 h-4 mr-2" />
-            {t("credits.sell")}
-          </Button>
-          <Button variant="outline" className="h-12">
-            <Send className="w-4 h-4 mr-2" />
-            {t("credits.transfer")}
-          </Button>
-        </div>
-      </div>
+      
 
       {/* Stats Grid */}
       <div className="p-6 space-y-3">

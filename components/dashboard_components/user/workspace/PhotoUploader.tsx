@@ -72,7 +72,7 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
     photos.forEach(photo => {
       data.append('images', photo)
     })
-    const sector = account?.conservationSector.toUpperCase() as string
+    const sector = account?.conservationSectors[0] as string
     data.append('sector', sector)
     const result = await Workspace.create(data)
     if (result.success) {

@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Loader2, UserPlus, MapPin, ArrowRight, ArrowLeft, Check } from "lucide-react"
 import { useLanguage } from "@/components/global/language-provider"
+import { useAuth } from "@/context/authContext"
 
 // Rwanda hierarchy (simplified, expand as needed)
 const rwandaAdministrativeDivisions = [
@@ -116,11 +117,14 @@ const rwandaAdministrativeDivisions = [
     }
 ];
 
-type FormStep = 1 | 2 | 3;
+type FormStep = 1 | 2 | 3 | 4;
 
 export default function Signup() {
     const conservationSectors = [
         "FARMER",
+        "HYBRID_CAR_OWNER",
+        "ECO_FRIENDLY_STOVES",
+        "COMMERCIAL_BUILDING"
     ];
     const router = useRouter()
     const { lang, setLanguage } = useLanguage()
@@ -137,7 +141,7 @@ export default function Signup() {
             contact: '',
             password: '',
             nid: '',
-            conservationSector: '',
+            conservationSectors: [],
             confirmPassword: '',
             province: '',
             district: '',
@@ -160,23 +164,26 @@ export default function Signup() {
     const steps = [
         { number: 1, title: "Personal Info", completed: currentStep > 1 },
         { number: 2, title: "Location", completed: currentStep > 2 },
-        { number: 3, title: "Security", completed: currentStep > 3 }
+        { number: 3, title: "Conservation", completed: currentStep > 3 },
+        { number: 4, title: "Security", completed: currentStep > 4 }
     ]
 
     const { t } = useLanguage()
 
-    const onSubmit = async (data: RegisterData) => {
-        setIsLoading(true)
 
+    const onSubmit = async (data: RegisterData) => {
+        if (data.password !== data.confirmPassword) {
+            toast.error(t('auth.password_mismatch'));
+            return;
+        }
         try {
             const { confirmPassword, ...newData } = data
             const result = await AuthAPI.register(newData)
             toast.success(t('auth.signup_success'))
-
             if (result?.data.role === 'ADMIN') {
-                router.push('/admin')
+                window.location.href = '/dashboard/admin'
             } else if (result?.data.role === 'USER') {
-                router.push('/user')
+                window.location.href = '/dashboard/user'
             }
         } catch (error) {
             toast.error(t('auth.signup_error'))
@@ -185,14 +192,13 @@ export default function Signup() {
             setIsLoading(false)
         }
     }
-
     const nextStep = async () => {
         // Validate current step before proceeding
         const fields = getStepFields(currentStep)
         const isValid = await form.trigger(fields)
 
         if (isValid) {
-            setCurrentStep(prev => Math.min(prev + 1, 3) as FormStep)
+            setCurrentStep(prev => Math.min(prev + 1, 4) as FormStep)
         }
     }
 
@@ -207,6 +213,8 @@ export default function Signup() {
             case 2:
                 return ['province', 'district', 'sector', 'cell', 'village']
             case 3:
+                return ['conservationSectors']
+            case 4:
                 return ['password', 'confirmPassword']
             default:
                 return []
@@ -596,8 +604,99 @@ export default function Signup() {
                                 </div>
                             )}
 
-                            {/* Step 3: Security Information */}
+                            {/* Step 3: Conservation Sectors */}
                             {currentStep === 3 && (
+                                <div className="space-y-6 animate-in fade-in duration-300">
+                                    <div className="text-center mb-6">
+                                        <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                                            <svg className="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M10 3.5a2.5 2.5 0 015 0v1.5a2.5 2.5 0 01-5 0V3.5zm0 5a2.5 2.5 0 015 0v1.5a2.5 2.5 0 01-5 0V8.5zm0 5a2.5 2.5 0 015 0v1.5a2.5 2.5 0 01-5 0v-1.5z" />
+                                            </svg>
+                                        </div>
+                                        <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                                            Conservation Sectors
+                                        </h2>
+                                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                                            Select one or more conservation sectors
+                                        </p>
+                                    </div>
+
+                                    <FormField
+                                        control={form.control}
+                                        name="conservationSectors"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                    Which sectors apply to you? {t('auth.required')}
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                        {conservationSectors.map((sector) => {
+                                                            const isSelected = field.value?.includes(sector) || false
+                                                            return (
+                                                                <label
+                                                                    key={sector}
+                                                                    className={`
+                                                                        relative flex items-center gap-3 p-4 rounded-xl cursor-pointer
+                                                                        border-2 transition-all duration-200
+                                                                        ${isSelected
+                                                                            ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 shadow-md shadow-emerald-200/50 dark:shadow-emerald-900/30'
+                                                                            : 'border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-800/30 hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm hover:shadow-emerald-100/50 dark:hover:shadow-emerald-900/20'
+                                                                        }
+                                                                    `}
+                                                                >
+                                                                    <div className={`
+                                                                        flex items-center justify-center w-5 h-5 rounded-md border-2 flex-shrink-0 transition-all duration-200
+                                                                        ${isSelected
+                                                                            ? 'bg-emerald-500 border-emerald-500 dark:bg-emerald-400 dark:border-emerald-400'
+                                                                            : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800'
+                                                                        }
+                                                                    `}>
+                                                                        {isSelected && (
+                                                                            <svg className="w-3 h-3 text-white dark:text-emerald-900" fill="currentColor" viewBox="0 0 20 20">
+                                                                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                            </svg>
+                                                                        )}
+                                                                    </div>
+                                                                    <input
+                                                                        type="checkbox"
+                                                                        checked={isSelected}
+                                                                        onChange={(e) => {
+                                                                            const newValue = e.target.checked
+                                                                                ? [...(field.value || []), sector]
+                                                                                : (field.value || []).filter(s => s !== sector)
+                                                                            field.onChange(newValue)
+                                                                        }}
+                                                                        className="sr-only"
+                                                                    />
+                                                                    <div className="flex-1 flex flex-col gap-1">
+                                                                        <span className={`
+                                                                            block font-semibold transition-colors duration-200
+                                                                            ${isSelected
+                                                                                ? 'text-emerald-700 dark:text-emerald-300'
+                                                                                : 'text-slate-700 dark:text-slate-300'
+                                                                            }
+                                                                        `}>
+                                                                            {sector}
+                                                                        </span>
+                                                                    </div>
+                                                                    {isSelected && (
+                                                                        <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></div>
+                                                                    )}
+                                                                </label>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage className="text-xs" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            )}
+
+                            {/* Step 4: Security Information */}
+                            {currentStep === 4 && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
                                     <div className="text-center mb-6">
                                         <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-2">
@@ -677,40 +776,6 @@ export default function Signup() {
                                                 </FormItem>
                                             )}
                                         />
-                                        <FormField
-                                            control={form.control}
-                                            name="conservationSector"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Conservation Sector</FormLabel>
-                                                    <FormControl>
-                                                        <Select
-                                                            {...field}
-                                                            value={field.value || ""}
-                                                            onValueChange={(val) => field.onChange(val)}
-                                                        >
-                                                            <SelectTrigger className="w-[220px]">
-                                                                <SelectValue placeholder="Select Conservation Sector" />
-                                                            </SelectTrigger>
-
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectLabel>Available Sectors</SelectLabel>
-
-                                                                    {conservationSectors.map((sector) => (
-                                                                        <SelectItem key={sector} value={sector}>
-                                                                            {sector}
-                                                                        </SelectItem>
-                                                                    ))}
-
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
                                     </div>
                                 </div>
                             )}
@@ -728,33 +793,37 @@ export default function Signup() {
                                     {t('auth.signup_previous')}
                                 </Button>
 
-                                {currentStep < 3 ? (
+                                {currentStep !== 4 ? (
                                     <Button
                                         type="button"
                                         onClick={nextStep}
                                         className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25"
                                     >
-                                        {t('auth.signup_next')}
+                                        {t('auth.signup_next')}{currentStep}
                                         <ArrowRight className="w-4 h-4" />
                                     </Button>
                                 ) : (
-                                    <Button
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25 disabled:opacity-50"
-                                    >
-                                        {isLoading ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                {t('auth.signup_creating')}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <UserPlus className="w-4 h-4" />
-                                                {t('auth.signup_create')}
-                                            </>
-                                        )}
-                                    </Button>
+                                    <>
+                                        <Button
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-600/25 disabled:opacity-50"
+                                        >
+                                            {isLoading ? (
+                                                <>
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                    {t('auth.signup_creating')}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <UserPlus className="w-4 h-4" />
+                                                    {t('auth.signup_create')}
+                                                </>
+                                            )}
+                                        </Button>
+                                    </>
+
+
                                 )}
                             </div>
                         </form>

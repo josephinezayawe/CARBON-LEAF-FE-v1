@@ -20,13 +20,13 @@ export const RegisterDataSchema = z.object({
     contact: z.union([PhoneSchema, EmailSchema]),
     password: z.string(),
     nid: z.string(),
-    conservationSector: z.string().min(1, "Select Sector"),
+    conservationSectors: z.array(z.string()).min(1, "Select at least one sector"),
     district: z.string().min(1, "Select District"),
     cell: z.string().min(1, "Select Cell"),
     village: z.string().min(1, "Select Village"),
     province: z.string().min(1, "Select Province"),
     sector: z.string().min(1, "Select Sector"),
-    confirmPassword: z.string().optional()
+    confirmPassword: z.string()
 }).superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {
         ctx.addIssue({
@@ -54,7 +54,7 @@ export type Account = {
     sector: string;
     cell: string;
     village: string;
-    conservationSector: string;
+    conservationSectors: string[];
     iat: number; // issued at timestamp
     exp: number; // expiry timestamp
 };
