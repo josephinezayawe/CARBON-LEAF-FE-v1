@@ -18,20 +18,20 @@ export const RegisterDataSchema = z.object({
     firstName: z.string().min(1, "Name Can't be empty"),
     lastName: z.string().min(1, "Last Name can't be empty"),
     contact: z.union([PhoneSchema, EmailSchema]),
-    password: z.string(),
-    nid: z.string(),
-    conservationSector: z.string().min(1, "Select Sector"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
+    nid: z.string().min(1, "National ID can't be empty"),
+    conservationSectors: z.array(z.string()).min(1, "Select at least one sector"),
     district: z.string().min(1, "Select District"),
     cell: z.string().min(1, "Select Cell"),
     village: z.string().min(1, "Select Village"),
     province: z.string().min(1, "Select Province"),
     sector: z.string().min(1, "Select Sector"),
-    confirmPassword: z.string().optional()
+    confirmPassword: z.string().min(1, "Confirm password can't be empty")
 }).superRefine((data, ctx) => {
     if (data.password !== data.confirmPassword) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: "Password don't match",
+            message: "Passwords don't match",
             path: ['confirmPassword']
         })
     }
@@ -54,7 +54,7 @@ export type Account = {
     sector: string;
     cell: string;
     village: string;
-    conservationSector: string;
+    conservationSectors: string[];
     iat: number; // issued at timestamp
     exp: number; // expiry timestamp
 };

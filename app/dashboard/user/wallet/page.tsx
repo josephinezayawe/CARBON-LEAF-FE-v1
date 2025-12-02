@@ -1,10 +1,9 @@
 "use client";
 
-import { Wallet, TrendingUp, ArrowUpRight, ArrowDownRight, History } from "lucide-react";
+import { Wallet, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/components/global/language-provider";
 import { Badge } from "@/components/ui/badge";
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
-import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
 import WalletAccountSetup from "@/components/dashboard_components/user/WalletAccountSetup";
 import WalletTransactions from "@/components/dashboard_components/user/WalletTransactions";
 import { useEffect, useState } from "react";
@@ -12,6 +11,7 @@ import { Account } from "@/lib/dataSchemas";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { WalletAPI } from "@/app/api/wallet";
+import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
 
 export default function WalletPage() {
   const [account, setAccount] = useState<Account>()
@@ -87,9 +87,8 @@ export default function WalletPage() {
       </div>
 
       {/* Transactions & Account Setup */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-1">
         <WalletTransactions />
-        <WalletAccountSetup />
       </div>
     </div>
   );
