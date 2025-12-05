@@ -7,15 +7,15 @@ import PhotoGallery from "@/components/dashboard_components/user/workspace/Photo
 import UPIRegistration from "@/components/dashboard_components/user/workspace/UPIRegistration";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  MapPin,
-  ImageIcon,
-  Upload,
-  FolderKanban,
-  TrendingUp,
-  Trees,
-  Car,
-  Flame,
-  Building2,
+   MapPin,
+   ImageIcon,
+   Upload,
+   FolderKanban,
+   TrendingUp,
+   Trees,
+   Car,
+   Flame,
+   Building2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -43,16 +43,16 @@ interface UploadedPhoto {
 }
 
 type Sector =
-  | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+   | "FARMER"
+   | "HYBRID CAR OWNER"
+   | "ECO FRIENDLY STOVES"
+   | "COMMERCIAL BUILDING";
 
 type SectorConfig = {
-  value: Sector;
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
+   value: Sector;
+   label: string;
+   description: string;
+   icon: React.ComponentType<{ className?: string }>;
 };
 
 const SECTORS: SectorConfig[] = [
