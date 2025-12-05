@@ -15,14 +15,11 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import api from "@/app/api/api";
 
-type Sector =
-  | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+type SectorOption = "FARMER" | "HYBRID_CAR_OWNER" | "ECO_FRIENDLY_STOVES" | "COMMERCIAL_BUILDING";
 
 type SectorConfig = {
-  value: Sector;
+  option: SectorOption;
+  value: string;
   label: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -38,6 +35,7 @@ type SectorConfig = {
 
 const SECTORS: SectorConfig[] = [
   {
+    option: "FARMER",
     value: "FARMER",
     label: "Farmer",
     description: "Agricultural land management",
@@ -52,6 +50,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
+    option: "HYBRID_CAR_OWNER",
     value: "HYBRID CAR OWNER",
     label: "Hybrid Car Owner",
     description: "Vehicle emissions tracking",
@@ -66,6 +65,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
+    option: "ECO_FRIENDLY_STOVES",
     value: "ECO FRIENDLY STOVES",
     label: "Eco Friendly Stoves",
     description: "Clean cooking solutions",
@@ -80,6 +80,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
+    option: "COMMERCIAL_BUILDING",
     value: "COMMERCIAL BUILDING",
     label: "Commercial Building",
     description: "Building emissions management",
@@ -96,9 +97,9 @@ const SECTORS: SectorConfig[] = [
 ];
 
 export default function SectorsManagement() {
-  const [userSectors, setUserSectors] = useState<Sector[]>([]);
+  const [userSectors, setUserSectors] = useState<SectorOption[]>([]);
   const [loading, setLoading] = useState(true);
-  const [addingId, setAddingId] = useState<Sector | null>(null);
+  const [addingId, setAddingId] = useState<SectorOption | null>(null);
 
   useEffect(() => {
     fetchUserSectors();
@@ -108,8 +109,8 @@ export default function SectorsManagement() {
     try {
       setLoading(true);
       const response = await api.get("/api/user/sectors");
-      if (response.data?.sectors) {
-        setUserSectors(response.data.sectors);
+      if (response.data?.sectors && Array.isArray(response.data.sectors)) {
+        setUserSectors(response.data.sectors as SectorOption[]);
       } else {
         // Default: show FARMER as added for demo
         setUserSectors(["FARMER"]);
@@ -123,16 +124,17 @@ export default function SectorsManagement() {
     }
   };
 
-  const handleAddSector = async (sector: Sector) => {
-    setAddingId(sector);
+  const handleAddSector = async (sectorOption: SectorOption) => {
+    setAddingId(sectorOption);
     try {
+      const sectorConfig = SECTORS.find((s) => s.option === sectorOption);
       const response = await api.post("/api/user/sectors", {
-        sector,
+        sector: sectorConfig?.value,
       });
 
       if (response.data?.success) {
-        setUserSectors([...userSectors, sector]);
-        toast.success(`${SECTORS.find((s) => s.value === sector)?.label} added successfully`);
+        setUserSectors([...userSectors, sectorOption]);
+        toast.success(`${sectorConfig?.label} added successfully`);
       } else {
         toast.error(response.data?.message || "Failed to add sector");
       }
@@ -145,11 +147,11 @@ export default function SectorsManagement() {
   };
 
   const availableSectors = SECTORS.filter(
-    (sector) => !userSectors.includes(sector.value)
+    (sector) => !userSectors.includes(sector.option)
   );
 
   const currentUserSectors = SECTORS.filter((sector) =>
-    userSectors.includes(sector.value)
+    userSectors.includes(sector.option)
   );
 
   return (
@@ -187,7 +189,7 @@ export default function SectorsManagement() {
                 const Icon = sector.icon;
                 return (
                   <div
-                    key={sector.value}
+                    key={sector.option}
                     className={`relative p-4 rounded-xl border border-gray-200 dark:border-gray-700 ${sector.color.bg} ${sector.color.bgDark} transition-all`}
                   >
                     <div className="absolute top-3 right-3">
@@ -237,12 +239,12 @@ export default function SectorsManagement() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {availableSectors.map((sector) => {
                   const Icon = sector.icon;
-                  const isAdding = addingId === sector.value;
+                  const isAdding = addingId === sector.option;
 
                   return (
                     <button
-                      key={sector.value}
-                      onClick={() => handleAddSector(sector.value)}
+                      key={sector.option}
+                      onClick={() => handleAddSector(sector.option)}
                       disabled={isAdding}
                       className={`relative p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-emerald-500 dark:hover:border-emerald-400 transition-all group cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
