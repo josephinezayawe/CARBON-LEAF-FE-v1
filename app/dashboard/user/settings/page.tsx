@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import UserSettings from "@/components/dashboard_components/user/settings/UserSettings";
 import ProfileSettings from "@/components/dashboard_components/user/settings/ProfileSettings";
 import SecuritySettings from "@/components/dashboard_components/user/settings/SecuritySettings";
+import SectorsManagement from "@/components/dashboard_components/user/settings/SectorsManagement";
 
 export default function SettingsPage() {
   const { t } = useLanguage();
@@ -51,6 +52,7 @@ export default function SettingsPage() {
         <div className="lg:col-span-2 space-y-6">
           <ProfileSettings />
           <SecuritySettings />
+          <SectorsManagement />
         </div>
         <div className="space-y-6">
           <UserSettings />
