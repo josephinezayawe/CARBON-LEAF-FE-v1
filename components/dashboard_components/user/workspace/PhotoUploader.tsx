@@ -2,9 +2,24 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { ImagePlus, Trash2, Upload, CloudUpload, X, CheckCircle2, MapPin, Image as ImageIcon } from "lucide-react";
+import {
+  ImagePlus,
+  Trash2,
+  Upload,
+  CloudUpload,
+  X,
+  CheckCircle2,
+  MapPin,
+  Image as ImageIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -13,7 +28,72 @@ import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { Workspace } from "@/app/api/workspace";
 
-export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) {
+type Sector =
+  | "FARMER"
+  | "HYBRID CAR OWNER"
+  | "ECO FRIENDLY STOVES"
+  | "COMMERCIAL BUILDING";
+
+interface RegisteredUPI {
+  id: string;
+  upi: string;
+  landName?: string;
+  registeredAt: string;
+}
+
+const getSectorConfig = (sector: Sector) => {
+  const configs = {
+    FARMER: {
+      selectionLabel: "Select Land Parcel",
+      selectionPlaceholder: "Choose a registered UPI...",
+      selectionTooltip: "Choose UPI for photos",
+      icon: MapPin,
+      emptyMessage: "No UPIs registered",
+      selectToEnable: "Select a land parcel to enable",
+      readyMessage: "Ready to upload for",
+    },
+    "HYBRID CAR OWNER": {
+      selectionLabel: "Select Vehicle",
+      selectionPlaceholder: "Choose a registered vehicle...",
+      selectionTooltip: "Choose vehicle for photos",
+      icon: MapPin,
+      emptyMessage: "No vehicles registered",
+      selectToEnable: "Select a vehicle to enable",
+      readyMessage: "Ready to upload for",
+    },
+    "ECO FRIENDLY STOVES": {
+      selectionLabel: "Select Stove",
+      selectionPlaceholder: "Choose a registered stove...",
+      selectionTooltip: "Choose stove for photos",
+      icon: MapPin,
+      emptyMessage: "No stoves registered",
+      selectToEnable: "Select a stove to enable",
+      readyMessage: "Ready to upload for",
+    },
+    "COMMERCIAL BUILDING": {
+      selectionLabel: "Select Building",
+      selectionPlaceholder: "Choose a registered building...",
+      selectionTooltip: "Choose building for photos",
+      icon: MapPin,
+      emptyMessage: "No buildings registered",
+      selectToEnable: "Select a building to enable",
+      readyMessage: "Ready to upload for",
+    },
+  };
+  return configs[sector];
+};
+
+export default function PhotoUploader({
+  upiList = [],
+  sector = "FARMER",
+  registeredItems = [],
+  onUploadSuccess,
+}: {
+  upiList?: string[];
+  sector?: Sector;
+  registeredItems?: RegisteredUPI[];
+  onUploadSuccess?: () => void;
+}) {
   const { t } = useLanguage();
   const [selectedUPI, setSelectedUPI] = useState<string | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
@@ -39,17 +119,20 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
 
-    if (!selectedUPI) return;
+      if (!selectedUPI) return;
 
-    const files = Array.from(e.dataTransfer.files).filter(file =>
-      file.type.startsWith('image/')
-    );
-    setPhotos(prev => [...prev, ...files]);
-  }, [selectedUPI]);
+      const files = Array.from(e.dataTransfer.files).filter((file) =>
+        file.type.startsWith("image/")
+      );
+      setPhotos((prev) => [...prev, ...files]);
+    },
+    [selectedUPI]
+  );
 
   const removePhoto = (index: number) => {
     setPhotos(photos.filter((_, i) => i !== index));
@@ -68,56 +151,69 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
   console.log(account);
 
   const handleSubmit = async () => {
-    const data = new FormData()
-    photos.forEach(photo => {
-      data.append('images', photo)
-    })
-    const sector = account?.conservationSectors[0] as string
-    data.append('sector', sector)
-    const result = await Workspace.create(data)
-    if (result.success) {
-      toast.success('Photos Uploaded Successfully');
-    } else {
-      toast.error('Photos Upload Failed');
-      toast.error(result.message);
+    if (!selectedUPI) {
+      toast.error("Please select a land parcel");
+      return;
     }
-    console.log(result)
+
     setIsUploading(true);
     setUploadProgress(0);
 
-    // Simulate upload progress
-    for (let i = 0; i <= 100; i += 10) {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      setUploadProgress(i);
-    }
+    const data = new FormData();
+    photos.forEach((photo) => {
+      data.append("images", photo);
+    });
+    data.append("sector", sector);
+    data.append("upi", selectedUPI);
 
+    const result = await Workspace.create(data);
+    
+    if (result.success) {
+      // Simulate upload progress
+      for (let i = 0; i <= 100; i += 10) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        setUploadProgress(i);
+      }
+      toast.success("Photos Uploaded Successfully");
+      setPhotos([]);
+      setUploadProgress(0);
+      onUploadSuccess?.();
+    } else {
+      toast.error("Photos Upload Failed");
+      toast.error(result.message);
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+    
     setIsUploading(false);
-    setPhotos([]);
-    setUploadProgress(0);
   };
+
+  const config = getSectorConfig(sector);
 
   return (
     <div className="space-y-6">
-      {/* UPI Selection */}
+      {/* Asset Selection */}
       <div className="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-900">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
             <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <Label className="font-medium">{t("workspace.select_land_parcel")}</Label>
-            <p className="text-xs text-muted-foreground">{t("workspace.choose_upi_for_photos")}</p>
+            <Label className="font-medium">{config.selectionLabel}</Label>
+            <p className="text-xs text-muted-foreground">
+              {config.selectionTooltip}
+            </p>
           </div>
         </div>
 
         <Select onValueChange={setSelectedUPI} value={selectedUPI || undefined}>
           <SelectTrigger className="h-11 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-            <SelectValue placeholder={t("workspace.select_upi_placeholder")} />
+            <SelectValue placeholder={config.selectionPlaceholder} />
           </SelectTrigger>
           <SelectContent>
             {upiList.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
-                {t("workspace.no_upis_registered")}
+                {config.emptyMessage}
               </div>
             ) : (
               upiList.map((upi, idx) => (
@@ -159,18 +255,22 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
           disabled={!selectedUPI}
         />
 
-        <div className={cn(
-          "w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors",
-          isDragging
-            ? "bg-emerald-100 dark:bg-emerald-900/50"
-            : "bg-gray-100 dark:bg-gray-800"
-        )}>
-          <CloudUpload className={cn(
-            "w-8 h-8 transition-colors",
+        <div
+          className={cn(
+            "w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors",
             isDragging
-              ? "text-emerald-600 dark:text-emerald-400"
-              : "text-gray-400"
-          )} />
+              ? "bg-emerald-100 dark:bg-emerald-900/50"
+              : "bg-gray-100 dark:bg-gray-800"
+          )}
+        >
+          <CloudUpload
+            className={cn(
+              "w-8 h-8 transition-colors",
+              isDragging
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-gray-400"
+            )}
+          />
         </div>
 
         <p className="font-semibold text-lg mb-1">
@@ -187,7 +287,7 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
         {!selectedUPI && (
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-4 flex items-center gap-1">
             <MapPin className="w-3 h-3" />
-            {t("workspace.select_upi_to_enable")}
+            {config.selectToEnable}
           </p>
         )}
       </div>
@@ -200,8 +300,14 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
               <ImageIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               {t("workspace.selected_photos")}
             </h4>
-            <Badge variant="secondary" className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-              {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
+            <Badge
+              variant="secondary"
+              className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+            >
+              {photos.length}{" "}
+              {photos.length === 1
+                ? t("workspace.photo_singular")
+                : t("workspace.photo_plural")}
             </Badge>
           </div>
 
@@ -231,8 +337,12 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
                 </button>
 
                 <div className="absolute bottom-0 left-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <p className="text-xs text-white truncate font-medium">{file.name}</p>
-                  <p className="text-xs text-white/70">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <p className="text-xs text-white truncate font-medium">
+                    {file.name}
+                  </p>
+                  <p className="text-xs text-white/70">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
                 </div>
               </div>
             ))}
@@ -245,7 +355,9 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
                 <span className="font-medium text-emerald-700 dark:text-emerald-300">
                   {t("workspace.uploading_photos")}
                 </span>
-                <span className="text-emerald-600 dark:text-emerald-400">{uploadProgress}%</span>
+                <span className="text-emerald-600 dark:text-emerald-400">
+                  {uploadProgress}%
+                </span>
               </div>
               <Progress value={uploadProgress} className="h-2" />
             </div>
@@ -266,7 +378,10 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  {t("workspace.submit")} {photos.length} {photos.length === 1 ? t("workspace.photo_singular") : t("workspace.photo_plural")}
+                  {t("workspace.submit")} {photos.length}{" "}
+                  {photos.length === 1
+                    ? t("workspace.photo_singular")
+                    : t("workspace.photo_plural")}
                 </>
               )}
             </Button>
@@ -287,7 +402,8 @@ export default function PhotoUploader({ upiList = [] }: { upiList?: string[] }) 
       {photos.length === 0 && selectedUPI && (
         <div className="text-center py-8 text-muted-foreground text-sm">
           <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
-          {t("workspace.ready_to_upload")} <span className="font-semibold text-foreground">{selectedUPI}</span>
+          {config.readyMessage}{" "}
+          <span className="font-semibold text-foreground">{selectedUPI}</span>
         </div>
       )}
     </div>

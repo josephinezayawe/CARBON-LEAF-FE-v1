@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Languages, Sun, Moon, Percent, Bell, Globe, Palette, Volume2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/global/theme-provider";
 import { useLanguage } from "@/components/global/language-provider";
 
 interface SettingItemProps {
@@ -36,11 +35,9 @@ function SettingItem({ icon, label, description, children }: SettingItemProps) {
 }
 
 export default function UserSettings() {
-  const { theme, setTheme } = useTheme();
-  const { t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
+  const { t, lang, setLanguage } = useLanguage();
   const [notifications, setNotifications] = useState(true);
-  const [sounds, setSounds] = useState(true);
-  const [language, setLanguage] = useState("english");
 
   return (
     <div className="space-y-6">
@@ -67,7 +64,7 @@ export default function UserSettings() {
            >
             <Switch
               checked={theme === "dark"}
-              onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+              onCheckedChange={toggleTheme}
             />
           </SettingItem>
 
@@ -77,14 +74,14 @@ export default function UserSettings() {
             label={t("settings_preferences.language")}
             description={t("settings_preferences.language_desc")}
           >
-            <Select value={language} onValueChange={setLanguage}>
+            <Select value={lang} onValueChange={setLanguage}>
               <SelectTrigger className="w-32 h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="english">{t("settings_preferences.english")}</SelectItem>
-                <SelectItem value="french">{t("settings_preferences.french")}</SelectItem>
-                <SelectItem value="kinyarwanda">{t("settings_preferences.kinyarwanda")}</SelectItem>
+                <SelectItem value="en">{t("settings_preferences.english")}</SelectItem>
+                <SelectItem value="fr">{t("settings_preferences.french")}</SelectItem>
+                <SelectItem value="rw">{t("settings_preferences.kinyarwanda")}</SelectItem>
               </SelectContent>
             </Select>
           </SettingItem>
@@ -101,17 +98,7 @@ export default function UserSettings() {
             />
           </SettingItem>
 
-          {/* Sounds */}
-          <SettingItem
-            icon={<Volume2 className="w-4 h-4 text-pink-500" />}
-            label={t("settings_preferences.sound_effects")}
-            description={t("settings_preferences.play_sounds")}
-          >
-            <Switch
-              checked={sounds}
-              onCheckedChange={setSounds}
-            />
-          </SettingItem>
+          
         </div>
       </div>
 

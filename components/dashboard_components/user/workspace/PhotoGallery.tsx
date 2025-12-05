@@ -9,7 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   ImageIcon,
   ZoomIn,
@@ -35,7 +40,29 @@ interface PhotoItem {
   upi: string;
 }
 
-export default function PhotoGallery() {
+type Sector =
+  | "FARMER"
+  | "HYBRID CAR OWNER"
+  | "ECO FRIENDLY STOVES"
+  | "COMMERCIAL BUILDING";
+
+const getSectorFilterLabel = (sector: Sector) => {
+  const labels = {
+    FARMER: "Filter by UPI",
+    "HYBRID CAR OWNER": "Filter by Vehicle",
+    "ECO FRIENDLY STOVES": "Filter by Stove",
+    "COMMERCIAL BUILDING": "Filter by Building",
+  };
+  return labels[sector];
+};
+
+export default function PhotoGallery({
+  sector = "FARMER",
+  refreshTrigger = 0,
+}: {
+  sector?: Sector;
+  refreshTrigger?: number;
+}) {
   const { t } = useLanguage();
   const [filterUPI, setFilterUPI] = useState<string>("all");
   const [viewMode, setViewMode] = useState<"grid" | "compact">("grid");
@@ -71,20 +98,21 @@ export default function PhotoGallery() {
       const workspaces = result?.data?.data?.workspaces ?? [];
 
       // Transform and flatten all images from all workspaces
-      const transformed: PhotoItem[] = workspaces.flatMap((ws: any) =>
-        ws.imageAssets?.map((url: string, index: number) => ({
-          id: `${ws.id}-${index}`,
-          url,
-          uploadedAt: ws.uploadDate ?? "",
-          upi: ws.userId,
-        })) ?? []
+      const transformed: PhotoItem[] = workspaces.flatMap(
+        (ws: any) =>
+          ws.imageAssets?.map((url: string, index: number) => ({
+            id: `${ws.id}-${index}`,
+            url,
+            uploadedAt: ws.uploadDate ?? "",
+            upi: ws.userId,
+          })) ?? []
       );
 
       setPhotos(transformed);
     }
 
     getPhotos();
-  }, [account]);
+  }, [account, refreshTrigger]);
 
   const filteredPhotos =
     filterUPI === "all" ? photos : photos.filter((p) => p.upi === filterUPI);
@@ -111,7 +139,6 @@ export default function PhotoGallery() {
 
   return (
     <div className="space-y-6">
-
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-purple-100">
@@ -126,7 +153,6 @@ export default function PhotoGallery() {
         </div>
 
         <div className="flex items-center gap-3">
-
           <div className="flex items-center bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setViewMode("grid")}
@@ -149,13 +175,21 @@ export default function PhotoGallery() {
             </button>
           </div>
 
-
           <Select onValueChange={setFilterUPI}>
-            <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Filter by UPI" />
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder={getSectorFilterLabel(sector)} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All UPIs</SelectItem>
+              <SelectItem value="all">
+                All{" "}
+                {sector === "FARMER"
+                  ? "UPIs"
+                  : sector === "HYBRID CAR OWNER"
+                  ? "Vehicles"
+                  : sector === "ECO FRIENDLY STOVES"
+                  ? "Stoves"
+                  : "Buildings"}
+              </SelectItem>
               {upiList.map((upi, index) => (
                 <SelectItem key={index} value={upi}>
                   {upi}
@@ -165,7 +199,6 @@ export default function PhotoGallery() {
           </Select>
         </div>
       </div>
-
 
       <div
         className={cn(
@@ -188,7 +221,6 @@ export default function PhotoGallery() {
           </div>
         ))}
       </div>
-
 
       {selectedIndex !== null && filteredPhotos[selectedIndex] && (
         <Dialog open={true} onOpenChange={() => setSelectedIndex(null)}>
@@ -216,7 +248,6 @@ export default function PhotoGallery() {
                       </button>
                     </>
                   )}
-
                 </>
               )}
 

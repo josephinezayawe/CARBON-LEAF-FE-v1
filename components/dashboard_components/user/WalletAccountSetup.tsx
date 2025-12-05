@@ -32,8 +32,8 @@ export default function WalletAccountSetup() {
       <div className="p-6 border-b border-gray-100 dark:border-gray-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/50">
-              <CreditCard className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div className="p-2.5 rounded-xl bg-emerald-100 dark:bg-emerald-900/50">
+              <CreditCard className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div>
               <h3 className="font-semibold text-lg">{t("wallet.payment_methods")}</h3>
@@ -78,7 +78,7 @@ export default function WalletAccountSetup() {
                 <Input 
                   placeholder="e.g., Bank of Kigali" 
                   required 
-                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
@@ -90,7 +90,7 @@ export default function WalletAccountSetup() {
                 <Input 
                   placeholder="Enter account number" 
                   required 
-                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
@@ -102,7 +102,7 @@ export default function WalletAccountSetup() {
                 <Input 
                   placeholder="Full name as on account" 
                   required 
-                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
@@ -116,7 +116,7 @@ export default function WalletAccountSetup() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25"
+                className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25"
               >
                 {loading ? (
                   <>
@@ -147,8 +147,8 @@ export default function WalletAccountSetup() {
                       key={provider}
                       className={cn(
                         "flex items-center justify-center gap-2 p-4 rounded-xl border-2 cursor-pointer transition-all",
-                        "border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-700",
-                        "has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50 dark:has-[:checked]:bg-purple-900/20"
+                        "border-gray-200 dark:border-gray-700 hover:border-emerald-300 dark:hover:border-emerald-700",
+                        "has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50 dark:has-[:checked]:bg-emerald-900/20"
                       )}
                     >
                       <input type="radio" name="provider" value={provider} className="sr-only" />
@@ -166,7 +166,7 @@ export default function WalletAccountSetup() {
                 <Input 
                   placeholder="07XX XXX XXX" 
                   required 
-                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
@@ -178,7 +178,7 @@ export default function WalletAccountSetup() {
                 <Input 
                   placeholder="Registered name" 
                   required 
-                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500"
+                  className="h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
                 />
               </div>
 
@@ -192,7 +192,7 @@ export default function WalletAccountSetup() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg shadow-purple-500/25"
+                className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg shadow-emerald-500/25"
               >
                 {loading ? (
                     <>

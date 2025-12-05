@@ -11,7 +11,7 @@ import { Account } from "@/lib/dataSchemas";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import { WalletAPI } from "@/app/api/wallet";
-import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
+// import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
 
 export default function WalletPage() {
   const [account, setAccount] = useState<Account>()
@@ -47,7 +47,7 @@ export default function WalletPage() {
   return (
     <div className="space-y-8">
       {/* Header Section */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-green-500 to-teal-600 p-6 md:p-8">
         <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,rgba(255,255,255,0.5))]" />
         <div className="absolute -top-24 -right-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
@@ -63,7 +63,7 @@ export default function WalletPage() {
                   <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
                     {t("wallet.title")}
                   </h1>
-                  <p className="text-purple-100 text-sm md:text-base">
+                  <p className="text-emerald-100 text-sm md:text-base">
                     {t("wallet.manage")}
                   </p>
                 </div>
@@ -82,7 +82,7 @@ export default function WalletPage() {
 
       {/* Balance & Summary */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <WalletBalance />
+        <WalletAccountSetup />
         <WalletSummary credits={credits} />
       </div>
 
