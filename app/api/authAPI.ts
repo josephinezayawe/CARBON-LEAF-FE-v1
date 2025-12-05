@@ -6,6 +6,8 @@ export const AuthAPI = {
 
     register: async (data: any) => {
         try {
+            console.log(data);
+            
             const result = await api.post('/api/register/', data)
             return result.data
         } catch (error) {
@@ -17,7 +19,7 @@ export const AuthAPI = {
 
     },
     login: async (data: any) => {
-        try {
+        try {            
             const result = await api.post('/api/login/', data)
             return result.data
         } catch (error) {
