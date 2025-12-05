@@ -198,27 +198,27 @@ export default function WorkspacePage() {
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
 
         <div className="relative z-10">
-          <div className="flex flex-col items-start gap-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
-                <FolderKanban className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                  Workspace
-                </h1>
-                <p className="text-emerald-100 text-sm md:text-base">
-                  Manage your{" "}
-                  {selectedSector === "FARMER" ? "land parcels" : "assets"}{" "}
-                  and documentation
-                </p>
-              </div>
-            </div>
-            <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5 whitespace-nowrap shadow-lg">
-              <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-              Active
-            </Badge>
-          </div>
+           <div className="flex flex-col items-start gap-6">
+             <div className="flex items-center gap-3">
+               <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
+                 <FolderKanban className="w-6 h-6 text-white" />
+               </div>
+               <div>
+                 <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+                   Workspace
+                 </h1>
+                 <p className="text-emerald-100 text-sm md:text-base">
+                   Manage your{" "}
+                   {selectedSector === "FARMER" ? "land parcels" : "assets"}{" "}
+                   and documentation
+                 </p>
+               </div>
+             </div>
+             <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5 whitespace-nowrap shadow-lg">
+               <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
+               Active
+             </Badge>
+           </div>
         </div>
       </div>
 
