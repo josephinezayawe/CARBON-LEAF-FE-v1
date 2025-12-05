@@ -13,10 +13,13 @@ import { useState } from "react"
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react"
 import { useLanguage } from "@/components/global/language-provider"
 import { useAuth } from "@/context/authContext"
+import { useTheme } from "@/components/global/theme-provider"
+import { Sun, Moon } from "lucide-react"
 
 export default function SignIn() {
   const router = useRouter()
   const { lang, setLanguage } = useLanguage()
+  const { theme, toggleTheme } = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -51,8 +54,22 @@ export default function SignIn() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-green-100/20 dark:from-slate-950 dark:via-emerald-950/20 dark:to-green-950/10 px-4 py-8">
-      {/* Language Switcher */}
-      <div className="absolute top-6 right-6">
+      {/* Theme and Language Switchers */}
+      <div className="absolute top-6 right-6 flex items-center gap-4">
+        {/* Theme Toggle */}
+        <button 
+          onClick={toggleTheme}
+          className="px-3 py-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-white dark:hover:bg-slate-700 transition-colors flex items-center gap-2 shadow-sm"
+          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+        >
+          {theme === 'light' ? (
+            <Moon className="w-4 h-4" />
+          ) : (
+            <Sun className="w-4 h-4" />
+          )}
+        </button>
+
+        {/* Language Switcher */}
         <div className="relative group">
           <button className="px-3 py-1.5 rounded-lg bg-white/80 border border-slate-200 text-slate-700 text-sm font-medium hover:bg-white transition-colors flex items-center gap-2 shadow-sm">
             {lang.toUpperCase()}
