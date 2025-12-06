@@ -19,7 +19,7 @@ const mockPendingApprovals: PendingApproval[] = [
   {
     id: "1",
     userName: "Jean Ndayisaba",
-    sector: "Farmer",
+    sector: "farmer",
     creditsRequested: 1200,
     submittedDate: "2 hours ago",
     status: "documents",
@@ -27,7 +27,7 @@ const mockPendingApprovals: PendingApproval[] = [
   {
     id: "2",
     userName: "Marie Uwizeyimana",
-    sector: "Eco Stoves",
+    sector: "eco_stove",
     creditsRequested: 800,
     submittedDate: "5 hours ago",
     status: "verification",
@@ -35,7 +35,7 @@ const mockPendingApprovals: PendingApproval[] = [
   {
     id: "3",
     userName: "Paul Habimana",
-    sector: "Hybrid Car Owner",
+    sector: "hybrid_vehicle",
     creditsRequested: 500,
     submittedDate: "1 day ago",
     status: "pending",
@@ -43,7 +43,7 @@ const mockPendingApprovals: PendingApproval[] = [
   {
     id: "4",
     userName: "Sophie Karangwa",
-    sector: "Commercial Building",
+    sector: "commercial_building",
     creditsRequested: 2500,
     submittedDate: "2 days ago",
     status: "documents",
@@ -51,7 +51,7 @@ const mockPendingApprovals: PendingApproval[] = [
   {
     id: "5",
     userName: "Emmanuel Kanyarwanda",
-    sector: "Farmer",
+    sector: "farmer",
     creditsRequested: 950,
     submittedDate: "3 days ago",
     status: "pending",
@@ -60,6 +60,23 @@ const mockPendingApprovals: PendingApproval[] = [
 
 export default function PendingApprovalsWidget() {
   const { t } = useLanguage()
+
+  const getSectorLabel = (sector: string) => {
+    return t(`admin.${sector}`)
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "documents":
+        return t("admin.approval_status_documents")
+      case "verification":
+        return t("admin.approval_status_verification")
+      case "pending":
+        return t("admin.approval_status_pending")
+      default:
+        return status
+    }
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -119,15 +136,15 @@ export default function PendingApprovalsWidget() {
                 <div className="flex items-center gap-2 mb-1">
                   {getStatusIcon(approval.status)}
                   <p className="font-medium text-sm truncate">{approval.userName}</p>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {approval.sector} • {approval.creditsRequested.toLocaleString()} credits
-                </p>
-                <p className="text-xs text-muted-foreground/70 mt-1">{approval.submittedDate}</p>
-              </div>
-              <Badge className={getStatusColor(approval.status)}>
-                {approval.status}
-              </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                     {getSectorLabel(approval.sector)} • {approval.creditsRequested.toLocaleString()} credits
+                  </p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">{approval.submittedDate}</p>
+                  </div>
+                  <Badge className={getStatusColor(approval.status)}>
+                  {getStatusLabel(approval.status)}
+                  </Badge>
             </div>
           </div>
         ))}

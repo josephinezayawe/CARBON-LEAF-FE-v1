@@ -12,22 +12,32 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 import { useLanguage } from "@/components/global/language-provider"
 import { Badge } from "@/components/ui/badge"
 
-const userDataBySector = [
-  { name: "Farmer", users: 4200, active: 3800, pending: 400, color: "hsl(142, 76%, 36%)" },
-  { name: "Hybrid Car Owner", users: 2150, active: 1980, pending: 170, color: "hsl(217, 91%, 60%)" },
-  { name: "Eco Stoves", users: 3100, active: 2850, pending: 250, color: "hsl(39, 84%, 53%)" },
-  { name: "Commercial Building", users: 2000, active: 1750, pending: 250, color: "hsl(280, 85%, 50%)" },
+const userDataBySectorData = [
+  { key: "farmer", users: 4200, active: 3800, pending: 400, color: "hsl(142, 76%, 36%)" },
+  { key: "hybrid_vehicle", users: 2150, active: 1980, pending: 170, color: "hsl(217, 91%, 60%)" },
+  { key: "eco_stove", users: 3100, active: 2850, pending: 250, color: "hsl(39, 84%, 53%)" },
+  { key: "commercial_building", users: 2000, active: 1750, pending: 250, color: "hsl(280, 85%, 50%)" },
 ]
 
-const statusBreakdown = [
-  { name: "Active", value: 10380, color: "hsl(142, 76%, 36%)" },
-  { name: "Pending", value: 1070, color: "hsl(39, 84%, 53%)" },
-  { name: "Suspended", value: 350, color: "hsl(0, 84%, 60%)" },
-  { name: "Inactive", value: 350, color: "hsl(200, 40%, 60%)" },
+const statusBreakdownData = [
+  { key: "status_active", value: 10380, color: "hsl(142, 76%, 36%)" },
+  { key: "status_pending", value: 1070, color: "hsl(39, 84%, 53%)" },
+  { key: "status_suspended", value: 350, color: "hsl(0, 84%, 60%)" },
+  { key: "status_inactive", value: 350, color: "hsl(200, 40%, 60%)" },
 ]
 
 export default function AllUsersOverview() {
   const { t } = useLanguage()
+
+  const userDataBySector = userDataBySectorData.map((item) => ({
+    ...item,
+    name: t(`admin.${item.key}`),
+  }))
+
+  const statusBreakdown = statusBreakdownData.map((item) => ({
+    ...item,
+    name: t(`admin.${item.key}`),
+  }))
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">

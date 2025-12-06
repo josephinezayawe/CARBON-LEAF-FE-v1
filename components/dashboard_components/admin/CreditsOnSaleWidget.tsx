@@ -45,6 +45,19 @@ const mockListings: CreditListing[] = [
 export default function CreditsOnSaleWidget() {
   const { t } = useLanguage()
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return t("admin.status_active")
+      case "sold_out":
+        return t("admin.listing_status_sold_out")
+      case "paused":
+        return t("admin.listing_status_paused")
+      default:
+        return status
+    }
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -104,7 +117,7 @@ export default function CreditsOnSaleWidget() {
                   </p>
                 </div>
                 <Badge className={getStatusColor(listing.status)}>
-                  {listing.status.replace(/_/g, " ")}
+                   {getStatusLabel(listing.status)}
                 </Badge>
               </div>
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">

@@ -21,7 +21,7 @@ export default function AdminDashboard() {
     <div className="space-y-6 w-full">
       {/* Header Section */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tighter">
           {t("admin.welcome")}
         </h1>
         <p className="text-muted-foreground">

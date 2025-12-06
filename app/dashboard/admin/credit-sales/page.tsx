@@ -43,7 +43,7 @@ const mockListings: CreditListing[] = [
   {
     id: "list-001",
     name: "Farmer Credits - Batch 001",
-    sector: "Farmer",
+    sector: "farmer",
     quantity: 45000,
     pricePerCredit: 210,
     totalValue: 9450000,
@@ -54,7 +54,7 @@ const mockListings: CreditListing[] = [
   {
     id: "list-002",
     name: "Eco Stove Credits - Premium",
-    sector: "Eco Stoves",
+    sector: "eco_stove",
     quantity: 28500,
     pricePerCredit: 215,
     totalValue: 6132500,
@@ -65,7 +65,7 @@ const mockListings: CreditListing[] = [
   {
     id: "list-003",
     name: "Hybrid Vehicle Credits",
-    sector: "Hybrid Vehicles",
+    sector: "hybrid_vehicle",
     quantity: 12000,
     pricePerCredit: 208,
     totalValue: 2496000,
@@ -76,7 +76,7 @@ const mockListings: CreditListing[] = [
   {
     id: "list-004",
     name: "Commercial Building Credits",
-    sector: "Commercial",
+    sector: "commercial_building",
     quantity: 35000,
     pricePerCredit: 218,
     totalValue: 7630000,
@@ -103,6 +103,23 @@ export default function CreditSalesPage() {
     .reduce((sum, l) => sum + (l.quantity - l.sold) * l.pricePerCredit, 0)
 
   const totalSold = listings.reduce((sum, l) => sum + l.sold * l.pricePerCredit, 0)
+
+  const getSectorLabel = (sector: string) => {
+    return t(`admin.${sector}`)
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return t("admin.status_active")
+      case "sold_out":
+        return t("admin.listing_status_sold_out")
+      case "paused":
+        return t("admin.listing_status_paused")
+      default:
+        return status
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -213,9 +230,9 @@ export default function CreditSalesPage() {
                          </SelectTrigger>
                          <SelectContent>
                            <SelectItem value="farmer">{t("admin.farmer")}</SelectItem>
-                           <SelectItem value="eco">{t("admin.eco_stoves")}</SelectItem>
-                           <SelectItem value="hybrid">{t("admin.hybrid_vehicles")}</SelectItem>
-                           <SelectItem value="commercial">{t("admin.commercial")}</SelectItem>
+                           <SelectItem value="eco_stove">{t("admin.eco_stove")}</SelectItem>
+                           <SelectItem value="hybrid_vehicle">{t("admin.hybrid_vehicle")}</SelectItem>
+                           <SelectItem value="commercial_building">{t("admin.commercial_building")}</SelectItem>
                          </SelectContent>
                        </Select>
                      </div>
@@ -278,7 +295,7 @@ export default function CreditSalesPage() {
                         </TableCell>
                         <TableCell>
                           <Badge className={getStatusColor(listing.status)}>
-                            {listing.status.replace(/_/g, " ")}
+                            {getStatusLabel(listing.status)}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">

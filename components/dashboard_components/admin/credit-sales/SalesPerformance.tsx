@@ -2,6 +2,7 @@
 
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/components/global/language-provider"
 
 const salesData = [
   { date: "Week 1", credits: 5000, revenue: 1050000, buyers: 2 },
@@ -19,11 +20,13 @@ interface CreditListing {
 }
 
 export default function SalesPerformance({ listings }: { listings: CreditListing[] }) {
+  const { t } = useLanguage()
+
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <CardTitle>Sales Performance</CardTitle>
-        <CardDescription>Weekly sales trend and growth metrics</CardDescription>
+        <CardTitle>{t("admin.sales_performance")}</CardTitle>
+        <CardDescription>{t("admin.weekly_sales_trend")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
@@ -67,7 +70,7 @@ export default function SalesPerformance({ listings }: { listings: CreditListing
                 stroke="hsl(217, 91%, 60%)"
                 strokeWidth={2}
                 dot={{ fill: "hsl(217, 91%, 60%)" }}
-                name="Credits Sold"
+                name={t("admin.credits_sold")}
               />
               <Line
                 yAxisId="right"
@@ -76,7 +79,7 @@ export default function SalesPerformance({ listings }: { listings: CreditListing
                 stroke="hsl(142, 76%, 36%)"
                 strokeWidth={2}
                 dot={{ fill: "hsl(142, 76%, 36%)" }}
-                name="Revenue (RWF)"
+                name={t("admin.revenue_rwf")}
               />
             </LineChart>
           </ResponsiveContainer>

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowDownLeft, ArrowUpRight, ShoppingCart, Eye, Download } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/components/global/language-provider"
 
 interface Transaction {
   id: string
@@ -20,6 +21,32 @@ interface Props {
 }
 
 export default function WalletTransactionsList({ transactions }: Props) {
+  const { t } = useLanguage()
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case "deposit":
+        return t("admin.tx_deposit")
+      case "sale":
+        return t("admin.tx_sale")
+      case "withdrawal":
+        return t("admin.tx_withdrawal")
+      default:
+        return type
+    }
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "completed":
+        return t("admin.tx_completed")
+      case "pending":
+        return t("admin.tx_pending")
+      default:
+        return status
+    }
+  }
+
   const getTypeIcon = (type: string) => {
     switch (type) {
       case "deposit":
@@ -62,17 +89,17 @@ export default function WalletTransactionsList({ transactions }: Props) {
   return (
     <Card className="border-0 shadow-sm">
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Recent Transactions</CardTitle>
-            <CardDescription>{transactions.length} recent transactions</CardDescription>
-          </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <Download className="w-4 h-4" />
-            Export
-          </Button>
-        </div>
-      </CardHeader>
+         <div className="flex items-center justify-between">
+           <div>
+             <CardTitle>{t("admin.recent_transactions")}</CardTitle>
+             <CardDescription>{transactions.length} {t("admin.recent_transactions_desc")}</CardDescription>
+           </div>
+           <Button variant="outline" size="sm" className="gap-2">
+             <Download className="w-4 h-4" />
+             {t("admin.export")}
+           </Button>
+         </div>
+       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {transactions.map((tx) => (
@@ -105,7 +132,7 @@ export default function WalletTransactionsList({ transactions }: Props) {
                         : "text-amber-600 border-amber-200 bg-amber-50"
                     )}
                   >
-                    {tx.status}
+                    {getStatusLabel(tx.status)}
                   </Badge>
                 </div>
                 <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
