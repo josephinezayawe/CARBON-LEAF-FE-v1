@@ -28,53 +28,53 @@ export default function SettingsPage() {
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.system_settings")}</h1>
         <p className="text-muted-foreground">
-          Configure system parameters and fees
+          {t("admin.configure_parameters")}
         </p>
       </div>
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full max-w-2xl grid-cols-3">
-          <TabsTrigger value="fees">Fees & Pricing</TabsTrigger>
-          <TabsTrigger value="general">General Settings</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="fees">{t("admin.fees_pricing")}</TabsTrigger>
+          <TabsTrigger value="general">{t("admin.general_settings")}</TabsTrigger>
+          <TabsTrigger value="notifications">{t("admin.notifications")}</TabsTrigger>
         </TabsList>
 
         {/* Fees & Pricing Tab */}
         <TabsContent value="fees">
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle>Fee Configuration</CardTitle>
+              <CardTitle>{t("admin.fee_configuration")}</CardTitle>
               <CardDescription>
-                Set commission rates and pricing for the system
+                {t("admin.set_commission_rates")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Platform Commission */}
               <div className="space-y-4 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30">
-                <h3 className="font-semibold">Platform Commission</h3>
+                <h3 className="font-semibold">{t("admin.platform_commission")}</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <Label htmlFor="farmer-commission">Farmer Credits Commission (%)</Label>
+                     <Label htmlFor="farmer-commission">{t("admin.farmer_commission")}</Label>
                      <Input id="farmer-commission" type="number" defaultValue="5" step="0.1" />
-                     <p className="text-xs text-muted-foreground">Applied to all farmer credit sales</p>
+                     <p className="text-xs text-muted-foreground">{t("admin.applied_farmer")}</p>
                    </div>
                    <div className="space-y-2">
-                     <Label htmlFor="eco-commission">Eco Stoves Commission (%)</Label>
+                     <Label htmlFor="eco-commission">{t("admin.eco_commission")}</Label>
                      <Input id="eco-commission" type="number" defaultValue="6" step="0.1" />
-                     <p className="text-xs text-muted-foreground">Applied to eco stove transactions</p>
+                     <p className="text-xs text-muted-foreground">{t("admin.applied_eco")}</p>
                    </div>
                    <div className="space-y-2">
-                     <Label htmlFor="hybrid-commission">Hybrid Vehicle Commission (%)</Label>
+                     <Label htmlFor="hybrid-commission">{t("admin.hybrid_commission")}</Label>
                      <Input id="hybrid-commission" type="number" defaultValue="4" step="0.1" />
-                     <p className="text-xs text-muted-foreground">Applied to hybrid vehicle credits</p>
+                     <p className="text-xs text-muted-foreground">{t("admin.applied_hybrid")}</p>
                    </div>
                    <div className="space-y-2">
-                     <Label htmlFor="commercial-commission">Commercial Commission (%)</Label>
+                     <Label htmlFor="commercial-commission">{t("admin.commercial_commission")}</Label>
                      <Input id="commercial-commission" type="number" defaultValue="7" step="0.1" />
-                     <p className="text-xs text-muted-foreground">Applied to commercial credits</p>
+                     <p className="text-xs text-muted-foreground">{t("admin.applied_commercial")}</p>
                    </div>
                  </div>
               </div>

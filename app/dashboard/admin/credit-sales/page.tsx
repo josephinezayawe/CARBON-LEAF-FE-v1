@@ -121,9 +121,9 @@ export default function CreditSalesPage() {
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Credit Sales</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.credit_sales")}</h1>
         <p className="text-muted-foreground">
-          Manage credit listings and monitor sales to companies
+          {t("admin.manage_listings")}
         </p>
       </div>
 
@@ -131,38 +131,38 @@ export default function CreditSalesPage() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Active Listings</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.active_listings")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Currently selling</p>
+            <p className="text-xs text-muted-foreground">{t("admin.currently_selling")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total on Sale</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.total_on_sale")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(totalOnSale / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">RWF value</p>
+            <p className="text-xs text-muted-foreground">{t("admin.rwf_value")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Sold</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.total_sold")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(totalSold / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">RWF revenue</p>
+            <p className="text-xs text-muted-foreground">{t("admin.rwf_revenue")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Active Buyers</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.active_buyers")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{mockBuyers.length}</div>
-            <p className="text-xs text-muted-foreground">Companies</p>
+            <p className="text-xs text-muted-foreground">{t("admin.companies")}</p>
           </CardContent>
         </Card>
       </div>
@@ -173,8 +173,8 @@ export default function CreditSalesPage() {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full max-w-md grid-cols-2">
-          <TabsTrigger value="listings">Active Listings</TabsTrigger>
-          <TabsTrigger value="buyers">Buyers</TabsTrigger>
+          <TabsTrigger value="listings">{t("admin.active_listings_tab")}</TabsTrigger>
+          <TabsTrigger value="buyers">{t("admin.buyers_tab")}</TabsTrigger>
         </TabsList>
 
         {/* Listings Tab */}
@@ -183,15 +183,15 @@ export default function CreditSalesPage() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>Credit Listings</CardTitle>
-                  <CardDescription>All active and paused listings</CardDescription>
+                  <CardTitle>{t("admin.credit_listings")}</CardTitle>
+                  <CardDescription>{t("admin.all_active_paused")}</CardDescription>
                 </div>
                 <Button
                   onClick={() => setShowNewListingForm(!showNewListingForm)}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <Plus className="w-4 h-4 mr-2" />
-                  New Listing
+                  {t("admin.new_listing")}
                 </Button>
               </div>
             </CardHeader>
@@ -200,48 +200,48 @@ export default function CreditSalesPage() {
               <>
                 <div className="border-t border-gray-200 dark:border-gray-700 px-6 py-6">
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <Label>Listing Name</Label>
-                        <Input placeholder="e.g., Farmer Credits - Batch 002" />
-                      </div>
-                      <div>
-                        <Label>Sector</Label>
-                        <Select>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select sector" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="farmer">Farmer</SelectItem>
-                            <SelectItem value="eco">Eco Stoves</SelectItem>
-                            <SelectItem value="hybrid">Hybrid Vehicles</SelectItem>
-                            <SelectItem value="commercial">Commercial</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label>Quantity (Credits)</Label>
-                        <Input type="number" placeholder="0" />
-                      </div>
-                      <div>
-                        <Label>Price per Credit (RWF)</Label>
-                        <Input type="number" placeholder="210" />
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Description</Label>
-                      <Textarea placeholder="Describe the credits and their source..." rows={3} />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button className="flex-1 bg-blue-600 hover:bg-blue-700">Create Listing</Button>
-                      <Button
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => setShowNewListingForm(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </div>
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <div>
+                       <Label>{t("admin.listing_name")}</Label>
+                       <Input placeholder={t("admin.listing_placeholder")} />
+                     </div>
+                     <div>
+                       <Label>{t("admin.select_sector")}</Label>
+                       <Select>
+                         <SelectTrigger>
+                           <SelectValue placeholder={t("admin.select_sector")} />
+                         </SelectTrigger>
+                         <SelectContent>
+                           <SelectItem value="farmer">{t("admin.farmer")}</SelectItem>
+                           <SelectItem value="eco">{t("admin.eco_stoves")}</SelectItem>
+                           <SelectItem value="hybrid">{t("admin.hybrid_vehicles")}</SelectItem>
+                           <SelectItem value="commercial">{t("admin.commercial")}</SelectItem>
+                         </SelectContent>
+                       </Select>
+                     </div>
+                     <div>
+                       <Label>{t("admin.quantity_credits")}</Label>
+                       <Input type="number" placeholder="0" />
+                     </div>
+                     <div>
+                       <Label>{t("admin.price_per_credit")}</Label>
+                       <Input type="number" placeholder="210" />
+                     </div>
+                   </div>
+                   <div>
+                     <Label>{t("admin.description")}</Label>
+                     <Textarea placeholder={t("admin.describe_credits")} rows={3} />
+                   </div>
+                   <div className="flex gap-3">
+                     <Button className="flex-1 bg-blue-600 hover:bg-blue-700">{t("admin.create_listing")}</Button>
+                     <Button
+                       variant="outline"
+                       className="flex-1"
+                       onClick={() => setShowNewListingForm(false)}
+                     >
+                       {t("admin.cancel")}
+                     </Button>
+                   </div>
                   </div>
                 </div>
               </>
@@ -252,14 +252,14 @@ export default function CreditSalesPage() {
                 <Table>
                   <TableHeader>
                     <TableRow className="border-b bg-gray-50/50 dark:bg-gray-800/50">
-                      <TableHead>Listing Name</TableHead>
-                      <TableHead>Credits</TableHead>
-                      <TableHead>Price</TableHead>
-                      <TableHead>Total Value</TableHead>
-                      <TableHead>Sold</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Created</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t("admin.table_listing_name")}</TableHead>
+                      <TableHead>{t("admin.table_credits")}</TableHead>
+                      <TableHead>{t("admin.table_price")}</TableHead>
+                      <TableHead>{t("admin.table_total_value")}</TableHead>
+                      <TableHead>{t("admin.table_sold")}</TableHead>
+                      <TableHead>{t("admin.table_status")}</TableHead>
+                      <TableHead>{t("admin.table_created")}</TableHead>
+                      <TableHead className="text-right">{t("admin.table_actions")}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -285,7 +285,7 @@ export default function CreditSalesPage() {
                           {new Date(listing.createdDate).toLocaleDateString()}
                         </TableCell>
                         <TableCell className="text-right">
-                          <Button size="sm" variant="ghost">Edit</Button>
+                          <Button size="sm" variant="ghost">{t("admin.edit")}</Button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -297,12 +297,12 @@ export default function CreditSalesPage() {
         </TabsContent>
 
         {/* Buyers Tab */}
-        <TabsContent value="buyers">
-          <Card className="border-0 shadow-sm">
-            <CardHeader>
-              <CardTitle>Buyers & Partners</CardTitle>
-              <CardDescription>Companies purchasing credits</CardDescription>
-            </CardHeader>
+         <TabsContent value="buyers">
+           <Card className="border-0 shadow-sm">
+             <CardHeader>
+               <CardTitle>{t("admin.buyers_partners")}</CardTitle>
+               <CardDescription>{t("admin.companies_purchasing")}</CardDescription>
+             </CardHeader>
             <CardContent>
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {mockBuyers.map((buyer) => (
@@ -316,15 +316,15 @@ export default function CreditSalesPage() {
                     </div>
                     <div className="space-y-2 text-sm">
                       <p className="text-muted-foreground">
-                        <span className="font-medium">{buyer.credits.toLocaleString()}</span> credits purchased
+                        <span className="font-medium">{buyer.credits.toLocaleString()}</span> {t("admin.credits_purchased")}
                       </p>
                       <p className="text-muted-foreground">
-                        <span className="font-medium">{(buyer.totalValue / 1000000).toFixed(1)}M RWF</span> spent
+                        <span className="font-medium">{(buyer.totalValue / 1000000).toFixed(1)}M RWF</span> {t("admin.spent")}
                       </p>
                     </div>
                     <div className="mt-4 flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1">View History</Button>
-                      <Button size="sm" variant="ghost">Contact</Button>
+                      <Button size="sm" variant="outline" className="flex-1">{t("admin.view_history")}</Button>
+                      <Button size="sm" variant="ghost">{t("admin.contact")}</Button>
                     </div>
                   </div>
                 ))}

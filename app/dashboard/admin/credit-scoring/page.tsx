@@ -109,9 +109,9 @@ export default function CreditScoringPage() {
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Credit Scoring System</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.credit_scoring")}</h1>
         <p className="text-muted-foreground">
-          AI-powered verification and credit approval management
+          {t("admin.ai_powered_verification")}
         </p>
       </div>
 
@@ -119,38 +119,38 @@ export default function CreditScoringPage() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Pending Review</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.pending_review")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">47</div>
-            <p className="text-xs text-muted-foreground">Awaiting initial review</p>
+            <p className="text-xs text-muted-foreground">{t("admin.awaiting_initial_review")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Under AI Review</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.under_ai_review")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">23</div>
-            <p className="text-xs text-muted-foreground">AI verification in progress</p>
+            <p className="text-xs text-muted-foreground">{t("admin.ai_verification_progress")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Approved</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.approved")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">234</div>
-            <p className="text-xs text-muted-foreground">Credits issued</p>
+            <p className="text-xs text-muted-foreground">{t("admin.credits_issued")}</p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Rejected</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.rejected")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">Failed verification</p>
+            <p className="text-xs text-muted-foreground">{t("admin.failed_verification")}</p>
           </CardContent>
         </Card>
       </div>
@@ -162,8 +162,8 @@ export default function CreditScoringPage() {
           {/* Sector Selection */}
           <Card className="border-0 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-lg">Select Sector</CardTitle>
-              <CardDescription>Choose a sector to view and verify applications</CardDescription>
+              <CardTitle className="text-lg">{t("admin.select_sector_title")}</CardTitle>
+              <CardDescription>{t("admin.choose_sector_verify")}</CardDescription>
             </CardHeader>
             <CardContent>
               <Select value={selectedSector} onValueChange={(value) => setSelectedSector(value as Sector)}>
@@ -171,10 +171,10 @@ export default function CreditScoringPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="farmer">Farmer</SelectItem>
-                  <SelectItem value="eco-stoves">Eco-Friendly Stoves</SelectItem>
-                  <SelectItem value="hybrid-vehicles">Hybrid Car Owners</SelectItem>
-                  <SelectItem value="commercial">Commercial Buildings</SelectItem>
+                  <SelectItem value="farmer">{t("admin.farmer")}</SelectItem>
+                  <SelectItem value="eco-stoves">{t("admin.eco_stoves")}</SelectItem>
+                  <SelectItem value="hybrid-vehicles">{t("admin.hybrid_vehicles")}</SelectItem>
+                  <SelectItem value="commercial">{t("admin.commercial")}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>
@@ -184,17 +184,17 @@ export default function CreditScoringPage() {
           <CreditScoringAIAssistant selectedApplication={selectedApp} />
 
           {/* Documents Panel */}
-          {selectedApp && (
-            <Card className="border-0 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <File className="w-5 h-5" />
-                  Documents & Evidence
-                </CardTitle>
-                <CardDescription>
-                  {selectedApp.documents.length} documents provided
-                </CardDescription>
-              </CardHeader>
+           {selectedApp && (
+             <Card className="border-0 shadow-sm">
+               <CardHeader>
+                 <CardTitle className="text-lg flex items-center gap-2">
+                   <File className="w-5 h-5" />
+                   {t("admin.documents_evidence")}
+                 </CardTitle>
+                 <CardDescription>
+                   {selectedApp.documents.length} {t("admin.documents_provided")}
+                 </CardDescription>
+               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {selectedApp.documents.map((doc, idx) => (
@@ -208,7 +208,7 @@ export default function CreditScoringPage() {
                         </div>
                         <span className="font-medium text-sm">{doc}</span>
                       </div>
-                      <Button size="sm" variant="ghost">View</Button>
+                      <Button size="sm" variant="ghost">{t("admin.view")}</Button>
                     </div>
                   ))}
                 </div>

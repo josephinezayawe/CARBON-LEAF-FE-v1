@@ -68,9 +68,9 @@ export default function AdminWalletPage() {
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Admin Wallet</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.admin_wallet")}</h1>
         <p className="text-muted-foreground">
-          Manage system credits and revenue
+          {t("admin.manage_credits_revenue")}
         </p>
       </div>
 
@@ -78,45 +78,45 @@ export default function AdminWalletPage() {
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">System Credits</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.system_credits")}</CardTitle>
             <Wallet className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(totalCredits / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">Total in system</p>
+            <p className="text-xs text-muted-foreground">{t("admin.total_in_system")}</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.total_value")}</CardTitle>
             <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(totalValue / 1000000000).toFixed(1)}B</div>
-            <p className="text-xs text-muted-foreground">RWF equivalent</p>
+            <p className="text-xs text-muted-foreground">{t("admin.rwf_equivalent")}</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Sales</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.monthly_sales")}</CardTitle>
             <ArrowUpRight className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(monthlySales / 1000).toFixed(0)}K</div>
-            <p className="text-xs text-muted-foreground">Credits sold this month</p>
+            <p className="text-xs text-muted-foreground">{t("admin.credits_sold_month")}</p>
           </CardContent>
         </Card>
 
         <Card className="border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Monthly Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">{t("admin.monthly_revenue")}</CardTitle>
             <TrendingUp className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{(monthlyRevenue / 1000000).toFixed(1)}M</div>
-            <p className="text-xs text-muted-foreground">RWF from sales</p>
+            <p className="text-xs text-muted-foreground">{t("admin.rwf_from_sales")}</p>
           </CardContent>
         </Card>
       </div>
@@ -139,19 +139,19 @@ export default function AdminWalletPage() {
       {/* Detailed Breakdown */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle>Sector Breakdown</CardTitle>
-          <CardDescription>Credits collected by sector</CardDescription>
+          <CardTitle>{t("admin.sector_breakdown")}</CardTitle>
+          <CardDescription>{t("admin.credits_collected_sector")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="border-b bg-gray-50/50 dark:bg-gray-800/50">
-                  <TableHead>Sector</TableHead>
-                  <TableHead>Credits Collected</TableHead>
-                  <TableHead>Percentage</TableHead>
-                  <TableHead>Current Value (RWF)</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>{t("admin.table_sector")}</TableHead>
+                  <TableHead>{t("admin.table_credits_collected")}</TableHead>
+                  <TableHead>{t("admin.table_percentage")}</TableHead>
+                  <TableHead>{t("admin.table_current_value")}</TableHead>
+                  <TableHead>{t("admin.table_status")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -180,7 +180,7 @@ export default function AdminWalletPage() {
                     </TableCell>
                     <TableCell>
                       <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
-                        Active
+                        {t("admin.active")}
                       </Badge>
                     </TableCell>
                   </TableRow>
