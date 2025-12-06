@@ -72,22 +72,22 @@ const faqs: FAQItem[] = [
   },
 ]
 
-const contactInfo = [
-  {
-    title: "Email Support",
-    description: "support@carbonleaf.com",
-    icon: Mail,
-  },
-  {
-    title: "Live Chat",
-    description: "Available 9 AM - 6 PM RWT",
-    icon: MessageSquare,
-  },
-  {
-    title: "Documentation",
-    description: "View complete API docs",
-    icon: BookOpen,
-  },
+const getContactInfo = (t: any) => [
+   {
+     title: t("admin.email_support"),
+     description: t("admin.email_support_desc"),
+     icon: Mail,
+   },
+   {
+     title: t("admin.live_chat"),
+     description: t("admin.live_chat_desc"),
+     icon: MessageSquare,
+   },
+   {
+     title: t("admin.documentation"),
+     description: t("admin.documentation_desc"),
+     icon: BookOpen,
+   },
 ]
 
 export default function HelpPage() {
@@ -104,27 +104,19 @@ export default function HelpPage() {
     return matchesSearch && matchesCategory
   })
 
-  const categories = [
-    { id: "all", label: "All Topics" },
-    { id: "credit-scoring", label: "Credit Scoring" },
-    { id: "credit-sales", label: "Credit Sales" },
-    { id: "admin-wallet", label: "Admin Wallet" },
-    { id: "users", label: "User Management" },
-  ]
-
   return (
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Help & Documentation</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t("admin.help_documentation")}</h1>
         <p className="text-muted-foreground">
-          Get help with admin dashboard features and common tasks
+          {t("admin.get_help_admin")}
         </p>
       </div>
 
       {/* Quick Links */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
-        {contactInfo.map((contact) => {
+       <div className="grid gap-4 grid-cols-1 sm:grid-cols-3">
+         {getContactInfo(t).map((contact) => {
           const Icon = contact.icon
           return (
             <Card key={contact.title} className="border-0 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
@@ -138,7 +130,7 @@ export default function HelpPage() {
                     <p className="text-xs text-muted-foreground mt-1">{contact.description}</p>
                   </div>
                   <Button size="sm" variant="outline" className="w-full">
-                    Contact
+                   {t("admin.contact")}
                   </Button>
                 </div>
               </CardContent>
@@ -150,8 +142,8 @@ export default function HelpPage() {
       {/* FAQ Section */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
-          <CardDescription>Find answers to common questions</CardDescription>
+          <CardTitle>{t("admin.frequently_asked")}</CardTitle>
+          <CardDescription>{t("admin.find_answers")}</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-6">
@@ -160,7 +152,7 @@ export default function HelpPage() {
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search FAQs..."
+                placeholder={t("admin.search_faqs")}
                 className="pl-10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -169,16 +161,41 @@ export default function HelpPage() {
 
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                >
-                  {category.label}
-                </Button>
-              ))}
+              <Button
+                variant={selectedCategory === "all" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("all")}
+              >
+                {t("admin.all_topics")}
+              </Button>
+              <Button
+                variant={selectedCategory === "credit-scoring" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("credit-scoring")}
+              >
+                {t("admin.credit_scoring_category")}
+              </Button>
+              <Button
+                variant={selectedCategory === "credit-sales" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("credit-sales")}
+              >
+                {t("admin.credit_sales_category")}
+              </Button>
+              <Button
+                variant={selectedCategory === "admin-wallet" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("admin-wallet")}
+              >
+                {t("admin.admin_wallet_category")}
+              </Button>
+              <Button
+                variant={selectedCategory === "users" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedCategory("users")}
+              >
+                {t("admin.user_management")}
+              </Button>
             </div>
           </div>
 
@@ -187,17 +204,28 @@ export default function HelpPage() {
             <div className="flex items-center justify-center py-12 text-center">
               <div>
                 <AlertCircle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                <p className="text-muted-foreground">No FAQs found matching your search</p>
+                <p className="text-muted-foreground">{t("admin.no_faqs_found")}</p>
               </div>
             </div>
           ) : (
             <Accordion type="single" collapsible className="w-full">
-              {filteredFaqs.map((faq, idx) => (
+              {filteredFaqs.map((faq, idx) => {
+                const categoryLabel = faq.category === "credit-scoring" 
+                  ? t("admin.credit_scoring_category")
+                  : faq.category === "credit-sales"
+                  ? t("admin.credit_sales_category")
+                  : faq.category === "admin-wallet"
+                  ? t("admin.admin_wallet_category")
+                  : faq.category === "users"
+                  ? t("admin.user_management")
+                  : t("admin.all_topics")
+                
+                return (
                 <AccordionItem key={idx} value={`faq-${idx}`} className="border-b border-gray-200 dark:border-gray-700">
                   <AccordionTrigger className="hover:no-underline hover:bg-gray-50 dark:hover:bg-gray-800/50 px-4 py-3 rounded-t-lg transition-colors">
                     <div className="flex items-center gap-3 text-left">
                       <Badge variant="secondary" className="text-xs">
-                        {categories.find((c) => c.id === faq.category)?.label}
+                        {categoryLabel}
                       </Badge>
                       <span className="font-medium">{faq.question}</span>
                     </div>
@@ -206,7 +234,8 @@ export default function HelpPage() {
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
-              ))}
+              )
+              })}
             </Accordion>
           )}
         </CardContent>
@@ -215,16 +244,16 @@ export default function HelpPage() {
       {/* Additional Resources */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle>Additional Resources</CardTitle>
-          <CardDescription>Useful documents and guides</CardDescription>
+          <CardTitle>{t("admin.additional_resources")}</CardTitle>
+          <CardDescription>{t("admin.useful_documents")}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {[
-              { name: "Admin Handbook", format: "PDF", size: "2.4 MB" },
-              { name: "API Documentation", format: "HTML", size: "Online" },
-              { name: "System Architecture Guide", format: "PDF", size: "1.8 MB" },
-              { name: "Compliance & Regulations", format: "PDF", size: "3.2 MB" },
+              { name: t("admin.resources_handbook"), format: t("admin.resource_format_pdf"), size: "2.4 MB" },
+              { name: t("admin.resources_api"), format: t("admin.resource_format_html"), size: t("admin.resource_online") },
+              { name: t("admin.resources_architecture"), format: t("admin.resource_format_pdf"), size: "1.8 MB" },
+              { name: t("admin.resources_compliance"), format: t("admin.resource_format_pdf"), size: "3.2 MB" },
             ].map((resource) => (
               <div
                 key={resource.name}
@@ -240,7 +269,7 @@ export default function HelpPage() {
                   </div>
                 </div>
                 <Button size="sm" variant="ghost">
-                  Download
+                  {t("admin.download")}
                 </Button>
               </div>
             ))}
