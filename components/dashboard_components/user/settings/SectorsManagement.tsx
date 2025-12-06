@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import api from "@/app/api/api";
+import { SettingsAPI } from "@/app/api/settings";
 
 type SectorOption = "FARMER" | "HYBRID_CAR_OWNER" | "ECO_FRIENDLY_STOVES" | "COMMERCIAL_BUILDING";
 
@@ -128,15 +129,15 @@ export default function SectorsManagement() {
     setAddingId(sectorOption);
     try {
       const sectorConfig = SECTORS.find((s) => s.option === sectorOption);
-      const response = await api.post("/api/user/sectors", {
-        sector: sectorConfig?.value,
-      });
+      const response = await SettingsAPI.addSectors(sectorConfig?.option);
 
-      if (response.data?.success) {
-        setUserSectors([...userSectors, sectorOption]);
-        toast.success(`${sectorConfig?.label} added successfully`);
+      if (response.success) {
+        const newSectors = response.data.userSectors.map((s: any) => s.sector)
+        setUserSectors([...newSectors]);
+        
+        toast.success(`${response.message}`);
       } else {
-        toast.error(response.data?.message || "Failed to add sector");
+        toast.error(response.message);
       }
     } catch (error) {
       console.error("Failed to add sector:", error);
