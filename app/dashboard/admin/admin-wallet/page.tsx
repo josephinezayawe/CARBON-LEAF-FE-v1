@@ -34,7 +34,7 @@ const mockTransactions: Transaction[] = [
     type: "deposit",
     description: "Credits from Farmer - Jean Ndayisaba",
     amount: 1200,
-    timestamp: "2024-12-06 10:30 AM",
+    timestamp: "2025-12-06 10:30 AM",
     status: "completed",
   },
   {
@@ -42,7 +42,7 @@ const mockTransactions: Transaction[] = [
     type: "sale",
     description: "Credits sold to Global Energy Corp",
     amount: 15000,
-    timestamp: "2024-12-05 3:45 PM",
+    timestamp: "2025-12-05 3:45 PM",
     status: "completed",
   },
   {
@@ -50,7 +50,7 @@ const mockTransactions: Transaction[] = [
     type: "withdrawal",
     description: "Payout to partner organization",
     amount: 5000,
-    timestamp: "2024-12-04 11:20 AM",
+    timestamp: "2025-12-04 11:20 AM",
     status: "completed",
   },
 ]

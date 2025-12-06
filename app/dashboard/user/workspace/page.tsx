@@ -131,13 +131,13 @@ export default function WorkspacePage() {
       id: "1",
       upi: "1/23/45/67",
       landName: "Farm Plot A",
-      registeredAt: "2024-01-15",
+      registeredAt: "2025-01-15",
     },
     {
       id: "2",
       upi: "2/34/56/78",
       landName: "Forest Land B",
-      registeredAt: "2024-02-20",
+      registeredAt: "2025-02-20",
     },
   ]);
 
