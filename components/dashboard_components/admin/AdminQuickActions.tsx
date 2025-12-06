@@ -70,34 +70,34 @@ export default function AdminQuickActions() {
    const { t } = useLanguage()
    const quickActions = getQuickActions(t)
   return (
-    <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
-      <CardHeader>
+    <Card className="shadow-xl border border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-br from-white to-gray-50/30 dark:from-gray-900/80 dark:to-gray-800/30">
+      <CardHeader className="pb-4">
          <CardTitle className="text-2xl font-black bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight">{t("admin.quick_actions")}</CardTitle>
-         <CardDescription className="text-sm font-medium">{t("admin.fast_access_admin_tasks")}</CardDescription>
+         <CardDescription className="text-sm font-medium text-gray-600 dark:text-gray-400">{t("admin.fast_access_admin_tasks")}</CardDescription>
        </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {quickActions.map((action) => {
-            const Icon = action.icon
-            return (
-              <Link href={action.href} key={action.label}>
-                <Button
-                  variant="outline"
-                  className="h-auto p-4 w-full justify-start hover:bg-muted/50 transition-colors border-gray-200 dark:border-gray-700"
-                >
-                  <div className={`p-2.5 rounded-lg mr-3 shrink-0 ${action.color}`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="text-left">
-                    <p className="font-semibold text-sm">{action.label}</p>
-                    <p className="text-xs text-muted-foreground">{action.description}</p>
-                  </div>
-                </Button>
-              </Link>
-            )
-          })}
-        </div>
-      </CardContent>
-    </Card>
-  )
+       <CardContent>
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+           {quickActions.map((action) => {
+             const Icon = action.icon
+             return (
+               <Link href={action.href} key={action.label}>
+                 <Button
+                   variant="outline"
+                   className="h-auto p-4 w-full justify-start border border-gray-200/60 dark:border-gray-700/60 hover:border-transparent transition-all duration-300 hover:shadow-lg hover:scale-105 hover:-translate-y-1 bg-white/80 dark:bg-gray-800/80 hover:bg-gradient-to-br hover:from-white/95 hover:to-gray-50 dark:hover:from-gray-800/95 dark:hover:to-gray-700/80"
+                 >
+                   <div className={`p-3 rounded-lg mr-3 shrink-0 transition-all duration-300 ${action.color}`}>
+                     <Icon className="w-5 h-5" />
+                   </div>
+                   <div className="text-left">
+                     <p className="font-semibold text-sm text-gray-900 dark:text-gray-100">{action.label}</p>
+                     <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{action.description}</p>
+                   </div>
+                 </Button>
+               </Link>
+             )
+           })}
+         </div>
+       </CardContent>
+     </Card>
+   )
 }
