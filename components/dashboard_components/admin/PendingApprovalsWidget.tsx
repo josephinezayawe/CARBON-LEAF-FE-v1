@@ -96,10 +96,10 @@ export default function PendingApprovalsWidget() {
               <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/50">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
               </div>
-              Pending Approvals
+              {t("admin.pending_approvals")}
             </CardTitle>
             <CardDescription className="mt-2">
-              {mockPendingApprovals.length} requests awaiting verification
+              {mockPendingApprovals.length} {t("admin.requests_awaiting_verification")}
             </CardDescription>
           </div>
           <Badge variant="destructive" className="text-lg h-8 w-8 flex items-center justify-center p-0">
@@ -133,7 +133,7 @@ export default function PendingApprovalsWidget() {
         ))}
 
         <Button variant="outline" className="w-full text-sm mt-2">
-          View all {mockPendingApprovals.length} requests
+          {t("admin.view_all_requests")} {mockPendingApprovals.length}
         </Button>
       </CardContent>
     </Card>

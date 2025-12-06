@@ -70,8 +70,8 @@ export default function CreditsOnSaleWidget() {
               <ShoppingCart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">Credits on Sale</CardTitle>
-              <CardDescription>{activeListings} active listings</CardDescription>
+              <CardTitle className="text-lg font-bold">{t("admin.credits_on_sale")}</CardTitle>
+              <CardDescription>{activeListings} {t("admin.active_listings")}</CardDescription>
             </div>
           </div>
         </div>
@@ -80,7 +80,7 @@ export default function CreditsOnSaleWidget() {
       <CardContent className="space-y-4">
         {/* Total Value */}
         <div className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
-          <p className="text-xs text-muted-foreground mb-1">Total Value on Market</p>
+          <p className="text-xs text-muted-foreground mb-1">{t("admin.total_value_on_market")}</p>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">
               {(totalOnSale / 1000000).toFixed(1)}M
@@ -112,7 +112,7 @@ export default function CreditsOnSaleWidget() {
                   {(listing.totalValue / 1000000).toFixed(2)}M RWF
                 </span>
                 <Button size="sm" variant="ghost" className="h-7 text-xs">
-                  Manage
+                  {t("admin.manage")}
                 </Button>
               </div>
             </div>
@@ -122,7 +122,7 @@ export default function CreditsOnSaleWidget() {
         {/* Action Button */}
         <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" size="sm">
           <ArrowUpRight className="w-4 h-4 mr-2" />
-          Create New Listing
+          {t("admin.create_new_listing")}
         </Button>
       </CardContent>
     </Card>

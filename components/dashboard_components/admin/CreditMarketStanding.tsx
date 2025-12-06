@@ -12,32 +12,32 @@ interface MarketMetric {
   trend: "up" | "down"
 }
 
-const marketMetrics: MarketMetric[] = [
-  {
-    label: "Market Price (per credit)",
-    value: "210 RWF",
-    change: 2.4,
-    trend: "up",
-  },
-  {
-    label: "24h Trading Volume",
-    value: "850K",
-    change: 12.5,
-    trend: "up",
-  },
-  {
-    label: "Market Demand",
-    value: "Very High",
-    change: 8.2,
-    trend: "up",
-  },
-  {
-    label: "Available Supply",
-    value: "2.5M Credits",
-    change: -3.1,
-    trend: "down",
-  },
-]
+const getMarketMetrics = (t: (key: string) => string): MarketMetric[] => [
+   {
+     label: t("admin.market_price_per_credit"),
+     value: "210 RWF",
+     change: 2.4,
+     trend: "up",
+   },
+   {
+     label: t("admin.trading_volume_24h"),
+     value: "850K",
+     change: 12.5,
+     trend: "up",
+   },
+   {
+     label: t("admin.market_demand"),
+     value: t("admin.very_high"),
+     change: 8.2,
+     trend: "up",
+   },
+   {
+     label: t("admin.available_supply"),
+     value: "2.5M Credits",
+     change: -3.1,
+     trend: "down",
+   },
+ ]
 
 const sectorPrices = [
   { sector: "Farmer", price: 215, change: 1.9 },
@@ -47,7 +47,8 @@ const sectorPrices = [
 ]
 
 export default function CreditMarketStanding() {
-  const { t } = useLanguage()
+   const { t } = useLanguage()
+   const marketMetrics = getMarketMetrics(t)
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
@@ -58,8 +59,8 @@ export default function CreditMarketStanding() {
               <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <CardTitle className="text-lg font-bold">Market Standing</CardTitle>
-              <CardDescription>Real-time market metrics</CardDescription>
+              <CardTitle className="text-lg font-bold">{t("admin.market_standing")}</CardTitle>
+              <CardDescription>{t("admin.real_time_market_metrics")}</CardDescription>
             </div>
           </div>
         </div>
@@ -99,7 +100,7 @@ export default function CreditMarketStanding() {
 
         {/* Sector Pricing */}
         <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-          <h4 className="text-sm font-semibold mb-3">Sector Pricing</h4>
+          <h4 className="text-sm font-semibold mb-3">{t("admin.sector_pricing")}</h4>
           <div className="space-y-2">
             {sectorPrices.map((sector) => (
               <div
