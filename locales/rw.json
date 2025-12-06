@@ -5,7 +5,12 @@
     "workspace": "Ahakorerwa",
     "guidance": "Inyigisho",
     "report": "Raporo",
-    "settings": "Amagenamiterere"
+    "settings": "Amagenamiterere",
+    "system_users": "Abakoresha Sisitemu",
+    "credit_scoring": "Gupima Amafaranga",
+    "credit_sales": "Kuguza Amafaranga",
+    "admin_wallet": "Konti ya Mwenyikazi",
+    "help": "Ubufasha"
   },
   "general": {
     "logout": "Sohoka",
@@ -405,6 +410,10 @@
     "select_cell": "Hitamo Akagari",
     "select_village": "Hitamo Umudugudu",
     "by_continuing": "Mu kubara, wemera iyisabwa ryacu"
+  },
+  "admin": {
+    "welcome": "Murakaza neza Kuri Admin Dashboard",
+    "dashboard_desc": "Shambuye sisitemu, abakoresha, amafaranga kandi menya imikorere y'uburembo"
   },
   "landing": {
     "live_marketplace": "Isoko ry'igihe cy'amakuru v2.0",

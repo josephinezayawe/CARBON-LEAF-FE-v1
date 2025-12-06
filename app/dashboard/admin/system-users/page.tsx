@@ -1,0 +1,322 @@
+"use client"
+
+import React, { useState } from "react"
+import { useLanguage } from "@/components/global/language-provider"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu"
+import { Search, Filter, MoreHorizontal, Eye, Edit2, Trash2, Ban } from "lucide-react"
+import SystemUsersChart from "@/components/dashboard_components/admin/system-users/SystemUsersChart"
+import SystemUsersFilters from "@/components/dashboard_components/admin/system-users/SystemUsersFilters"
+
+interface SystemUser {
+  id: string
+  name: string
+  email: string
+  sector: string
+  credits: number
+  status: "active" | "pending" | "suspended"
+  joinedDate: string
+  verificationStatus: "verified" | "pending_verification"
+}
+
+const mockUsers: SystemUser[] = [
+  {
+    id: "1",
+    name: "Jean Ndayisaba",
+    email: "jean@example.com",
+    sector: "Farmer",
+    credits: 4200,
+    status: "active",
+    joinedDate: "2024-01-15",
+    verificationStatus: "verified",
+  },
+  {
+    id: "2",
+    name: "Marie Uwizeyimana",
+    email: "marie@example.com",
+    sector: "Eco Stoves",
+    credits: 2150,
+    status: "active",
+    joinedDate: "2024-02-20",
+    verificationStatus: "verified",
+  },
+  {
+    id: "3",
+    name: "Paul Habimana",
+    email: "paul@example.com",
+    sector: "Hybrid Car Owner",
+    credits: 0,
+    status: "pending",
+    joinedDate: "2024-12-01",
+    verificationStatus: "pending_verification",
+  },
+  {
+    id: "4",
+    name: "Sophie Karangwa",
+    email: "sophie@example.com",
+    sector: "Commercial Building",
+    credits: 5800,
+    status: "active",
+    joinedDate: "2024-01-08",
+    verificationStatus: "verified",
+  },
+  {
+    id: "5",
+    name: "Emmanuel Kanyarwanda",
+    email: "emmanuel@example.com",
+    sector: "Farmer",
+    credits: 3200,
+    status: "suspended",
+    joinedDate: "2024-03-10",
+    verificationStatus: "verified",
+  },
+]
+
+export default function SystemUsersPage() {
+  const { t } = useLanguage()
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedSector, setSelectedSector] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("all")
+
+  const sectors = ["all", "Farmer", "Hybrid Car Owner", "Eco Stoves", "Commercial Building"]
+  const statuses = ["all", "active", "pending", "suspended"]
+
+  const filteredUsers = mockUsers.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesSector = selectedSector === "all" || user.sector === selectedSector
+    const matchesStatus = selectedStatus === "all" || user.status === selectedStatus
+
+    return matchesSearch && matchesSector && matchesStatus
+  })
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+      case "pending":
+        return "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
+      case "suspended":
+        return "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300"
+      default:
+        return "bg-muted text-muted-foreground"
+    }
+  }
+
+  const getVerificationColor = (status: string) => {
+    return status === "verified"
+      ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+      : "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
+  }
+
+  return (
+    <div className="space-y-6 w-full">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">System Users</h1>
+        <p className="text-muted-foreground">
+          Manage and monitor all registered users across sectors
+        </p>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">12,450</div>
+            <p className="text-xs text-muted-foreground">+12% this month</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Active</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">10,380</div>
+            <p className="text-xs text-muted-foreground">83% of total</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Pending</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1,420</div>
+            <p className="text-xs text-muted-foreground">Verification needed</p>
+          </CardContent>
+        </Card>
+        <Card className="border-0 shadow-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Suspended</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">650</div>
+            <p className="text-xs text-muted-foreground">5% of total</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts */}
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
+        <div className="lg:col-span-4">
+          <SystemUsersChart />
+        </div>
+        <div className="lg:col-span-3">
+          <SystemUsersFilters />
+        </div>
+      </div>
+
+      {/* Users Table */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>User Directory</CardTitle>
+              <CardDescription>{filteredUsers.length} users displayed</CardDescription>
+            </div>
+            <Button>Add New User</Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {/* Filters */}
+          <div className="space-y-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="relative sm:col-span-2">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or email..."
+                  className="pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+
+              <Select value={selectedSector} onValueChange={setSelectedSector}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select sector" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sectors.map((sector) => (
+                    <SelectItem key={sector} value={sector}>
+                      {sector === "all" ? "All Sectors" : sector}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status === "all" ? "All Statuses" : status.charAt(0).toUpperCase() + status.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Table */}
+          <div className="border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b bg-gray-50/50 dark:bg-gray-800/50">
+                  <TableHead>Name</TableHead>
+                  <TableHead>Sector</TableHead>
+                  <TableHead>Credits</TableHead>
+                  <TableHead>Verification</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.id} className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell className="text-sm">{user.sector}</TableCell>
+                    <TableCell className="font-semibold">{user.credits.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <Badge className={getVerificationColor(user.verificationStatus)}>
+                        {user.verificationStatus === "verified" ? "✓ Verified" : "Pending"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={getStatusColor(user.status)}>
+                        {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(user.joinedDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Edit2 className="h-4 w-4 mr-2" />
+                            Edit User
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          {user.status !== "suspended" && (
+                            <DropdownMenuItem className="text-amber-600">
+                              <Ban className="h-4 w-4 mr-2" />
+                              Suspend Account
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
