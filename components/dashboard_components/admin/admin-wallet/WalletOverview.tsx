@@ -3,6 +3,7 @@
 import { AreaChart, Area, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp } from "lucide-react"
+import { useLanguage } from "@/components/global/language-provider"
 
 const walletData = [
   { month: "Jan", credits: 1200000 },
@@ -14,14 +15,16 @@ const walletData = [
 ]
 
 export default function WalletOverview() {
+  const { t } = useLanguage()
+
   return (
     <Card className="h-full border-0 shadow-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="w-5 h-5" />
-          Wallet Growth
+          {t("admin.wallet_growth")}
         </CardTitle>
-        <CardDescription>6-month growth trend</CardDescription>
+        <CardDescription>{t("admin.six_month_growth_trend")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">

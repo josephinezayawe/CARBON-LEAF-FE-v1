@@ -72,9 +72,9 @@ export default function AdminQuickActions() {
   return (
     <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
       <CardHeader>
-        <CardTitle>{t("admin.quick_actions")}</CardTitle>
-        <CardDescription>{t("admin.fast_access_admin_tasks")}</CardDescription>
-      </CardHeader>
+         <CardTitle className="text-2xl font-black bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tight">{t("admin.quick_actions")}</CardTitle>
+         <CardDescription className="text-sm font-medium">{t("admin.fast_access_admin_tasks")}</CardDescription>
+       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickActions.map((action) => {

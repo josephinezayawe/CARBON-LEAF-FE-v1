@@ -3,20 +3,28 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useLanguage } from "@/components/global/language-provider"
 
-const distributionData = [
-  { name: "Farmer", value: 825000, color: "hsl(142, 76%, 36%)" },
-  { name: "Eco Stoves", value: 625000, color: "hsl(39, 84%, 53%)" },
-  { name: "Hybrid Vehicles", value: 525000, color: "hsl(217, 91%, 60%)" },
-  { name: "Commercial", value: 525000, color: "hsl(280, 85%, 50%)" },
+const distributionDataBase = [
+  { key: "farmer", value: 825000, color: "hsl(142, 76%, 36%)" },
+  { key: "eco_stove", value: 625000, color: "hsl(39, 84%, 53%)" },
+  { key: "hybrid_vehicle", value: 525000, color: "hsl(217, 91%, 60%)" },
+  { key: "commercial_building", value: 525000, color: "hsl(280, 85%, 50%)" },
 ]
 
 export default function CreditDistribution() {
+  const { t } = useLanguage()
+
+  const distributionData = distributionDataBase.map((item) => ({
+    ...item,
+    name: t(`admin.${item.key}`),
+  }))
+
   return (
     <Card className="h-full border-0 shadow-sm">
       <CardHeader>
-        <CardTitle>Credit Distribution</CardTitle>
-        <CardDescription>By sector</CardDescription>
+        <CardTitle>{t("admin.credit_distribution")}</CardTitle>
+        <CardDescription>{t("admin.by_sector")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <ResponsiveContainer width="100%" height={250}>

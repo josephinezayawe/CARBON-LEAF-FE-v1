@@ -1,18 +1,24 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { useLanguage } from "@/components/global/language-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import React, { useState } from "react";
+import { useLanguage } from "@/components/global/language-provider";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -20,27 +26,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuItem,
-} from "@/components/ui/dropdown-menu"
-import { Search, Filter, MoreHorizontal, Eye, Edit2, Trash2, Ban } from "lucide-react"
-import SystemUsersChart from "@/components/dashboard_components/admin/system-users/SystemUsersChart"
-import SystemUsersFilters from "@/components/dashboard_components/admin/system-users/SystemUsersFilters"
+} from "@/components/ui/dropdown-menu";
+import { Search, MoreHorizontal, Eye, Edit2, Trash2, Ban } from "lucide-react";
+import SystemUsersChart from "@/components/dashboard_components/admin/system-users/SystemUsersChart";
+import SystemUsersFilters from "@/components/dashboard_components/admin/system-users/SystemUsersFilters";
 
 interface SystemUser {
-  id: string
-  name: string
-  email: string
-  sector: string
-  credits: number
-  status: "active" | "pending" | "suspended"
-  joinedDate: string
-  verificationStatus: "verified" | "pending_verification"
+  id: string;
+  name: string;
+  email: string;
+  sector: string;
+  credits: number;
+  status: "active" | "pending" | "suspended";
+  joinedDate: string;
+  verificationStatus: "verified" | "pending_verification";
 }
 
 const mockUsers: SystemUser[] = [
@@ -94,92 +100,144 @@ const mockUsers: SystemUser[] = [
     joinedDate: "2025-03-10",
     verificationStatus: "verified",
   },
-]
+];
 
 export default function SystemUsersPage() {
-  const { t } = useLanguage()
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSector, setSelectedSector] = useState("all")
-  const [selectedStatus, setSelectedStatus] = useState("all")
+  const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSector, setSelectedSector] = useState("all");
+  const [selectedStatus, setSelectedStatus] = useState("all");
 
-  const sectors = ["all", "Farmer", "Hybrid Car Owner", "Eco Stoves", "Commercial Building"]
-  const statuses = ["all", "active", "pending", "suspended"]
+  const sectors = [
+    "all",
+    "Farmer",
+    "Hybrid Car Owner",
+    "Eco Stoves",
+    "Commercial Building",
+  ];
+  const statuses = ["all", "active", "pending", "suspended"];
 
   const filteredUsers = mockUsers.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesSector = selectedSector === "all" || user.sector === selectedSector
-    const matchesStatus = selectedStatus === "all" || user.status === selectedStatus
+      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSector =
+      selectedSector === "all" || user.sector === selectedSector;
+    const matchesStatus =
+      selectedStatus === "all" || user.status === selectedStatus;
 
-    return matchesSearch && matchesSector && matchesStatus
-  })
+    return matchesSearch && matchesSector && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
+        return "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300";
       case "pending":
-        return "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
+        return "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300";
       case "suspended":
-        return "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300"
+        return "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300";
       default:
-        return "bg-muted text-muted-foreground"
+        return "bg-muted text-muted-foreground";
     }
-  }
+  };
 
   const getVerificationColor = (status: string) => {
     return status === "verified"
       ? "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300"
-      : "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300"
-  }
+      : "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300";
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "active":
+        return t("admin.status_active");
+      case "pending":
+        return t("admin.status_pending");
+      case "suspended":
+        return t("admin.status_suspended");
+      default:
+        return status;
+    }
+  };
+
+  const getSectorLabel = (sector: string) => {
+    switch (sector) {
+      case "Farmer":
+        return t("admin.farmer");
+      case "Hybrid Car Owner":
+        return t("admin.hybrid_vehicle");
+      case "Eco Stoves":
+        return t("admin.eco_stove");
+      case "Commercial Building":
+        return t("admin.commercial_building");
+      default:
+        return sector;
+    }
+  };
 
   return (
     <div className="space-y-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">{t("admin.system_users")}</h1>
-        <p className="text-muted-foreground">
-          {t("admin.manage_monitor")}
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          {t("admin.system_users")}
+        </h1>
+        <p className="text-muted-foreground">{t("admin.manage_monitor")}</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-4">
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("admin.total_users_count")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("admin.total_users_count")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12,450</div>
-            <p className="text-xs text-muted-foreground">+12% {t("admin.this_month")}</p>
+            <p className="text-xs text-muted-foreground">
+              +12% {t("admin.this_month")}
+            </p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("admin.active")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("admin.active")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">10,380</div>
-            <p className="text-xs text-muted-foreground">83% {t("admin.of_total")}</p>
+            <p className="text-xs text-muted-foreground">
+              83% {t("admin.of_total")}
+            </p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("admin.pending")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("admin.pending")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1,420</div>
-            <p className="text-xs text-muted-foreground">{t("admin.verification_needed")}</p>
+            <p className="text-xs text-muted-foreground">
+              {t("admin.verification_needed")}
+            </p>
           </CardContent>
         </Card>
         <Card className="border-0 shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">{t("admin.suspended")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("admin.suspended")}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">650</div>
-            <p className="text-xs text-muted-foreground">5% {t("admin.of_total")}</p>
+            <p className="text-xs text-muted-foreground">
+              5% {t("admin.of_total")}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -197,13 +255,15 @@ export default function SystemUsersPage() {
       {/* Users Table */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
-        <div className="flex items-center justify-between">
-        <div>
-          <CardTitle>{t("admin.user_directory")}</CardTitle>
-          <CardDescription>{filteredUsers.length} {t("admin.users_displayed")}</CardDescription>
-        </div>
-        <Button>{t("admin.add_new_user")}</Button>
-        </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{t("admin.user_directory")}</CardTitle>
+              <CardDescription>
+                {filteredUsers.length} {t("admin.users_displayed")}
+              </CardDescription>
+            </div>
+            <Button>{t("admin.add_new_user")}</Button>
+          </div>
         </CardHeader>
         <CardContent>
           {/* Filters */}
@@ -226,7 +286,9 @@ export default function SystemUsersPage() {
                 <SelectContent>
                   {sectors.map((sector) => (
                     <SelectItem key={sector} value={sector}>
-                      {sector === "all" ? t("admin.all_sectors") : sector}
+                      {sector === "all"
+                        ? t("admin.all_sectors")
+                        : getSectorLabel(sector)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -239,7 +301,9 @@ export default function SystemUsersPage() {
                 <SelectContent>
                   {statuses.map((status) => (
                     <SelectItem key={status} value={status}>
-                      {status === "all" ? t("admin.all_statuses") : status.charAt(0).toUpperCase() + status.slice(1)}
+                      {status === "all"
+                        ? t("admin.all_statuses")
+                        : getStatusLabel(status)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -258,23 +322,38 @@ export default function SystemUsersPage() {
                   <TableHead>{t("admin.table_verification")}</TableHead>
                   <TableHead>{t("admin.table_status")}</TableHead>
                   <TableHead>{t("admin.table_joined")}</TableHead>
-                  <TableHead className="text-right">{t("admin.table_actions")}</TableHead>
+                  <TableHead className="text-right">
+                    {t("admin.table_actions")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredUsers.map((user) => (
-                  <TableRow key={user.id} className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+                  <TableRow
+                    key={user.id}
+                    className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
+                  >
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell className="text-sm">{user.sector}</TableCell>
-                    <TableCell className="font-semibold">{user.credits.toLocaleString()}</TableCell>
+                    <TableCell className="text-sm">
+                      {getSectorLabel(user.sector)}
+                    </TableCell>
+                    <TableCell className="font-semibold">
+                      {user.credits.toLocaleString()}
+                    </TableCell>
                     <TableCell>
-                      <Badge className={getVerificationColor(user.verificationStatus)}>
-                        {user.verificationStatus === "verified" ? t("admin.verified") : t("admin.pending")}
+                      <Badge
+                        className={getVerificationColor(
+                          user.verificationStatus
+                        )}
+                      >
+                        {user.verificationStatus === "verified"
+                          ? t("admin.verified")
+                          : t("admin.pending")}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(user.status)}>
-                        {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                        {getStatusLabel(user.status)}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
@@ -283,7 +362,11 @@ export default function SystemUsersPage() {
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
@@ -318,5 +401,5 @@ export default function SystemUsersPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

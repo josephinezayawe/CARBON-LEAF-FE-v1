@@ -2,20 +2,32 @@
 
 import { BarChart, Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/components/global/language-provider"
 
-const usersBySector = [
-  { sector: "Farmer", users: 4200, active: 3800, inactive: 400 },
-  { sector: "Hybrid Vehicle", users: 2150, active: 1980, inactive: 170 },
-  { sector: "Eco Stoves", users: 3100, active: 2850, inactive: 250 },
-  { sector: "Commercial", users: 2000, active: 1750, inactive: 250 },
+const usersBySectorData = [
+  { sectorKey: "farmer", users: 4200, active: 3800, inactive: 400 },
+  { sectorKey: "hybrid_vehicle", users: 2150, active: 1980, inactive: 170 },
+  { sectorKey: "eco_stove", users: 3100, active: 2850, inactive: 250 },
+  { sectorKey: "commercial_building", users: 2000, active: 1750, inactive: 250 },
 ]
 
 export default function SystemUsersChart() {
+  const { t } = useLanguage()
+
+  const getSectorName = (sectorKey: string) => {
+    return t(`admin.${sectorKey}`)
+  }
+
+  const usersBySector = usersBySectorData.map((item) => ({
+    ...item,
+    sector: getSectorName(item.sectorKey),
+  }))
+
   return (
     <Card className="h-full border-0 shadow-sm">
       <CardHeader>
-        <CardTitle>Users by Sector</CardTitle>
-        <CardDescription>Distribution across all sectors</CardDescription>
+        <CardTitle>{t("admin.users_by_sector")}</CardTitle>
+        <CardDescription>{t("admin.distribution_sectors")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">

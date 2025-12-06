@@ -18,7 +18,7 @@ import CreditScoringAIAssistant from "@/components/dashboard_components/admin/cr
 import PendingApplicationsList from "@/components/dashboard_components/admin/credit-scoring/PendingApplicationsList"
 import UserDetailsPanel from "@/components/dashboard_components/admin/credit-scoring/UserDetailsPanel"
 
-type Sector = "farmer" | "eco-stoves" | "hybrid-vehicles" | "commercial"
+type Sector = "farmer" | "eco_stove" | "hybrid_vehicle" | "commercial_building"
 
 interface PendingApplication {
   id: string
@@ -43,7 +43,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-002",
     userName: "Marie Uwizeyimana",
-    sector: "eco-stoves",
+    sector: "eco_stove",
     creditsRequested: 800,
     submittedDate: "5 hours ago",
     documents: ["Installation Photos", "User Agreement", "Proof of Residence"],
@@ -52,7 +52,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-003",
     userName: "Paul Habimana",
-    sector: "hybrid-vehicles",
+    sector: "hybrid_vehicle",
     creditsRequested: 500,
     submittedDate: "1 day ago",
     documents: ["Vehicle Registration", "Purchase Invoice", "Insurance Document"],
@@ -61,7 +61,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-004",
     userName: "Sophie Karangwa",
-    sector: "commercial",
+    sector: "commercial_building",
     creditsRequested: 2500,
     submittedDate: "2 days ago",
     documents: ["Building Audit", "Energy Certificates", "Business License"],
@@ -76,6 +76,25 @@ export default function CreditScoringPage() {
   const [activeTab, setActiveTab] = useState("pending")
 
   const sectorApplications = mockApplications.filter(app => app.sector === selectedSector)
+
+  const getSectorLabel = (sector: string) => {
+    return t(`admin.${sector}`)
+  }
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending_review":
+        return t("admin.cs_pending_review")
+      case "under_ai_review":
+        return t("admin.cs_under_ai_review")
+      case "approved":
+        return t("admin.cs_approved")
+      case "rejected":
+        return t("admin.cs_rejected")
+      default:
+        return status
+    }
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -172,9 +191,9 @@ export default function CreditScoringPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="farmer">{t("admin.farmer")}</SelectItem>
-                  <SelectItem value="eco-stoves">{t("admin.eco_stoves")}</SelectItem>
-                  <SelectItem value="hybrid-vehicles">{t("admin.hybrid_vehicles")}</SelectItem>
-                  <SelectItem value="commercial">{t("admin.commercial")}</SelectItem>
+                  <SelectItem value="eco_stove">{t("admin.eco_stove")}</SelectItem>
+                  <SelectItem value="hybrid_vehicle">{t("admin.hybrid_vehicle")}</SelectItem>
+                  <SelectItem value="commercial_building">{t("admin.commercial_building")}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>

@@ -39,16 +39,21 @@ const getMarketMetrics = (t: (key: string) => string): MarketMetric[] => [
    },
  ]
 
-const sectorPrices = [
-  { sector: "Farmer", price: 215, change: 1.9 },
-  { sector: "Eco Stoves", price: 212, change: 0.5 },
-  { sector: "Hybrid Vehicles", price: 205, change: -1.2 },
-  { sector: "Commercial", price: 218, change: 3.4 },
+const sectorPricesData = [
+  { key: "farmer", price: 215, change: 1.9 },
+  { key: "eco_stove", price: 212, change: 0.5 },
+  { key: "hybrid_vehicle", price: 205, change: -1.2 },
+  { key: "commercial_building", price: 218, change: 3.4 },
 ]
 
 export default function CreditMarketStanding() {
    const { t } = useLanguage()
    const marketMetrics = getMarketMetrics(t)
+   
+   const sectorPrices = sectorPricesData.map((item) => ({
+     ...item,
+     sector: t(`admin.${item.key}`),
+   }))
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
