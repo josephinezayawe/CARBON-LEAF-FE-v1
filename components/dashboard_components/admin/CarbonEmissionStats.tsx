@@ -80,17 +80,17 @@ export default function CarbonEmissionStats() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              Carbon Emission Tracking
-              <TrendingDown className="h-5 w-5 text-emerald-500" />
-            </CardTitle>
-            <CardDescription className="text-gray-600 dark:text-gray-400 mt-2">
-              System-wide emission reduction progress
-            </CardDescription>
+             <CardTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+               {t("admin.carbon_emission_tracking")}
+               <TrendingDown className="h-5 w-5 text-emerald-500" />
+             </CardTitle>
+             <CardDescription className="text-gray-600 dark:text-gray-400 mt-2">
+               {t("admin.system_wide_emission_reduction")}
+             </CardDescription>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-emerald-600">-58%</div>
-            <div className="text-sm text-gray-500">Overall reduction</div>
+            <div className="text-sm text-gray-500">{t("admin.overall_reduction")}</div>
           </div>
         </div>
       </CardHeader>

@@ -34,14 +34,14 @@ export default function AllUsersOverview() {
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold">User Overview</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t("admin.user_overview")}</CardTitle>
             <CardDescription className="mt-2">
-              Distribution across sectors and statuses
+              {t("admin.distribution_across_sectors")}
             </CardDescription>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold text-blue-600">12,450</div>
-            <div className="text-sm text-gray-500">Total users</div>
+            <div className="text-sm text-gray-500">{t("admin.total_users")}</div>
           </div>
         </div>
       </CardHeader>
@@ -49,7 +49,7 @@ export default function AllUsersOverview() {
       <CardContent className="pt-4">
         {/* Users by Sector Chart */}
         <div className="mb-8">
-          <h4 className="text-sm font-semibold mb-4">Users by Sector</h4>
+          <h4 className="text-sm font-semibold mb-4">{t("admin.users_by_sector")}</h4>
           <div className="bg-gray-50 dark:bg-gray-800/30 rounded-lg p-4">
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={userDataBySector}>
@@ -85,7 +85,7 @@ export default function AllUsersOverview() {
         {/* Status Breakdown */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h4 className="text-sm font-semibold mb-4">Status Distribution</h4>
+            <h4 className="text-sm font-semibold mb-4">{t("admin.status_distribution")}</h4>
             <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie

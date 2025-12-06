@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress"
 import { Activity, Database, Users, Zap } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { useLanguage } from "@/components/global/language-provider"
 
 interface HealthMetric {
   label: string
@@ -12,32 +13,32 @@ interface HealthMetric {
   icon: React.ReactNode
 }
 
-const healthMetrics: HealthMetric[] = [
-  {
-    label: "System Uptime",
-    value: 99.8,
-    status: "healthy",
-    icon: <Activity className="w-4 h-4" />,
-  },
-  {
-    label: "Database Performance",
-    value: 87,
-    status: "healthy",
-    icon: <Database className="w-4 h-4" />,
-  },
-  {
-    label: "API Response Time",
-    value: 94,
-    status: "healthy",
-    icon: <Zap className="w-4 h-4" />,
-  },
-  {
-    label: "Active Connections",
-    value: 73,
-    status: "warning",
-    icon: <Users className="w-4 h-4" />,
-  },
-]
+const getHealthMetrics = (t: (key: string) => string): HealthMetric[] => [
+   {
+     label: t("admin.system_uptime"),
+     value: 99.8,
+     status: "healthy",
+     icon: <Activity className="w-4 h-4" />,
+   },
+   {
+     label: t("admin.database_performance"),
+     value: 87,
+     status: "healthy",
+     icon: <Database className="w-4 h-4" />,
+   },
+   {
+     label: t("admin.api_response_time"),
+     value: 94,
+     status: "healthy",
+     icon: <Zap className="w-4 h-4" />,
+   },
+   {
+     label: t("admin.active_connections"),
+     value: 73,
+     status: "warning",
+     icon: <Users className="w-4 h-4" />,
+   },
+ ]
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -79,21 +80,23 @@ const getStatusBadge = (status: string) => {
 }
 
 export default function SystemHealthWidget() {
-  const overallHealth = Math.round(
-    healthMetrics.reduce((sum, m) => sum + m.value, 0) / healthMetrics.length
-  )
+   const { t } = useLanguage()
+   const healthMetrics = getHealthMetrics(t)
+   const overallHealth = Math.round(
+     healthMetrics.reduce((sum, m) => sum + m.value, 0) / healthMetrics.length
+   )
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-lg font-bold">System Health</CardTitle>
-            <CardDescription>Infrastructure & performance metrics</CardDescription>
+            <CardTitle className="text-lg font-bold">{t("admin.system_health")}</CardTitle>
+            <CardDescription>{t("admin.infrastructure_metrics")}</CardDescription>
           </div>
           <div className="text-right">
             <div className="text-3xl font-bold">{overallHealth}%</div>
-            <Badge className={getStatusBadge("healthy")}>Healthy</Badge>
+            <Badge className={getStatusBadge("healthy")}>{t("admin.healthy")}</Badge>
           </div>
         </div>
       </CardHeader>
