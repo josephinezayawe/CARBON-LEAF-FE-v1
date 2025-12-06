@@ -8,7 +8,7 @@ import { toast } from "sonner"
 export default function FrmerSide() {
     const {user } = useAuth();
     return (<>
-        Hello
+        Hello world!
         {user && user.role}
     </>)
 }
