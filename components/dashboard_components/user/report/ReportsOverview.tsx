@@ -15,7 +15,7 @@ const salesData = [
 const uploadActivity = [
   { date: "2025-01-13", photos: 14, land: "UPI-223-Kigali", status: "verified" },
   { date: "2025-01-02", photos: 8, land: "UPI-145-Musanze", status: "verified" },
-  { date: "2024-12-28", photos: 12, land: "UPI-089-Rubavu", status: "pending" },
+  { date: "2025-12-28", photos: 12, land: "UPI-089-Rubavu", status: "pending" },
 ];
 
 export default function ReportsOverview() {

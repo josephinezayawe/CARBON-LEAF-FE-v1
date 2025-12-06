@@ -212,55 +212,6 @@ export default function HelpPage() {
         </CardContent>
       </Card>
 
-      {/* Video Tutorials */}
-      <Card className="border-0 shadow-sm">
-        <CardHeader>
-          <CardTitle>Video Tutorials</CardTitle>
-          <CardDescription>Learn through step-by-step video guides</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-            {[
-              {
-                title: "Getting Started with Credit Scoring",
-                duration: "5:32",
-                thumbnail: "bg-blue-100",
-              },
-              {
-                title: "Managing Credit Listings & Sales",
-                duration: "7:45",
-                thumbnail: "bg-purple-100",
-              },
-              {
-                title: "User Management & Verification",
-                duration: "6:20",
-                thumbnail: "bg-emerald-100",
-              },
-              {
-                title: "Admin Wallet & Revenue Reports",
-                duration: "8:15",
-                thumbnail: "bg-amber-100",
-              },
-            ].map((video) => (
-              <div
-                key={video.title}
-                className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow cursor-pointer"
-              >
-                <div className={`${video.thumbnail} h-32 flex items-center justify-center`}>
-                  <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                    <div className="w-0 h-0 border-l-8 border-l-black border-y-4 border-y-transparent ml-1" />
-                  </div>
-                </div>
-                <div className="p-3">
-                  <p className="font-medium text-sm line-clamp-2">{video.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{video.duration}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Additional Resources */}
       <Card className="border-0 shadow-sm">
         <CardHeader>
