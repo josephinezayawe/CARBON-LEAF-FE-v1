@@ -5,7 +5,12 @@
     "workspace": "Espace de travail",
     "guidance": "Conseils",
     "report": "Rapports",
-    "settings": "Paramètres"
+    "settings": "Paramètres",
+    "system_users": "Utilisateurs du Système",
+    "credit_scoring": "Notation de Crédits",
+    "credit_sales": "Ventes de Crédits",
+    "admin_wallet": "Portefeuille Admin",
+    "help": "Aide"
   },
   "general": {
     "logout": "Déconnexion",
@@ -405,6 +410,10 @@
     "select_cell": "Sélectionner la cellule",
     "select_village": "Sélectionner le village",
     "by_continuing": "En continuant, vous acceptez nos Conditions de service"
+  },
+  "admin": {
+    "welcome": "Bienvenue au Tableau de Bord Administrateur",
+    "dashboard_desc": "Gérez le système, les utilisateurs, les crédits et surveillez les performances de la plateforme"
   },
   "landing": {
     "live_marketplace": "Place de marché en direct v2.0",

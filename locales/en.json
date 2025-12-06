@@ -5,7 +5,12 @@
     "workspace": "Workspace",
     "guidance": "Guidance",
     "report": "Reports",
-    "settings": "Settings"
+    "settings": "Settings",
+    "system_users": "System Users",
+    "credit_scoring": "Credit Scoring",
+    "credit_sales": "Credit Sales",
+    "admin_wallet": "Admin Wallet",
+    "help": "Help"
   },
   "general": {
     "logout": "Logout",
@@ -405,6 +410,10 @@
     "select_cell": "Select Cell",
     "select_village": "Select Village",
     "by_continuing": "By continuing, you agree to our Terms of Service"
+  },
+  "admin": {
+    "welcome": "Welcome to Admin Dashboard",
+    "dashboard_desc": "Manage system, users, credits, and monitor platform performance"
   },
   "landing": {
     "live_marketplace": "Live Marketplace v2.0",
