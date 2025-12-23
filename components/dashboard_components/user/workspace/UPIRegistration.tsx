@@ -56,6 +56,8 @@ export default function UPIRegistration({
       return;
     }
 
+    
+
     onAddUPI?.(upiInput, landName);
     setSuccess(true);
     setUpiInput("");
