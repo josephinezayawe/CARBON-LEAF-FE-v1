@@ -7,15 +7,15 @@ import PhotoGallery from "@/components/dashboard_components/user/workspace/Photo
 import UPIRegistration from "@/components/dashboard_components/user/workspace/UPIRegistration";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-   MapPin,
-   ImageIcon,
-   Upload,
-   FolderKanban,
-   TrendingUp,
-   Trees,
-   Car,
-   Flame,
-   Building2,
+  MapPin,
+  ImageIcon,
+  Upload,
+  FolderKanban,
+  TrendingUp,
+  Trees,
+  Car,
+  Flame,
+  Building2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -43,16 +43,16 @@ interface UploadedPhoto {
 }
 
 type Sector =
-   | "FARMER"
-   | "HYBRID CAR OWNER"
-   | "ECO FRIENDLY STOVES"
-   | "COMMERCIAL BUILDING";
+  | "FARMER"
+  | "HYBRID CAR OWNER"
+  | "ECO FRIENDLY STOVES"
+  | "COMMERCIAL BUILDING";
 
 type SectorConfig = {
-   value: Sector;
-   label: string;
-   description: string;
-   icon: React.ComponentType<{ className?: string }>;
+  value: Sector;
+  label: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
 };
 
 const SECTORS: SectorConfig[] = [
@@ -198,42 +198,6 @@ export default function WorkspacePage() {
         <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full blur-2xl" />
 
         <div className="relative z-10">
-<<<<<<< HEAD
-           <div className="flex flex-col items-start gap-6">
-             <div className="flex items-center gap-3">
-               <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
-                 <FolderKanban className="w-6 h-6 text-white" />
-               </div>
-               <div>
-                 <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                   Workspace
-                 </h1>
-                 <p className="text-emerald-100 text-sm md:text-base">
-                   Manage your{" "}
-                   {selectedSector === "FARMER" ? "land parcels" : "assets"}{" "}
-                   and documentation
-                 </p>
-               </div>
-             </div>
-             <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm px-3 py-1.5 whitespace-nowrap shadow-lg">
-               <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-               Active
-             </Badge>
-           </div>
-        </div>
-      </div>
-
-      {/* Sector Selection Card */}
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm py-12 px-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-          <div className="flex-1">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
-              Activity Sector
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Select your sector to customize your experience
-            </p>
-=======
           <div className="flex flex-col items-start gap-6">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -254,50 +218,7 @@ export default function WorkspacePage() {
               <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
               Active
             </Badge>
->>>>>>> 4e039ae (latest #20 Sectors settings)
           </div>
-          <Select
-            value={selectedSector}
-            onValueChange={(value) => setSelectedSector(value as Sector)}
-          >
-            <SelectTrigger className="w-full sm:w-96 h-16 py-7 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-              <div className="flex items-center gap-2">
-                {(() => {
-                  const sector = SECTORS.find((s) => s.value === selectedSector);
-                  if (sector) {
-                    const Icon = sector.icon;
-                    return <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 invisible" />;
-                  }
-                  return null;
-                })()}
-                <SelectValue />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-              {SECTORS.map((sector) => {
-                const Icon = sector.icon;
-                return (
-                  <SelectItem
-                    key={sector.value}
-                    value={sector.value}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
-                        <Icon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-medium text-sm">{sector.label}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {sector.description}
-                        </span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                );
-              })}
-            </SelectContent>
-          </Select>
         </div>
       </div>
 
