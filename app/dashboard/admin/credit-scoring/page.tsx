@@ -17,18 +17,7 @@ import { AlertCircle, Brain, CheckCircle2, XCircle, File, Image as ImageIcon } f
 import CreditScoringAIAssistant from "@/components/dashboard_components/admin/credit-scoring/CreditScoringAIAssistant"
 import PendingApplicationsList from "@/components/dashboard_components/admin/credit-scoring/PendingApplicationsList"
 import UserDetailsPanel from "@/components/dashboard_components/admin/credit-scoring/UserDetailsPanel"
-
-type Sector = "farmer" | "eco_stove" | "hybrid_vehicle" | "commercial_building"
-
-interface PendingApplication {
-  id: string
-  userName: string
-  sector: Sector
-  creditsRequested: number
-  submittedDate: string
-  documents: string[]
-  status: "pending_review" | "under_ai_review" | "approved" | "rejected"
-}
+import type { Sector, PendingApplication } from "@/components/dashboard_components/admin/credit-scoring/types"
 
 const mockApplications: PendingApplication[] = [
   {
@@ -43,7 +32,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-002",
     userName: "Marie Uwizeyimana",
-    sector: "eco_stove",
+    sector: "eco-stoves",
     creditsRequested: 800,
     submittedDate: "5 hours ago",
     documents: ["Installation Photos", "User Agreement", "Proof of Residence"],
@@ -52,7 +41,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-003",
     userName: "Paul Habimana",
-    sector: "hybrid_vehicle",
+    sector: "hybrid-vehicles",
     creditsRequested: 500,
     submittedDate: "1 day ago",
     documents: ["Vehicle Registration", "Purchase Invoice", "Insurance Document"],
@@ -61,7 +50,7 @@ const mockApplications: PendingApplication[] = [
   {
     id: "app-004",
     userName: "Sophie Karangwa",
-    sector: "commercial_building",
+    sector: "commercial",
     creditsRequested: 2500,
     submittedDate: "2 days ago",
     documents: ["Building Audit", "Energy Certificates", "Business License"],
@@ -191,9 +180,9 @@ export default function CreditScoringPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="farmer">{t("admin.farmer")}</SelectItem>
-                  <SelectItem value="eco_stove">{t("admin.eco_stove")}</SelectItem>
-                  <SelectItem value="hybrid_vehicle">{t("admin.hybrid_vehicle")}</SelectItem>
-                  <SelectItem value="commercial_building">{t("admin.commercial_building")}</SelectItem>
+                  <SelectItem value="eco-stoves">{t("admin.eco_stove")}</SelectItem>
+                  <SelectItem value="hybrid-vehicles">{t("admin.hybrid_vehicle")}</SelectItem>
+                  <SelectItem value="commercial">{t("admin.commercial_building")}</SelectItem>
                 </SelectContent>
               </Select>
             </CardContent>

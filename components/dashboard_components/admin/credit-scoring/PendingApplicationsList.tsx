@@ -5,18 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AlertCircle, CheckCircle2, XCircle, Brain, Clock } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-type Sector = "farmer" | "eco-stoves" | "hybrid-vehicles" | "commercial"
-
-interface PendingApplication {
-  id: string
-  userName: string
-  sector: Sector
-  creditsRequested: number
-  submittedDate: string
-  documents: string[]
-  status: "pending_review" | "under_ai_review" | "approved" | "rejected"
-}
+import type { Sector, PendingApplication } from "./types"
 
 interface Props {
   applications: PendingApplication[]
