@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
+import LocationSelector from "./LocationSelector";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface FormFieldsProps {
   sector: SectorType;
   formData: Record<string, any>;
@@ -22,6 +24,7 @@ interface FieldInputProps {
   onChange: (value: any) => void;
   showError?: boolean;
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * Individual field input component
@@ -107,9 +110,22 @@ export default function FormFields({
 }: FormFieldsProps) {
   const fields = getFieldsForSector(sector);
 
-  // Separate common and optional fields for better organization
-  const commonFields = fields.slice(0, 9); // Common fields count
-  const optionalFields = fields.slice(9); // Optional fields after common
+  // Separate location fields from other common fields
+  const locationFieldNames = ["province", "district", "sectorArea", "cell", "village"];
+  const commonAndOptionalFields = fields.filter((f) => !locationFieldNames.includes(f.name));
+  
+  // Find where sector-specific optional fields start (e.g., landUPI for FARMER)
+  const optionalStartIndex = commonAndOptionalFields.findIndex((f) => 
+    ["landUPI", "carPlate", "stoveSerialNumber", "buildingReg"].includes(f.name)
+  );
+  
+  const commonFields = optionalStartIndex !== -1 
+    ? commonAndOptionalFields.slice(0, optionalStartIndex)
+    : commonAndOptionalFields;
+  
+  const optionalFields = optionalStartIndex !== -1 
+    ? commonAndOptionalFields.slice(optionalStartIndex)
+    : [];
 
   return (
     <div className="space-y-6">
@@ -138,6 +154,37 @@ export default function FormFields({
               />
             </div>
           ))}
+        </div>
+
+        {/* Location Section */}
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-50 mb-3">
+            Location Information
+          </h3>
+          
+          <LocationSelector
+            value={{
+              province: (formData.province || "") as string,
+              district: (formData.district || "") as string,
+              sector: (formData.sectorArea || "") as string,
+              cell: (formData.cell || "") as string,
+              village: (formData.village || "") as string,
+            }}
+            onChange={(field, value) => {
+              // Map 'sector' from LocationSelector back to 'sectorArea' in form
+              const fieldName = field === "sector" ? "sectorArea" : field;
+              onUpdateField(fieldName, value);
+            }}
+            errors={{
+              province: errors.province,
+              district: errors.district,
+              sector: errors.sectorArea,
+              cell: errors.cell,
+              village: errors.village,
+            }}
+            isSubmitted={isSubmitted}
+            showLabels={true}
+          />
         </div>
       </div>
 

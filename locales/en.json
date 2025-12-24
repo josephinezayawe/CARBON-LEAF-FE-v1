@@ -410,7 +410,7 @@
     "select_cell": "Select Cell",
     "select_village": "Select Village",
     "by_continuing": "By continuing, you agree to our Terms of Service"
-  },
+    },
   "admin": {
     "welcome": "Welcome to Admin Dashboard",
     "dashboard_desc": "Manage system, users, credits, and monitor platform performance",

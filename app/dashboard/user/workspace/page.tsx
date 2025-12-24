@@ -6,6 +6,7 @@ import UploadSummary from "@/components/dashboard_components/user/workspace/Uplo
 import PhotoGallery from "@/components/dashboard_components/user/workspace/PhotoGallery";
 import UPIRegistration from "@/components/dashboard_components/user/workspace/UPIRegistration";
 import { AssetForm } from "@/components/AssetForm";
+import AssetsList, { Asset } from "@/components/AssetForm/AssetsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   MapPin,
@@ -66,6 +67,8 @@ export default function WorkspacePage() {
   // FIXED: add setter
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
   const [refreshGallery, setRefreshGallery] = useState(0);
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
   useEffect(() => {
     async function getPhotos() {
@@ -107,6 +110,31 @@ export default function WorkspacePage() {
 
   const handleRemoveUPI = (id: string) => {
     setRegisteredUPIs(registeredUPIs.filter((u) => u.id !== id));
+  };
+
+  const handleCreateAsset = async (payload: Record<string, any>) => {
+    const newAsset: Asset = {
+      id: Date.now().toString(),
+      name: payload.name,
+      sector: payload.sector,
+      assetType: payload.assetType,
+      description: payload.description,
+      location: `${payload.cell}, ${payload.village}, ${payload.district}`,
+      createdAt: new Date().toISOString(),
+      data: payload,
+    };
+    
+    setAssets([...assets, newAsset]);
+    setSelectedAsset(newAsset);
+    toast.success(`Asset "${newAsset.name}" created successfully`);
+  };
+
+  const handleDeleteAsset = (id: string) => {
+    setAssets(assets.filter((a) => a.id !== id));
+    if (selectedAsset?.id === id) {
+      setSelectedAsset(null);
+    }
+    toast.success("Asset deleted");
   };
 
   const upiList = registeredUPIs.map((u) => u.upi);
@@ -272,41 +300,63 @@ export default function WorkspacePage() {
               value="register"
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"
             >
-              <AssetForm
-                initialSector={selectedSector as SectorType}
-                hideSectorSelector={true}
-                onSubmit={async (payload) => {
-                  try {
-                    // TODO: Replace with actual API call
-                    console.log("Asset payload:", payload);
-                    toast.success("Asset created successfully");
-                    // const response = await Workspace.addAsset(payload);
-                  } catch (error) {
-                    toast.error(
-                      error instanceof Error ? error.message : "Failed to create asset"
-                    );
-                  }
-                }}
-              />
+              <div className="space-y-6">
+                {/* Create Asset Form */}
+                <AssetForm
+                  initialSector={selectedSector as SectorType}
+                  hideSectorSelector={true}
+                  onSubmit={handleCreateAsset}
+                />
+
+                {/* Assets List */}
+                {assets.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">
+                      Your Assets ({assets.length})
+                    </h3>
+                    <AssetsList
+                      assets={assets}
+                      onDelete={handleDeleteAsset}
+                    />
+                  </div>
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent
               value="upload"
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"
             >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <PhotoUploader
-                    upiList={upiList}
-                    sector={selectedSector}
-                    registeredItems={registeredUPIs}
-                    onUploadSuccess={() => setRefreshGallery((prev) => prev + 1)}
-                  />
-                </div>
-                <div>
-                  <PhotoGallery sector={selectedSector} refreshTrigger={refreshGallery} />
-                </div>
-              </div>
+              {(() => {
+                const sectorAssets = assets.filter((a) => a.sector === selectedSector);
+                
+                return sectorAssets.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Upload className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm">No assets created for {selectedSector}</p>
+                    <p className="text-gray-400 text-xs mt-1">Create an asset in the Create Asset tab first</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                      <PhotoUploader
+                        upiList={sectorAssets.map((a) => a.name)}
+                        sector={selectedSector}
+                        registeredItems={sectorAssets.map((a) => ({
+                          id: a.id,
+                          upi: a.name,
+                          landName: a.name,
+                          registeredAt: a.createdAt,
+                        }))}
+                        onUploadSuccess={() => setRefreshGallery((prev) => prev + 1)}
+                      />
+                    </div>
+                    <div>
+                      <PhotoGallery sector={selectedSector} refreshTrigger={refreshGallery} />
+                    </div>
+                  </div>
+                );
+              })()}
             </TabsContent>
 
             <TabsContent
