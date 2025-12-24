@@ -5,6 +5,7 @@ import PhotoUploader from "@/components/dashboard_components/user/workspace/Phot
 import UploadSummary from "@/components/dashboard_components/user/workspace/UploadSummary";
 import PhotoGallery from "@/components/dashboard_components/user/workspace/PhotoGallery";
 import UPIRegistration from "@/components/dashboard_components/user/workspace/UPIRegistration";
+import { AssetForm } from "@/components/AssetForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   MapPin,
@@ -27,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SectorType } from "@/lib/asset-config";
 
 interface RegisteredUPI {
   id: string;
@@ -42,90 +44,10 @@ interface UploadedPhoto {
   uploadedAt: string;
 }
 
-type Sector =
-  | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
-
-type SectorConfig = {
-  value: Sector;
-  label: string;
-  description: string;
-  icon: React.ComponentType<{ className?: string }>;
-};
-
-const SECTORS: SectorConfig[] = [
-  {
-    value: "FARMER",
-    label: "Farmer",
-    description: "Agricultural land management",
-    icon: Trees,
-  },
-  {
-    value: "HYBRID CAR OWNER",
-    label: "Hybrid Car Owner",
-    description: "Vehicle emissions tracking",
-    icon: Car,
-  },
-  {
-    value: "ECO FRIENDLY STOVES",
-    label: "Eco Friendly Stoves",
-    description: "Clean cooking solutions",
-    icon: Flame,
-  },
-  {
-    value: "COMMERCIAL BUILDING",
-    label: "Commercial Building",
-    description: "Building emissions management",
-    icon: Building2,
-  },
-];
-
-const getSectorConfig = (sector: Sector) => {
-  const configs = {
-    FARMER: {
-      registrationLabel: "Register UPI",
-      registrationShort: "UPI",
-      assetLabel: "Land Parcel",
-      assetPlaceholder: "Enter UPI code",
-      uploadLabel: "Upload Documents",
-      tabIcon: MapPin,
-      description: "Register your land parcels using UPI codes",
-    },
-    "HYBRID CAR OWNER": {
-      registrationLabel: "Register Vehicle",
-      registrationShort: "Vehicle",
-      assetLabel: "Vehicle ID",
-      assetPlaceholder: "Enter registration number",
-      uploadLabel: "Upload Documents",
-      tabIcon: MapPin,
-      description: "Register your hybrid vehicles for emissions tracking",
-    },
-    "ECO FRIENDLY STOVES": {
-      registrationLabel: "Register Stove",
-      registrationShort: "Stove",
-      assetLabel: "Stove Serial",
-      assetPlaceholder: "Enter serial number",
-      uploadLabel: "Upload Documents",
-      tabIcon: MapPin,
-      description: "Register your eco-friendly stoves",
-    },
-    "COMMERCIAL BUILDING": {
-      registrationLabel: "Register Building",
-      registrationShort: "Building",
-      assetLabel: "Building ID",
-      assetPlaceholder: "Enter building identifier",
-      uploadLabel: "Upload Documents",
-      tabIcon: MapPin,
-      description: "Register your commercial buildings",
-    },
-  };
-  return configs[sector];
-};
+// Sector configs moved to lib/asset-config.ts
 
 export default function WorkspacePage() {
-  const [selectedSector, setSelectedSector] = useState<Sector>("FARMER");
+  const [selectedSector, setSelectedSector] = useState<SectorType>("FARMER");
   const [registeredUPIs, setRegisteredUPIs] = useState<RegisteredUPI[]>([
     {
       id: "1",
@@ -235,44 +157,64 @@ export default function WorkspacePage() {
           </div>
           <Select
             value={selectedSector}
-            onValueChange={(value) => setSelectedSector(value as Sector)}
+            onValueChange={(value) => setSelectedSector(value as SectorType)}
           >
             <SelectTrigger className="w-full sm:w-96 h-16 py-7 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
-              <div className="flex items-center gap-2">
-                {(() => {
-                  const sector = SECTORS.find((s) => s.value === selectedSector);
-                  if (sector) {
-                    const Icon = sector.icon;
-                    return <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 invisible" />;
-                  }
-                  return null;
-                })()}
-                <SelectValue />
-              </div>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-              {SECTORS.map((sector) => {
-                const Icon = sector.icon;
-                return (
-                  <SelectItem
-                    key={sector.value}
-                    value={sector.value}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
-                        <Icon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-medium text-sm">{sector.label}</span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {sector.description}
-                        </span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                );
-              })}
+              <SelectItem value="FARMER" className="cursor-pointer">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
+                    <Trees className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium text-sm">Farmer</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Agricultural land management
+                    </span>
+                  </div>
+                </div>
+              </SelectItem>
+              <SelectItem value="HYBRID CAR OWNER" className="cursor-pointer">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
+                    <Car className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium text-sm">Hybrid Car Owner</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Vehicle emissions tracking
+                    </span>
+                  </div>
+                </div>
+              </SelectItem>
+              <SelectItem value="ECO FRIENDLY STOVES" className="cursor-pointer">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
+                    <Flame className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium text-sm">Eco Friendly Stoves</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Clean cooking solutions
+                    </span>
+                  </div>
+                </div>
+              </SelectItem>
+              <SelectItem value="COMMERCIAL BUILDING" className="cursor-pointer">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
+                    <Building2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-medium text-sm">Commercial Building</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Building emissions management
+                    </span>
+                  </div>
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -295,21 +237,15 @@ export default function WorkspacePage() {
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
               >
                 <MapPin className="w-4 h-4" />
-                <span className="hidden sm:inline">
-                  {getSectorConfig(selectedSector).registrationLabel}
-                </span>
-                <span className="sm:hidden">
-                  {getSectorConfig(selectedSector).registrationShort}
-                </span>
+                <span className="hidden sm:inline">Create Asset</span>
+                <span className="sm:hidden">Asset</span>
               </TabsTrigger>
               <TabsTrigger
                 value="upload"
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
               >
                 <Upload className="w-4 h-4" />
-                <span className="hidden sm:inline">
-                  {getSectorConfig(selectedSector).uploadLabel}
-                </span>
+                <span className="hidden sm:inline">Upload Documents</span>
                 <span className="sm:hidden">Upload</span>
               </TabsTrigger>
               <TabsTrigger
@@ -336,49 +272,22 @@ export default function WorkspacePage() {
               value="register"
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"
             >
-              {selectedSector === "FARMER" ? (
-                <UPIRegistration
-                  registeredUPIs={registeredUPIs}
-                  onAddUPI={handleAddUPI}
-                  onRemoveUPI={handleRemoveUPI}
-                />
-              ) : (
-                <div className="space-y-6">
-                  <div className="flex flex-col gap-2 mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50">
-                      {getSectorConfig(selectedSector).registrationLabel}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {getSectorConfig(selectedSector).description}
-                    </p>
-                  </div>
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-900/30 mb-4">
-                      <MapPin className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-2">
-                      {getSectorConfig(selectedSector).assetLabel}
-                    </h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      Enter your{" "}
-                      {getSectorConfig(selectedSector).assetLabel.toLowerCase()}{" "}
-                      details to get started
-                    </p>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder={
-                          getSectorConfig(selectedSector).assetPlaceholder
-                        }
-                        className="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50 placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      />
-                      <button className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors">
-                        Register
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <AssetForm
+                initialSector={selectedSector as SectorType}
+                hideSectorSelector={true}
+                onSubmit={async (payload) => {
+                  try {
+                    // TODO: Replace with actual API call
+                    console.log("Asset payload:", payload);
+                    toast.success("Asset created successfully");
+                    // const response = await Workspace.addAsset(payload);
+                  } catch (error) {
+                    toast.error(
+                      error instanceof Error ? error.message : "Failed to create asset"
+                    );
+                  }
+                }}
+              />
             </TabsContent>
 
             <TabsContent
