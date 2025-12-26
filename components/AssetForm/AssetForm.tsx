@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import SectorSelector from "./SectorSelector";
 import FormFields from "./FormFields";
+import { Workspace } from "@/app/api/workspace";
 
 interface AssetFormProps {
   initialSector?: SectorType;
@@ -54,12 +55,23 @@ export default function AssetForm({
 
     try {
       setSubmitting(true);
-      if (onSubmit) {
-        await onSubmit(payload);
+      
+      const res = await Workspace.addAsset(payload);
+      
+      if (res.success && res.data) {
         toast.success("Asset created successfully");
+        
+        // Call the onSubmit callback with the created asset data
+        if (onSubmit) {
+          await onSubmit(res.data);
+        }
+        
         form.resetForm();
+      } else {
+        toast.error(res.message || "Failed to create asset");
       }
     } catch (error) {
+      console.error("Error creating asset:", error);
       toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {
       setSubmitting(false);

@@ -32,9 +32,9 @@ export const Workspace = {
       };
     }
   },
-  addAsset: async () => {
+  addAsset: async (data: any) => {
     try {
-      const result = await api.get(`/api/user/workspace/`);
+      const result = await api.post(`/api/createAsset`, data);
       return {
         success: true,
         message: "Done successfully",
@@ -44,6 +44,24 @@ export const Workspace = {
       return {
         success: false,
         message: error as string,
+      };
+    }
+  },
+  getAssets: async (sector?: string) => {
+    try {
+      const result = await api.get(`/api/userAssets?sector=FARMER`);
+      // The API returns { success, message, data: [...assets] }
+      return {
+        success: result.data.success ?? true,
+        message: result.data.message ?? "Done successfully",
+        data: result.data.data as any, // This is the array of assets
+      };
+    } catch (error) {
+      console.error("Error fetching assets:", error);
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to fetch assets",
+        data: [],
       };
     }
   },

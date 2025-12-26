@@ -140,7 +140,7 @@ export function useAssetForm(defaultSector: SectorType): UseAssetFormReturn {
 
   /**
    * Build API payload
-   * Includes only visible fields for the sector + auto-set fields
+   * Includes all fields with empty strings for optional unfilled fields
    */
   const buildPayload = useCallback((): AssetFormState | null => {
     if (!validate()) {
@@ -156,7 +156,15 @@ export function useAssetForm(defaultSector: SectorType): UseAssetFormReturn {
 
     // Add visible fields from form
     visibleFieldNames.forEach((fieldName) => {
-      payload[fieldName] = formData[fieldName];
+      payload[fieldName] = formData[fieldName] || "";
+    });
+
+    // Ensure all optional fields are present with empty string defaults
+    const allOptionalFields = ["landUPI", "carPlate", "carSerialNumber", "stoveSerialNumber", "buildingReg"];
+    allOptionalFields.forEach((field) => {
+      if (!payload.hasOwnProperty(field)) {
+        payload[field] = "";
+      }
     });
 
     return payload;

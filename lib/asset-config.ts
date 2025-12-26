@@ -99,12 +99,12 @@ export interface SectorConfig {
   optionalFields: Record<SectorType, Field[]>;
 }
 
-// Auto-set values based on sector
+// Auto-set values based on sector  
 export const SECTOR_AUTO_VALUES: Record<SectorType, { assetType: string }> = {
-  FARMER: { assetType: "Land Parcel" },
-  "HYBRID CAR OWNER": { assetType: "Vehicle" },
-  "ECO FRIENDLY STOVES": { assetType: "Stove" },
-  "COMMERCIAL BUILDING": { assetType: "Building" },
+  FARMER: { assetType: "LAND" },
+  "HYBRID CAR OWNER": { assetType: "VEHICLE" },
+  "ECO FRIENDLY STOVES": { assetType: "STOVE" },
+  "COMMERCIAL BUILDING": { assetType: "BUILDING" },
 };
 
 // Common fields required for all sectors (auto-set fields excluded)

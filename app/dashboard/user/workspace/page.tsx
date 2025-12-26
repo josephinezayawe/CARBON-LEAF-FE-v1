@@ -9,15 +9,15 @@ import { AssetForm } from "@/components/AssetForm";
 import AssetsList, { Asset } from "@/components/AssetForm/AssetsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-   MapPin,
-   ImageIcon,
-   Upload,
-   FolderKanban,
-   TrendingUp,
-   Trees,
-   Car,
-   Flame,
-   Building2,
+  MapPin,
+  ImageIcon,
+  Upload,
+  FolderKanban,
+  TrendingUp,
+  Trees,
+  Car,
+  Flame,
+  Building2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -80,7 +80,12 @@ export default function WorkspacePage() {
       const workspaces = result?.data?.data?.workspaces ?? [];
 
       const transformed: UploadedPhoto[] = workspaces.flatMap(
-        (ws: { id: string; imageAssets?: string[]; uploadDate?: string; userId: string }) =>
+        (ws: {
+          id: string;
+          imageAssets?: string[];
+          uploadDate?: string;
+          userId: string;
+        }) =>
           ws.imageAssets?.map((url: string, index: number) => ({
             id: `${ws.id}-${index}`,
             url,
@@ -111,22 +116,58 @@ export default function WorkspacePage() {
   };
 
   const handleCreateAsset = async (payload: Record<string, any>) => {
+    // The API already returned the created asset, so we just add it to the list
     const newAsset: Asset = {
-      id: Date.now().toString(),
+      id: payload.id,
       name: payload.name,
-      sector: payload.sector,
+      sector: payload.sector as SectorType,
       assetType: payload.assetType,
       description: payload.description,
       location: `${payload.cell}, ${payload.village}, ${payload.district}`,
-      createdAt: new Date().toISOString(),
+      createdAt: payload.createdAt || new Date().toISOString(),
       data: payload,
     };
-    
+
     setAssets([...assets, newAsset]);
     setSelectedAsset(newAsset);
     toast.success(`Asset "${newAsset.name}" created successfully`);
   };
 
+  // Load user assets on mount
+  useEffect(() => {
+    const loadUserAssets = async () => {
+      try {
+        const result = await Workspace.getAssets("FARMER");
+        if (!result.success) {
+          console.error("Failed to load assets:", result.message);
+          return;
+        }
+
+        const assetsData = Array.isArray(result.data) ? result.data : [];
+        
+        // Transform API response to Asset interface
+        const transformedAssets: Asset[] = assetsData.map((apiAsset: any) => ({
+          id: apiAsset.id,
+          name: apiAsset.name,
+          sector: apiAsset.sector as SectorType,
+          assetType: apiAsset.assetType,
+          description: apiAsset.description,
+          location: `${apiAsset.cell}, ${apiAsset.village}, ${apiAsset.district}`,
+          createdAt: apiAsset.createdAt,
+          data: apiAsset,
+        }));
+
+        setAssets(transformedAssets);
+        console.log("Loaded assets:", transformedAssets);
+      } catch (error) {
+        console.error("Error loading assets:", error);
+        toast.error("Failed to load your assets");
+      }
+    };
+
+    loadUserAssets();
+  }, []);
+  
   const handleDeleteAsset = (id: string) => {
     setAssets(assets.filter((a) => a.id !== id));
     if (selectedAsset?.id === id) {
@@ -157,8 +198,8 @@ export default function WorkspacePage() {
                 </h1>
                 <p className="text-emerald-100 text-sm md:text-base">
                   Manage your{" "}
-                  {selectedSector === "FARMER" ? "land parcels" : "assets"}{" "}
-                  and documentation
+                  {selectedSector === "FARMER" ? "land parcels" : "assets"} and
+                  documentation
                 </p>
               </div>
             </div>
@@ -188,10 +229,14 @@ export default function WorkspacePage() {
             <SelectTrigger className="w-full sm:w-96 h-16 py-7 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
               <div className="flex items-center gap-2">
                 {(() => {
-                  const sector = SECTORS.find((s) => s.value === selectedSector);
+                  const sector = SECTORS.find(
+                    (s) => s.value === selectedSector
+                  );
                   if (sector) {
                     const Icon = sector.icon;
-                    return <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 invisible" />;
+                    return (
+                      <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 invisible" />
+                    );
                   }
                   return null;
                 })()}
@@ -212,7 +257,9 @@ export default function WorkspacePage() {
                         <Icon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div className="flex flex-col gap-0.5">
-                        <span className="font-medium text-sm">{sector.label}</span>
+                        <span className="font-medium text-sm">
+                          {sector.label}
+                        </span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           {sector.description}
                         </span>
@@ -292,10 +339,7 @@ export default function WorkspacePage() {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-50 mb-4">
                       Your Assets ({assets.length})
                     </h3>
-                    <AssetsList
-                      assets={assets}
-                      onDelete={handleDeleteAsset}
-                    />
+                    <AssetsList assets={assets} onDelete={handleDeleteAsset} />
                   </div>
                 )}
               </div>
@@ -306,13 +350,19 @@ export default function WorkspacePage() {
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"
             >
               {(() => {
-                const sectorAssets = assets.filter((a) => a.sector === selectedSector);
-                
+                const sectorAssets = assets.filter(
+                  (a) => a.sector === selectedSector
+                );
+
                 return sectorAssets.length === 0 ? (
                   <div className="text-center py-12">
                     <Upload className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500 text-sm">No assets created for {selectedSector}</p>
-                    <p className="text-gray-400 text-xs mt-1">Create an asset in the Create Asset tab first</p>
+                    <p className="text-gray-500 text-sm">
+                      No assets created for {selectedSector}
+                    </p>
+                    <p className="text-gray-400 text-xs mt-1">
+                      Create an asset in the Create Asset tab first
+                    </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -326,11 +376,16 @@ export default function WorkspacePage() {
                           landName: a.name,
                           registeredAt: a.createdAt,
                         }))}
-                        onUploadSuccess={() => setRefreshGallery((prev) => prev + 1)}
+                        onUploadSuccess={() =>
+                          setRefreshGallery((prev) => prev + 1)
+                        }
                       />
                     </div>
                     <div>
-                      <PhotoGallery sector={selectedSector} refreshTrigger={refreshGallery} />
+                      <PhotoGallery
+                        sector={selectedSector}
+                        refreshTrigger={refreshGallery}
+                      />
                     </div>
                   </div>
                 );
