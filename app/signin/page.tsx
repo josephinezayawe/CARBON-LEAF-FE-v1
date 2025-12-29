@@ -61,7 +61,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-green-100/20 dark:from-slate-950 dark:via-emerald-950/20 dark:to-green-950/10 px-4 py-8">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-green-100/20 dark:from-slate-950 dark:via-emerald-950/20 dark:to-green-950/10 px-4 py-8">
       {/* Theme and Language Switchers */}
       <div className="absolute top-6 right-6 flex items-center gap-4">
         {/* Theme Toggle */}
@@ -247,7 +247,7 @@ export default function SignIn() {
       </div>
 
       {/* Footer */}
-      <div className="text-center mt-6">
+      <div className="absolute bottom-6 text-center">
         <p className="text-xs text-slate-500 dark:text-slate-500">
           {t("auth.by_continuing")}
         </p>

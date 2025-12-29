@@ -698,6 +698,8 @@
     "listing_status_sold_out": "Épuisé",
     "listing_status_paused": "Suspendu",
     "status_inactive": "Inactif",
+    "user_credits_breakdown": "Répartition des crédits des utilisateurs",
+    "export": "Exporter",
     "cs_pending_review": "En attente d'examen",
     "cs_under_ai_review": "Sous revue IA",
     "cs_approved": "Approuvé",

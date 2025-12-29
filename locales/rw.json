@@ -698,6 +698,8 @@
     "listing_status_sold_out": "Byafashe",
     "listing_status_paused": "Yatakiye",
     "status_inactive": "Nta gukora",
+    "user_credits_breakdown": "Gucyagurwa kw'Amahoro y'Abakoresha",
+    "export": "Inyongera",
     "cs_pending_review": "Ikiriya kugerageza",
     "cs_under_ai_review": "Haba mu gutunganya kw'AI",
     "cs_approved": "Byemejwe",

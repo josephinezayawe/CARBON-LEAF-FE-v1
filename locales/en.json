@@ -698,6 +698,8 @@
     "listing_status_sold_out": "Sold Out",
     "listing_status_paused": "Paused",
     "status_inactive": "Inactive",
+    "user_credits_breakdown": "User Credits Breakdown",
+    "export": "Export",
     "cs_pending_review": "Pending Review",
     "cs_under_ai_review": "Under AI Review",
     "cs_approved": "Approved",
