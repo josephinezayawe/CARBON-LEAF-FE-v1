@@ -10,8 +10,14 @@
     "credit_scoring": "Gupima Amafaranga",
     "credit_sales": "Kuguza Amafaranga",
     "admin_wallet": "Konti ya Mwenyikazi",
-    "help": "Ubufasha"
-  },
+    "help": "Ubufasha",
+    "user_management": "Guverina Abakoresha",
+    "submissions": "Gusuzuma Ibisobanuro",
+    "duplicates": "Guverina Iby'Inyana",
+    "assets": "Guverina Imbogamizi",
+    "wallet": "Konti & Amanota",
+    "reports": "Raporo"
+    },
   "general": {
     "logout": "Sohoka",
     "language": "Ururimi",
@@ -717,7 +723,19 @@
     "tx_sale": "Guzitiza",
     "tx_withdrawal": "Kwikura",
     "tx_completed": "Byakozwe",
-    "tx_pending": "Ikiriya"
+    "tx_pending": "Ikiriya",
+    "duplicates_title": "Guverina Amafoto y'Inyana",
+    "duplicates_desc": "Reba kandi shambuye ibisobanuro byinyana byacitswe mu sisitemu",
+    "duplicates_detected": "Inyana Yacitswe",
+    "original_user": "Umukoresha Mbere",
+    "duplicate_user": "Umukoresha w'Inyana",
+    "original_ws_id": "ID WS Mbere",
+    "duplicate_ws_id": "ID WS y'Inyana",
+    "similarity": "Ubwiyandikireho",
+    "confidence": "Icyizigiro",
+    "date_detected": "Italiki Yacitswe",
+    "view_details": "Reba Ibigize",
+    "mark_false_positive": "Hitamo nka Idake"
     },
   "landing": {
     "live_marketplace": "Isoko ry'igihe cy'amakuru v2.0",

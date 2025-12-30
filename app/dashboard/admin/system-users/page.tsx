@@ -40,10 +40,19 @@ import SystemUsersFilters from "@/components/dashboard_components/admin/system-u
 
 interface SystemUser {
   id: string;
+  firstName: string;
+  lastName: string;
   name: string;
+  nid: string;
   email: string;
+  contact: string;
   sector: string;
+  province: string;
+  district: string;
+  cell?: string;
+  village?: string;
   credits: number;
+  assetCount: number;
   status: "active" | "pending" | "suspended";
   joinedDate: string;
   verificationStatus: "verified" | "pending_verification";
@@ -52,50 +61,95 @@ interface SystemUser {
 const mockUsers: SystemUser[] = [
   {
     id: "1",
+    firstName: "Jean",
+    lastName: "Ndayisaba",
     name: "Jean Ndayisaba",
+    nid: "1234567890",
     email: "jean@example.com",
+    contact: "+256 700 123 456",
     sector: "Farmer",
+    province: "Kigali City",
+    district: "Gasabo",
+    cell: "Gisozi",
+    village: "Mururanga",
     credits: 4200,
+    assetCount: 2,
     status: "active",
     joinedDate: "2025-01-15",
     verificationStatus: "verified",
   },
   {
     id: "2",
+    firstName: "Marie",
+    lastName: "Uwizeyimana",
     name: "Marie Uwizeyimana",
+    nid: "0987654321",
     email: "marie@example.com",
+    contact: "+256 700 234 567",
     sector: "Eco Stoves",
+    province: "Kigali City",
+    district: "Kicukiro",
+    cell: "Niboyi",
+    village: "Kamokya",
     credits: 2150,
+    assetCount: 1,
     status: "active",
     joinedDate: "2025-02-20",
     verificationStatus: "verified",
   },
   {
     id: "3",
+    firstName: "Paul",
+    lastName: "Habimana",
     name: "Paul Habimana",
+    nid: "1122334455",
     email: "paul@example.com",
+    contact: "+256 700 345 678",
     sector: "Hybrid Car Owner",
+    province: "Southern",
+    district: "Huye",
+    cell: "Nyarugenge",
+    village: "Karongi",
     credits: 0,
+    assetCount: 1,
     status: "pending",
     joinedDate: "2025-12-01",
     verificationStatus: "pending_verification",
   },
   {
     id: "4",
+    firstName: "Sophie",
+    lastName: "Karangwa",
     name: "Sophie Karangwa",
+    nid: "5544332211",
     email: "sophie@example.com",
+    contact: "+256 700 456 789",
     sector: "Commercial Building",
+    province: "Kigali City",
+    district: "Nyarugenge",
+    cell: "Kiyovu",
+    village: "Muhima",
     credits: 5800,
+    assetCount: 3,
     status: "active",
     joinedDate: "2025-01-08",
     verificationStatus: "verified",
   },
   {
     id: "5",
+    firstName: "Emmanuel",
+    lastName: "Kanyarwanda",
     name: "Emmanuel Kanyarwanda",
+    nid: "9876543210",
     email: "emmanuel@example.com",
+    contact: "+256 700 567 890",
     sector: "Farmer",
+    province: "Eastern",
+    district: "Muhanga",
+    cell: "Rwamagana",
+    village: "Kigabiro",
     credits: 3200,
+    assetCount: 2,
     status: "suspended",
     joinedDate: "2025-03-10",
     verificationStatus: "verified",
@@ -120,7 +174,9 @@ export default function SystemUsersPage() {
   const filteredUsers = mockUsers.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase());
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.nid.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.contact.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSector =
       selectedSector === "all" || user.sector === selectedSector;
     const matchesStatus =
@@ -312,16 +368,19 @@ export default function SystemUsersPage() {
           </div>
 
           {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-b bg-gray-50/50 dark:bg-gray-800/50">
-                  <TableHead>{t("admin.table_name")}</TableHead>
-                  <TableHead>{t("admin.table_sector")}</TableHead>
-                  <TableHead>{t("admin.table_credits")}</TableHead>
-                  <TableHead>{t("admin.table_verification")}</TableHead>
-                  <TableHead>{t("admin.table_status")}</TableHead>
-                  <TableHead>{t("admin.table_joined")}</TableHead>
+                  <TableHead>Name (First + Last)</TableHead>
+                  <TableHead>NID (Masked)</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Sector</TableHead>
+                  <TableHead>Location (Province, District)</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Wallet Balance</TableHead>
+                  <TableHead>Asset Count</TableHead>
+                  <TableHead>Created Date</TableHead>
                   <TableHead className="text-right">
                     {t("admin.table_actions")}
                   </TableHead>
@@ -333,28 +392,29 @@ export default function SystemUsersPage() {
                     key={user.id}
                     className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
                   >
-                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell className="font-medium">
+                      {user.firstName} {user.lastName}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {user.nid.substring(0, 4)}****{user.nid.substring(8)}
+                    </TableCell>
+                    <TableCell className="text-sm">{user.contact}</TableCell>
                     <TableCell className="text-sm">
                       {getSectorLabel(user.sector)}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {user.province}, {user.district}
+                    </TableCell>
+                    <TableCell>
+                      <Badge className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300">
+                        USER
+                      </Badge>
                     </TableCell>
                     <TableCell className="font-semibold">
                       {user.credits.toLocaleString()}
                     </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={getVerificationColor(
-                          user.verificationStatus
-                        )}
-                      >
-                        {user.verificationStatus === "verified"
-                          ? t("admin.verified")
-                          : t("admin.pending")}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(user.status)}>
-                        {getStatusLabel(user.status)}
-                      </Badge>
+                    <TableCell className="text-center">
+                      {user.assetCount}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {new Date(user.joinedDate).toLocaleDateString()}
@@ -373,11 +433,14 @@ export default function SystemUsersPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem>
                             <Eye className="h-4 w-4 mr-2" />
-                            {t("admin.view_profile")}
+                            View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Edit2 className="h-4 w-4 mr-2" />
-                            {t("admin.edit_user")}
+                            Edit User
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            {t("admin.manage_sectors")}
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           {user.status !== "suspended" && (

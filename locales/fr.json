@@ -10,8 +10,14 @@
     "credit_scoring": "Notation de Crédits",
     "credit_sales": "Ventes de Crédits",
     "admin_wallet": "Portefeuille Admin",
-    "help": "Aide"
-  },
+    "help": "Aide",
+    "user_management": "Gestion des Utilisateurs",
+    "submissions": "Examens des Soumissions",
+    "duplicates": "Gestion des Doublons",
+    "assets": "Gestion des Actifs",
+    "wallet": "Portefeuille & Crédits",
+    "reports": "Rapports"
+    },
   "general": {
     "logout": "Déconnexion",
     "language": "Langue",
@@ -717,7 +723,19 @@
     "tx_sale": "Vente",
     "tx_withdrawal": "Retrait",
     "tx_completed": "Complété",
-    "tx_pending": "En attente"
+    "tx_pending": "En attente",
+    "duplicates_title": "Gestion des Images en Double",
+    "duplicates_desc": "Afficher et gérer les soumissions en double détectées dans le système",
+    "duplicates_detected": "Doublons Détectés",
+    "original_user": "Utilisateur Original",
+    "duplicate_user": "Utilisateur en Double",
+    "original_ws_id": "ID WS Original",
+    "duplicate_ws_id": "ID WS en Double",
+    "similarity": "Similarité",
+    "confidence": "Confiance",
+    "date_detected": "Date Détectée",
+    "view_details": "Voir les Détails",
+    "mark_false_positive": "Marquer comme Faux Positif"
     },
   "landing": {
     "live_marketplace": "Place de marché en direct v2.0",
