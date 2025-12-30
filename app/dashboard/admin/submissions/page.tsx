@@ -568,14 +568,13 @@ export default function SubmissionsPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Status</p>
-                    <Badge
-                      className={getStatusColor(selectedSubmission.status)}
-                      className="text-xs"
-                    >
-                      {getStatusLabel(selectedSubmission.status)}
-                    </Badge>
-                  </div>
+                     <p className="text-xs text-muted-foreground">Status</p>
+                     <Badge
+                       className={`${getStatusColor(selectedSubmission.status)} text-xs`}
+                     >
+                       {getStatusLabel(selectedSubmission.status)}
+                     </Badge>
+                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground">Upload Date</p>
                     <p className="font-semibold text-sm">
