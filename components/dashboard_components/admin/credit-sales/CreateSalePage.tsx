@@ -321,12 +321,12 @@ export default function CreateSalePage() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Price Per Credit</p>
-                  <p className="font-semibold">₦{formData.pricePerCredit.toLocaleString()}</p>
+                  <p className="font-semibold">RWF{formData.pricePerCredit.toLocaleString()}</p>
                 </div>
                 <div className="col-span-2 border-t pt-3">
                   <p className="text-sm text-muted-foreground">Total Sale Amount</p>
                   <p className="text-2xl font-bold text-blue-600">
-                    ₦{totalSaleAmount.toLocaleString("en-RW", {
+                    RWF{totalSaleAmount.toLocaleString("en-RW", {
                       maximumFractionDigits: 2,
                     })}
                   </p>
@@ -390,7 +390,7 @@ export default function CreateSalePage() {
                             Remaining After
                           </TableHead>
                           <TableHead className="text-right">
-                            Amount Owed (₦)
+                            Amount Owed (RWF)
                           </TableHead>
                         </TableRow>
                       </TableHeader>
@@ -532,12 +532,12 @@ export default function CreateSalePage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Price Per Credit</p>
-                <p className="font-semibold">₦{formData.pricePerCredit}</p>
+                <p className="font-semibold">RWF{formData.pricePerCredit}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Amount</p>
                 <p className="font-bold text-lg text-blue-600">
-                  ₦{totalSaleAmount.toLocaleString()}
+                  RWF{totalSaleAmount.toLocaleString()}
                 </p>
               </div>
               <div>
@@ -559,7 +559,7 @@ export default function CreateSalePage() {
                     <TableRow className="bg-gray-50/50 dark:bg-gray-800/50">
                       <TableHead>User Name</TableHead>
                       <TableHead className="text-right">Credits Sold</TableHead>
-                      <TableHead className="text-right">Amount to Receive (₦)</TableHead>
+                      <TableHead className="text-right">Amount to Receive (RWF)</TableHead>
                       <TableHead className="text-center">Workspaces</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -640,7 +640,7 @@ export default function CreateSalePage() {
                 </span>{" "}
                 credits for{" "}
                 <span className="font-semibold">
-                  ₦{totalSaleAmount.toLocaleString()}
+                  RWF{totalSaleAmount.toLocaleString()}
                 </span>{" "}
                 affecting <span className="font-semibold">{affectedUsers}</span> users.
               </p>
@@ -715,7 +715,7 @@ export default function CreateSalePage() {
               <div>
                 <p className="text-sm text-muted-foreground">Total Amount</p>
                 <p className="font-bold text-lg text-green-600">
-                  ₦{totalSaleAmount.toLocaleString()}
+                  RWF{totalSaleAmount.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -738,7 +738,7 @@ export default function CreateSalePage() {
                   <div key={idx} className="flex justify-between text-sm">
                     <span>{allocation[idx]?.userName}</span>
                     <span className="font-semibold">
-                      ₦{item.amount.toLocaleString()}
+                      RWF{item.amount.toLocaleString()}
                     </span>
                   </div>
                 ))}

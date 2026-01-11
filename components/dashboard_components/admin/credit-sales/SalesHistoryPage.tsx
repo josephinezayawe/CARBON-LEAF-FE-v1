@@ -226,7 +226,7 @@ export default function SalesHistoryPage() {
                   <TableHead>Buyer Name</TableHead>
                   <TableHead className="text-right">Credits Sold</TableHead>
                   <TableHead className="text-right">Price/Credit</TableHead>
-                  <TableHead className="text-right">Total Amount (₦)</TableHead>
+                  <TableHead className="text-right">Total Amount (RWF)</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Sale Date</TableHead>
                   <TableHead>Created By</TableHead>
@@ -244,10 +244,10 @@ export default function SalesHistoryPage() {
                       {sale.creditsSold.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      ₦{sale.pricePerCredit.toLocaleString()}
+                      RWF{sale.pricePerCredit.toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      ₦{sale.totalAmount.toLocaleString()}
+                      RWF{sale.totalAmount.toLocaleString()}
                     </TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(sale.status)}>
@@ -365,12 +365,12 @@ export default function SalesHistoryPage() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Price/Credit</p>
-                    <p className="font-bold">₦{selectedSale.pricePerCredit}</p>
+                    <p className="font-bold">RWF{selectedSale.pricePerCredit}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Total Amount</p>
                     <p className="font-bold text-blue-600">
-                      ₦{selectedSale.totalAmount.toLocaleString()}
+                      RWF{selectedSale.totalAmount.toLocaleString()}
                     </p>
                   </div>
                 </div>

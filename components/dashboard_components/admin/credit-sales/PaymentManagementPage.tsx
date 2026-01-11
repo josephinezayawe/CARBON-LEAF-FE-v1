@@ -192,7 +192,7 @@ export default function PaymentManagementPage() {
                 Payments Due
               </p>
               <p className="text-2xl font-bold">
-                ₦{totalPaymentsDue.toLocaleString()}
+                RWF{totalPaymentsDue.toLocaleString()}
               </p>
             </div>
           </CardContent>
@@ -205,7 +205,7 @@ export default function PaymentManagementPage() {
                 Processed
               </p>
               <p className="text-2xl font-bold text-green-600">
-                ₦{totalProcessed.toLocaleString()}
+                RWF{totalProcessed.toLocaleString()}
               </p>
             </div>
           </CardContent>
@@ -218,7 +218,7 @@ export default function PaymentManagementPage() {
                 Total Distributed
               </p>
               <p className="text-2xl font-bold">
-                ₦{totalDistributed.toLocaleString()}
+                RWF{totalDistributed.toLocaleString()}
               </p>
             </div>
           </CardContent>
@@ -324,7 +324,7 @@ export default function PaymentManagementPage() {
                   <TableHead>Payment ID</TableHead>
                   <TableHead>User Name</TableHead>
                   <TableHead>Sale Number</TableHead>
-                  <TableHead className="text-right">Amount (₦)</TableHead>
+                  <TableHead className="text-right">Amount (RWF)</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Payment Method</TableHead>
                   <TableHead>Created Date</TableHead>
@@ -356,7 +356,7 @@ export default function PaymentManagementPage() {
                       {payment.saleNumber}
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      ₦{payment.amount.toLocaleString()}
+                      RWF{payment.amount.toLocaleString()}
                     </TableCell>
                     <TableCell>
                       <Badge className={getStatusColor(payment.status)}>
@@ -465,7 +465,7 @@ export default function PaymentManagementPage() {
                       Gross Amount
                     </span>
                     <span className="font-semibold">
-                      ₦{selectedPayment.amount.toLocaleString()}
+                      RWF{selectedPayment.amount.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -473,7 +473,7 @@ export default function PaymentManagementPage() {
                       Net Amount
                     </span>
                     <span className="font-bold text-green-600">
-                      ₦{selectedPayment.netAmount.toLocaleString()}
+                      RWF{selectedPayment.netAmount.toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -541,7 +541,7 @@ export default function PaymentManagementPage() {
                 <p className="text-sm font-medium">
                   Mark <span className="font-semibold">{selectedPayment.userName}</span> payment of{" "}
                   <span className="font-semibold">
-                    ₦{selectedPayment.amount.toLocaleString()}
+                    RWF{selectedPayment.amount.toLocaleString()}
                   </span>{" "}
                   as paid?
                 </p>
