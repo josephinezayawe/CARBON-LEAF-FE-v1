@@ -9,6 +9,7 @@ import {
   Shield,
   CheckSquare,
   Copy,
+  ShoppingCart,
 } from "lucide-react"
 
 import {
@@ -84,6 +85,14 @@ const getMenuItems = (t: (key: string) => string) => [
     url: "/dashboard/admin/wallet-credits",
     icon: Wallet,
     description: "Credits & wallet",
+    badge: "",
+    badgeVariant: "success" as const,
+  },
+  {
+    title: "Credit Sales",
+    url: "/dashboard/admin/credit-sales",
+    icon: ShoppingCart,
+    description: "Buy & sell credits",
     badge: "",
     badgeVariant: "success" as const,
   },
