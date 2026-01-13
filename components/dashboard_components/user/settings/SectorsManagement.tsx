@@ -17,9 +17,9 @@ import api from "@/app/api/api";
 
 type Sector =
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING";
 
 type SectorConfig = {
   value: Sector;
@@ -52,7 +52,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
-    value: "HYBRID CAR OWNER",
+    value: "HYBRID_CAR_OWNER",
     label: "Hybrid Car Owner",
     description: "Vehicle emissions tracking",
     icon: Car,
@@ -66,7 +66,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
-    value: "ECO FRIENDLY STOVES",
+    value: "ECO_FRIENDLY_STOVES",
     label: "Eco Friendly Stoves",
     description: "Clean cooking solutions",
     icon: Flame,
@@ -80,7 +80,7 @@ const SECTORS: SectorConfig[] = [
     },
   },
   {
-    value: "COMMERCIAL BUILDING",
+    value: "COMMERCIAL_BUILDING",
     label: "Commercial Building",
     description: "Building emissions management",
     icon: Building2,
@@ -107,17 +107,17 @@ export default function SectorsManagement() {
   const fetchUserSectors = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/api/user/sectors");
+      const response = await api.get("/api/user-sectors");
       if (response.data?.sectors) {
         setUserSectors(response.data.sectors);
       } else {
         // Default: show FARMER as added for demo
-        setUserSectors(["FARMER"]);
+        // setUserSectors(["FARMER"]);
       }
     } catch (error) {
       console.error("Failed to fetch sectors:", error);
       // Default: show FARMER as added for demo
-      setUserSectors(["FARMER"]);
+      // setUserSectors(["FARMER"]);
     } finally {
       setLoading(false);
     }
@@ -126,7 +126,7 @@ export default function SectorsManagement() {
   const handleAddSector = async (sector: Sector) => {
     setAddingId(sector);
     try {
-      const response = await api.post("/api/user/sectors", {
+      const response = await api.post("/api/addSector", {
         sector,
       });
 

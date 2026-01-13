@@ -1,20 +1,35 @@
-"use client"
+"use client";
 
-import React from "react"
-import { useLanguage } from "@/components/global/language-provider"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Activity, Users, TrendingUp, AlertCircle, Leaf, BarChart3, type LucideIcon } from "lucide-react"
-import { motion, type Variants } from "framer-motion"
-import { StatCard } from "@/components/dashboard_components/admin/StatCard"
+import React, { useEffect, useState } from "react";
+import { useLanguage } from "@/components/global/language-provider";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Activity,
+  Users,
+  TrendingUp,
+  AlertCircle,
+  Leaf,
+  BarChart3,
+  type LucideIcon,
+} from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { StatCard } from "@/components/dashboard_components/admin/StatCard";
 
 // Import admin components
-import CarbonEmissionStats from "@/components/dashboard_components/admin/CarbonEmissionStats"
-import AllUsersOverview from "@/components/dashboard_components/admin/AllUsersOverview"
-import CreditsOnSaleWidget from "@/components/dashboard_components/admin/CreditsOnSaleWidget"
-import PendingApprovalsWidget from "@/components/dashboard_components/admin/PendingApprovalsWidget"
-import CreditMarketStanding from "@/components/dashboard_components/admin/CreditMarketStanding"
-import SystemHealthWidget from "@/components/dashboard_components/admin/SystemHealthWidget"
-import AdminQuickActions from "@/components/dashboard_components/admin/AdminQuickActions"
+import CarbonEmissionStats from "@/components/dashboard_components/admin/CarbonEmissionStats";
+import AllUsersOverview from "@/components/dashboard_components/admin/AllUsersOverview";
+import CreditsOnSaleWidget from "@/components/dashboard_components/admin/CreditsOnSaleWidget";
+import PendingApprovalsWidget from "@/components/dashboard_components/admin/PendingApprovalsWidget";
+import CreditMarketStanding from "@/components/dashboard_components/admin/CreditMarketStanding";
+import SystemHealthWidget from "@/components/dashboard_components/admin/SystemHealthWidget";
+import AdminQuickActions from "@/components/dashboard_components/admin/AdminQuickActions";
+import { UsersAPI } from "@/app/api/users";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -25,7 +40,7 @@ const containerVariants: Variants = {
       delayChildren: 0.2,
     },
   },
-}
+};
 
 const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -34,7 +49,7 @@ const itemVariants: Variants = {
     y: 0,
     transition: { duration: 0.5 },
   },
-}
+};
 
 const headerVariants: Variants = {
   hidden: { opacity: 0, y: -30 },
@@ -43,24 +58,31 @@ const headerVariants: Variants = {
     y: 0,
     transition: { duration: 0.6 },
   },
-}
+};
 
 export default function AdminDashboard() {
-  const { t } = useLanguage()
-
+  const [users, setUsers] = useState<any[]>([]);
+  const { t } = useLanguage();
+  useEffect(() => {
+    async function allUsers() {
+      const result = await UsersAPI.getAllUsers();
+      setUsers(result);
+    }
+    allUsers();
+  }, []);
   const stats: Array<{
-    icon: LucideIcon
-    label: string
-    value: number
-    change: string
-    period: string
-    color: "blue" | "emerald" | "amber" | "green"
-    isLarge?: boolean
+    icon: LucideIcon;
+    label: string;
+    value: number;
+    change: string;
+    period: string;
+    color: "blue" | "emerald" | "amber" | "green";
+    isLarge?: boolean;
   }> = [
     {
       icon: Users,
       label: t("admin.total_users"),
-      value: 12450,
+      value: users.length || 0,
       change: "+12%",
       period: t("admin.from_last_month"),
       color: "blue",
@@ -90,7 +112,7 @@ export default function AdminDashboard() {
       period: t("admin.tons_co2_month"),
       color: "green",
     },
-  ]
+  ];
 
   return (
     <motion.div
@@ -100,16 +122,11 @@ export default function AdminDashboard() {
       variants={containerVariants}
     >
       {/* Header Section */}
-      <motion.div
-        className="space-y-2"
-        variants={headerVariants}
-      >
+      <motion.div className="space-y-2" variants={headerVariants}>
         <h1 className="text-4xl font-black bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 dark:from-emerald-400 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent tracking-tighter">
           {t("admin.welcome")}
         </h1>
-        <p className="text-muted-foreground">
-          {t("admin.dashboard_desc")}
-        </p>
+        <p className="text-muted-foreground">{t("admin.dashboard_desc")}</p>
       </motion.div>
 
       {/* KPI Stats - Top Row */}
@@ -118,19 +135,16 @@ export default function AdminDashboard() {
         variants={containerVariants}
       >
         {stats.map((stat, index) => (
-          <motion.div
-            key={index}
-            variants={itemVariants}
-          >
+          <motion.div key={index} variants={itemVariants}>
             <StatCard
               {...(stat as {
-                icon: LucideIcon
-                label: string
-                value: number
-                change: string
-                period: string
-                color: "blue" | "emerald" | "amber" | "green"
-                isLarge?: boolean
+                icon: LucideIcon;
+                label: string;
+                value: number;
+                change: string;
+                period: string;
+                color: "blue" | "emerald" | "amber" | "green";
+                isLarge?: boolean;
               })}
             />
           </motion.div>
@@ -143,10 +157,7 @@ export default function AdminDashboard() {
         variants={containerVariants}
       >
         {/* Left Column - Charts */}
-        <motion.div
-          className="lg:col-span-4 space-y-6"
-          variants={itemVariants}
-        >
+        <motion.div className="lg:col-span-4 space-y-6" variants={itemVariants}>
           {/* Carbon Emission Statistics */}
           <CarbonEmissionStats />
 
@@ -155,10 +166,7 @@ export default function AdminDashboard() {
         </motion.div>
 
         {/* Right Column - Widgets */}
-        <motion.div
-          className="lg:col-span-3 space-y-6"
-          variants={itemVariants}
-        >
+        <motion.div className="lg:col-span-3 space-y-6" variants={itemVariants}>
           {/* Pending Approvals */}
           <PendingApprovalsWidget />
 
@@ -172,17 +180,11 @@ export default function AdminDashboard() {
         className="grid gap-6 grid-cols-1 lg:grid-cols-7"
         variants={containerVariants}
       >
-        <motion.div
-          className="lg:col-span-4"
-          variants={itemVariants}
-        >
+        <motion.div className="lg:col-span-4" variants={itemVariants}>
           <AllUsersOverview />
         </motion.div>
 
-        <motion.div
-          className="lg:col-span-3"
-          variants={itemVariants}
-        >
+        <motion.div className="lg:col-span-3" variants={itemVariants}>
           <CreditMarketStanding />
         </motion.div>
       </motion.div>
@@ -191,6 +193,6 @@ export default function AdminDashboard() {
       <motion.div variants={itemVariants}>
         <AdminQuickActions />
       </motion.div>
-      </motion.div>
-      )
-      }
+    </motion.div>
+  );
+}

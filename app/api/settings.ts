@@ -44,7 +44,7 @@ export const SettingsAPI = {
     };
   },
   getUserSectors: async () => {
-    const response = await api.get("api/user-sectors");
+    const response = await api.get("/api/user-sectors");
     if (!response.data.success) {
       return {
         success: false,
