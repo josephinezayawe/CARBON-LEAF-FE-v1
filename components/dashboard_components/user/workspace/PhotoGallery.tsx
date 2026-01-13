@@ -42,16 +42,16 @@ interface PhotoItem {
 
 type Sector =
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING";
 
 const getSectorFilterLabel = (sector: Sector) => {
   const labels = {
     FARMER: "Filter by UPI",
-    "HYBRID CAR OWNER": "Filter by Vehicle",
-    "ECO FRIENDLY STOVES": "Filter by Stove",
-    "COMMERCIAL BUILDING": "Filter by Building",
+    "HYBRID_CAR_OWNER": "Filter by Vehicle",
+    "ECO_FRIENDLY_STOVES": "Filter by Stove",
+    "COMMERCIAL_BUILDING": "Filter by Building",
   };
   return labels[sector];
 };
@@ -184,14 +184,14 @@ export default function PhotoGallery({
                 All{" "}
                 {sector === "FARMER"
                   ? "UPIs"
-                  : sector === "HYBRID CAR OWNER"
+                  : sector === "HYBRID_CAR_OWNER"
                   ? "Vehicles"
-                  : sector === "ECO FRIENDLY STOVES"
+                  : sector === "ECO_FRIENDLY_STOVES"
                   ? "Stoves"
                   : "Buildings"}
               </SelectItem>
-              {upiList.map((upi, index) => (
-                <SelectItem key={index} value={upi}>
+              {upiList.map((upi) => (
+                <SelectItem key={upi} value={upi}>
                   {upi}
                 </SelectItem>
               ))}

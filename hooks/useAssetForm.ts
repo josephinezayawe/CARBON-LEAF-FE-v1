@@ -140,7 +140,7 @@ export function useAssetForm(defaultSector: SectorType): UseAssetFormReturn {
 
   /**
    * Build API payload
-   * Includes all fields with empty strings for optional unfilled fields
+   * Only includes fields relevant to the selected sector (no unrelated empty fields)
    */
   const buildPayload = useCallback((): AssetFormState | null => {
     if (!validate()) {
@@ -154,16 +154,19 @@ export function useAssetForm(defaultSector: SectorType): UseAssetFormReturn {
       assetType: SECTOR_AUTO_VALUES[sector].assetType,
     };
 
-    // Add visible fields from form
+    // Add ONLY visible fields for this sector from form data
+    // This ensures unrelated fields (like carPlate for FARMER) are NOT sent
     visibleFieldNames.forEach((fieldName) => {
-      payload[fieldName] = formData[fieldName] || "";
-    });
-
-    // Ensure all optional fields are present with empty string defaults
-    const allOptionalFields = ["landUPI", "carPlate", "carSerialNumber", "stoveSerialNumber", "buildingReg"];
-    allOptionalFields.forEach((field) => {
-      if (!payload.hasOwnProperty(field)) {
-        payload[field] = "";
+      const value = formData[fieldName];
+      // Only add field if it has a value, or if it's a required field (always include required fields)
+      if (value && value.trim && value.trim() !== "") {
+        payload[fieldName] = value;
+      } else {
+        // For required common fields, always include (even if empty, validation will catch it)
+        const field = getFieldsForSector(sector).find(f => f.name === fieldName);
+        if (field && field.required) {
+          payload[fieldName] = value || "";
+        }
       }
     });
 

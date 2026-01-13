@@ -66,16 +66,16 @@ function StatCard({
 
 type Sector =
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING";
 
 const getSectorLabel = (sector: Sector) => {
   const labels = {
     FARMER: "Registered Land Parcels",
-    "HYBRID CAR OWNER": "Registered Vehicles",
-    "ECO FRIENDLY STOVES": "Registered Stoves",
-    "COMMERCIAL BUILDING": "Registered Buildings",
+    "HYBRID_CAR_OWNER": "Registered Vehicles",
+    "ECO_FRIENDLY_STOVES": "Registered Stoves",
+    "COMMERCIAL_BUILDING": "Registered Buildings",
   };
   return labels[sector];
 };

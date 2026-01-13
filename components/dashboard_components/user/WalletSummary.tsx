@@ -76,19 +76,19 @@ export default function WalletSummary({ credits }: WalletSummaryProps) {
       icon: <Leaf className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />,
     },
     {
-      sector: "HYBRID CAR OWNER",
+      sector: "HYBRID_CAR_OWNER",
       credits: 15300,
       color: "blue",
       icon: <BarChart3 className="w-4 h-4 text-blue-600 dark:text-blue-400" />,
     },
     {
-      sector: "ECO FRIENDLY STOVES",
+      sector: "ECO_FRIENDLY_STOVES",
       credits: 22100,
       color: "orange",
       icon: <Coins className="w-4 h-4 text-orange-600 dark:text-orange-400" />,
     },
     {
-      sector: "COMMERCIAL BUILDING",
+      sector: "COMMERCIAL_BUILDING",
       credits: 19250,
       color: "purple",
       icon: (

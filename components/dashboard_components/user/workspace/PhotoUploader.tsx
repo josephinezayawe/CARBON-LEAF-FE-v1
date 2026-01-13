@@ -30,9 +30,9 @@ import { Workspace } from "@/app/api/workspace";
 
 type Sector =
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING";
 
 interface RegisteredUPI {
   id: string;
@@ -52,7 +52,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a land parcel to enable",
       readyMessage: "Ready to upload for",
     },
-    "HYBRID CAR OWNER": {
+    "HYBRID_CAR_OWNER": {
       selectionLabel: "Select Vehicle",
       selectionPlaceholder: "Choose a registered vehicle...",
       selectionTooltip: "Choose vehicle for photos",
@@ -61,7 +61,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a vehicle to enable",
       readyMessage: "Ready to upload for",
     },
-    "ECO FRIENDLY STOVES": {
+    "ECO_FRIENDLY_STOVES": {
       selectionLabel: "Select Stove",
       selectionPlaceholder: "Choose a registered stove...",
       selectionTooltip: "Choose stove for photos",
@@ -70,7 +70,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a stove to enable",
       readyMessage: "Ready to upload for",
     },
-    "COMMERCIAL BUILDING": {
+    "COMMERCIAL_BUILDING": {
       selectionLabel: "Select Building",
       selectionPlaceholder: "Choose a registered building...",
       selectionTooltip: "Choose building for photos",
@@ -216,8 +216,8 @@ export default function PhotoUploader({
                 {config.emptyMessage}
               </div>
             ) : (
-              upiList.map((upi, idx) => (
-                <SelectItem key={idx} value={upi} className="cursor-pointer">
+              upiList.map((upi) => (
+                <SelectItem key={upi} value={upi} className="cursor-pointer">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-emerald-600" />
                     {upi}

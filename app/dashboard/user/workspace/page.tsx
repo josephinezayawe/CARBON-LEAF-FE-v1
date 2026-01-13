@@ -29,7 +29,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { SectorType, SECTORS, getSectorConfig } from "@/lib/asset-config";
+import { SectorType, getSectorConfig } from "@/lib/asset-config";
+import { SettingsAPI } from "@/app/api/settings";
+
+interface UserSector {
+  id: string;
+  userId: string;
+  sector: "FARMER" | "HYBRID_CAR_OWNER" | "ECO_FRIENDLY_STOVES" | "COMMERCIAL_BUILDING";
+}
 
 interface RegisteredUPI {
   id: string;
@@ -45,28 +52,61 @@ interface UploadedPhoto {
   uploadedAt: string;
 }
 
-export default function WorkspacePage() {
-  const [selectedSector, setSelectedSector] = useState<SectorType>("FARMER");
-  const [registeredUPIs, setRegisteredUPIs] = useState<RegisteredUPI[]>([
-    {
-      id: "1",
-      upi: "1/23/45/67",
-      landName: "Farm Plot A",
-      registeredAt: "2025-01-15",
-    },
-    {
-      id: "2",
-      upi: "2/34/56/78",
-      landName: "Forest Land B",
-      registeredAt: "2025-02-20",
-    },
-  ]);
+// Map backend sector values to display info
+const SECTOR_DISPLAY_MAP: Record<string, { label: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
+  "FARMER": { 
+    label: "Farmer", 
+    description: "Agricultural land management",
+    icon: Trees 
+  },
+  "HYBRID_CAR_OWNER": { 
+    label: "Hybrid Car Owner", 
+    description: "Vehicle emissions tracking",
+    icon: Car 
+  },
+  "ECO_FRIENDLY_STOVES": { 
+    label: "Eco Friendly Stoves", 
+    description: "Clean cooking solutions",
+    icon: Flame 
+  },
+  "COMMERCIAL_BUILDING": { 
+    label: "Commercial Building", 
+    description: "Building emissions management",
+    icon: Building2 
+  },
+};
 
-  // FIXED: add setter
+export default function WorkspacePage() {
+  const [sectors, setSectors] = useState<UserSector[]>([]);
+  const [selectedSector, setSelectedSector] = useState<SectorType>("FARMER");
+  const [registeredUPIs, setRegisteredUPIs] = useState<RegisteredUPI[]>([]);
   const [uploadedPhotos, setUploadedPhotos] = useState<UploadedPhoto[]>([]);
   const [refreshGallery, setRefreshGallery] = useState(0);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [isLoadingSectors, setIsLoadingSectors] = useState(true);
+
+  useEffect(() => {
+    async function getUserSectors() {
+      try {
+        setIsLoadingSectors(true);
+        const res = await SettingsAPI.getUserSectors();
+        const userSectors = Array.isArray(res.data) ? res.data : [];
+        setSectors(userSectors);
+        
+        // Set first sector as selected, or FARMER as fallback
+        if (userSectors.length > 0) {
+          setSelectedSector(userSectors[0].sector as SectorType);
+        }
+      } catch (error) {
+        console.error("Error fetching user sectors:", error);
+        toast.error("Failed to load your sectors");
+      } finally {
+        setIsLoadingSectors(false);
+      }
+    }
+    getUserSectors();
+  }, []);
 
   useEffect(() => {
     async function getPhotos() {
@@ -229,11 +269,9 @@ export default function WorkspacePage() {
             <SelectTrigger className="w-full sm:w-96 h-16 py-7 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200">
               <div className="flex items-center gap-2">
                 {(() => {
-                  const sector = SECTORS.find(
-                    (s) => s.value === selectedSector
-                  );
-                  if (sector) {
-                    const Icon = sector.icon;
+                  const sectorInfo = SECTOR_DISPLAY_MAP[selectedSector];
+                  if (sectorInfo) {
+                    const Icon = sectorInfo.icon;
                     return (
                       <Icon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 invisible" />
                     );
@@ -244,30 +282,43 @@ export default function WorkspacePage() {
               </div>
             </SelectTrigger>
             <SelectContent className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
-              {SECTORS.map((sector) => {
-                const Icon = sector.icon;
-                return (
-                  <SelectItem
-                    key={sector.value}
-                    value={sector.value}
-                    className="cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2.5">
-                      <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
-                        <Icon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              {isLoadingSectors ? (
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  Loading your sectors...
+                </div>
+              ) : sectors.length === 0 ? (
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  No sectors assigned
+                </div>
+              ) : (
+                sectors.map((userSector) => {
+                  const sectorInfo = SECTOR_DISPLAY_MAP[userSector.sector];
+                  if (!sectorInfo) return null;
+                  
+                  const Icon = sectorInfo.icon;
+                  return (
+                    <SelectItem
+                      key={userSector.id}
+                      value={userSector.sector}
+                      className="cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className="p-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/30">
+                          <Icon className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          <span className="font-medium text-sm">
+                            {sectorInfo.label}
+                          </span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            {sectorInfo.description}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col gap-0.5">
-                        <span className="font-medium text-sm">
-                          {sector.label}
-                        </span>
-                        <span className="text-xs text-gray-500 dark:text-gray-400">
-                          {sector.description}
-                        </span>
-                      </div>
-                    </div>
-                  </SelectItem>
-                );
-              })}
+                    </SelectItem>
+                  );
+                })
+              )}
             </SelectContent>
           </Select>
         </div>

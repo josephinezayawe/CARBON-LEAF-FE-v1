@@ -48,9 +48,9 @@ export default function AssetsList({
   const getSectorColor = (sector: SectorType) => {
     const colors: Record<SectorType, string> = {
       FARMER: "bg-green-100 text-green-800",
-      "HYBRID CAR OWNER": "bg-blue-100 text-blue-800",
-      "ECO FRIENDLY STOVES": "bg-orange-100 text-orange-800",
-      "COMMERCIAL BUILDING": "bg-purple-100 text-purple-800",
+      "HYBRID_CAR_OWNER": "bg-blue-100 text-blue-800",
+      "ECO_FRIENDLY_STOVES": "bg-orange-100 text-orange-800",
+      "COMMERCIAL_BUILDING": "bg-purple-100 text-purple-800",
     };
     return colors[sector] || "bg-gray-100 text-gray-800";
   };

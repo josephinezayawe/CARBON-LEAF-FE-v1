@@ -42,7 +42,7 @@ export function AssetFormWithInitialSector() {
   return (
     <div className="container mx-auto py-8">
       <AssetForm 
-        initialSector="HYBRID CAR OWNER"
+        initialSector="HYBRID_CAR_OWNER"
         onSubmit={handleSubmit}
       />
     </div>
@@ -113,9 +113,9 @@ export function AssetFormAdvancedExample() {
             className="w-full border rounded-lg p-2"
           >
             <option value="FARMER">Farmer</option>
-            <option value="HYBRID CAR OWNER">Hybrid Car Owner</option>
-            <option value="ECO FRIENDLY STOVES">Eco Friendly Stoves</option>
-            <option value="COMMERCIAL BUILDING">Commercial Building</option>
+            <option value="HYBRID_CAR_OWNER">Hybrid Car Owner</option>
+            <option value="ECO_FRIENDLY_STOVES">Eco Friendly Stoves</option>
+            <option value="COMMERCIAL_BUILDING">Commercial Building</option>
           </select>
         </div>
 

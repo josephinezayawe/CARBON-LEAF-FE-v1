@@ -251,7 +251,7 @@ When sector changes:
 
 ```typescript
 // Before: Farmer with landUPI = "1/23/45/67"
-form.setSector("HYBRID CAR OWNER");
+form.setSector("HYBRID_CAR_OWNER");
 // After: landUPI = "" (automatically cleared)
 ```
 
@@ -266,7 +266,7 @@ const form = useAssetForm("FARMER");
 expect(form.getVisibleFields().some(f => f.name === "landUPI")).toBe(true);
 
 // Switch sector
-form.setSector("HYBRID CAR OWNER");
+form.setSector("HYBRID_CAR_OWNER");
 
 // Check fields updated
 expect(form.getVisibleFields().some(f => f.name === "carPlate")).toBe(true);
@@ -307,9 +307,9 @@ expect(payload).not.toHaveProperty("carPlate"); // Not visible for FARMER
 ```typescript
 type SectorType = 
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING"
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING"
   | "YOUR_NEW_SECTOR";
 ```
 

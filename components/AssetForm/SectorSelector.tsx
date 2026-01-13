@@ -27,19 +27,19 @@ const SECTOR_OPTIONS: SectorOption[] = [
     icon: Trees,
   },
   {
-    value: "HYBRID CAR OWNER",
+    value: "HYBRID_CAR_OWNER",
     label: "Hybrid Car Owner",
     description: "Vehicle emissions tracking",
     icon: Car,
   },
   {
-    value: "ECO FRIENDLY STOVES",
+    value: "ECO_FRIENDLY_STOVES",
     label: "Eco Friendly Stoves",
     description: "Clean cooking solutions",
     icon: Flame,
   },
   {
-    value: "COMMERCIAL BUILDING",
+    value: "COMMERCIAL_BUILDING",
     label: "Commercial Building",
     description: "Building emissions management",
     icon: Building2,

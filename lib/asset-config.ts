@@ -7,9 +7,9 @@ import { Trees, Car, Flame, Building2 } from "lucide-react"
 
 export type SectorType = 
   | "FARMER"
-  | "HYBRID CAR OWNER"
-  | "ECO FRIENDLY STOVES"
-  | "COMMERCIAL BUILDING";
+  | "HYBRID_CAR_OWNER"
+  | "ECO_FRIENDLY_STOVES"
+  | "COMMERCIAL_BUILDING";
 
 export interface SectorOption {
   value: SectorType;
@@ -26,19 +26,19 @@ export const SECTORS: SectorOption[] = [
     icon: Trees,
   },
   {
-    value: "HYBRID CAR OWNER",
+    value: "HYBRID_CAR_OWNER",
     label: "Hybrid Car Owner",
     description: "Vehicle emissions tracking",
     icon: Car,
   },
   {
-    value: "ECO FRIENDLY STOVES",
+    value: "ECO_FRIENDLY_STOVES",
     label: "Eco Friendly Stoves",
     description: "Clean cooking solutions",
     icon: Flame,
   },
   {
-    value: "COMMERCIAL BUILDING",
+    value: "COMMERCIAL_BUILDING",
     label: "Commercial Building",
     description: "Building emissions management",
     icon: Building2,
@@ -55,7 +55,7 @@ export function getSectorConfig(sector: SectorType) {
       uploadLabel: "Upload Documents",
       description: "Register your land parcels using UPI codes",
     },
-    "HYBRID CAR OWNER": {
+    "HYBRID_CAR_OWNER": {
       registrationLabel: "Register Vehicle",
       registrationShort: "Vehicle",
       assetLabel: "Vehicle ID",
@@ -63,7 +63,7 @@ export function getSectorConfig(sector: SectorType) {
       uploadLabel: "Upload Documents",
       description: "Register your hybrid vehicles for emissions tracking",
     },
-    "ECO FRIENDLY STOVES": {
+    "ECO_FRIENDLY_STOVES": {
       registrationLabel: "Register Stove",
       registrationShort: "Stove",
       assetLabel: "Stove Serial",
@@ -71,7 +71,7 @@ export function getSectorConfig(sector: SectorType) {
       uploadLabel: "Upload Documents",
       description: "Register your eco-friendly stoves",
     },
-    "COMMERCIAL BUILDING": {
+    "COMMERCIAL_BUILDING": {
       registrationLabel: "Register Building",
       registrationShort: "Building",
       assetLabel: "Building ID",
@@ -102,9 +102,9 @@ export interface SectorConfig {
 // Auto-set values based on sector  
 export const SECTOR_AUTO_VALUES: Record<SectorType, { assetType: string }> = {
   FARMER: { assetType: "LAND" },
-  "HYBRID CAR OWNER": { assetType: "VEHICLE" },
-  "ECO FRIENDLY STOVES": { assetType: "STOVE" },
-  "COMMERCIAL BUILDING": { assetType: "BUILDING" },
+  "HYBRID_CAR_OWNER": { assetType: "VEHICLE" },
+  "ECO_FRIENDLY_STOVES": { assetType: "STOVE" },
+  "COMMERCIAL_BUILDING": { assetType: "BUILDING" },
 };
 
 // Common fields required for all sectors (auto-set fields excluded)
@@ -172,7 +172,7 @@ const OPTIONAL_FIELDS: Record<SectorType, Field[]> = {
       helperText: "Unique Property Identifier",
     },
   ],
-  "HYBRID CAR OWNER": [
+  "HYBRID_CAR_OWNER": [
     {
       name: "carPlate",
       label: "Car Registration Plate",
@@ -188,7 +188,7 @@ const OPTIONAL_FIELDS: Record<SectorType, Field[]> = {
       required: true,
     },
   ],
-  "ECO FRIENDLY STOVES": [
+  "ECO_FRIENDLY_STOVES": [
     {
       name: "stoveSerialNumber",
       label: "Stove Serial Number",
@@ -197,7 +197,7 @@ const OPTIONAL_FIELDS: Record<SectorType, Field[]> = {
       required: true,
     },
   ],
-  "COMMERCIAL BUILDING": [
+  "COMMERCIAL_BUILDING": [
     {
       name: "buildingReg",
       label: "Building Registration Number",
