@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+// Added approveAsset to the import list
 import { getAllSystemAssets, approveAsset } from "@/app/api/assets.api";
 import {
   Card,
@@ -8,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -58,10 +58,6 @@ import {
   CheckCircle,
   RefreshCw,
   Loader2,
-  Contact2,
-  FileText,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,11 +65,9 @@ interface Asset {
   id: string;
   assetId: string;
   name: string;
-  description: string;
   type: "Vehicle" | "Stove" | "Land" | "Building";
   sector: string;
   owner: string;
-  ownerContact: string;
   location: string;
   verificationStatus: "Verified" | "Unverified";
   isActive: boolean;
@@ -90,10 +84,6 @@ export default function AssetsPage() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedSector, setSelectedSector] = useState("all");
   const [selectedStatus, setSelectedStatus] = useState("all");
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
 
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [verifyConfirmOpen, setVerifyConfirmOpen] = useState(false);
@@ -128,10 +118,6 @@ export default function AssetsPage() {
           id: item.id,
           assetId: identifier,
           name: item.name || "Unnamed Asset",
-          description:
-            item.description && item.description.trim() !== ""
-              ? item.description
-              : "No description provided",
           type:
             type === "VEHICLE"
               ? "Vehicle"
@@ -144,7 +130,6 @@ export default function AssetsPage() {
           owner: item.user
             ? `${item.user.firstName} ${item.user.lastName}`
             : "System",
-          ownerContact: item.user?.contact || "No contact info",
           location: `${item.province || ""}, ${item.district || ""}`,
           verificationStatus: item.verified ? "Verified" : "Unverified",
           isActive: item.isActive,
@@ -155,7 +140,6 @@ export default function AssetsPage() {
         };
       });
       setAssets(mappedAssets);
-      setCurrentPage(1); // Reset to first page on new data fetch
     } catch (error) {
       toast.error("Failed to load assets");
     } finally {
@@ -180,10 +164,11 @@ export default function AssetsPage() {
   const confirmVerifyAsset = async () => {
     if (selectedAsset) {
       try {
+        // Using the specific approveAsset call mapped to PATCH /api/:assetId/approve
         await approveAsset(selectedAsset.id);
         toast.success("Asset Verified successfully");
         setVerifyConfirmOpen(false);
-        fetchData();
+        fetchData(); // Refresh the list to reflect status change
       } catch (error) {
         toast.error("Verification failed");
       }
@@ -201,14 +186,6 @@ export default function AssetsPage() {
       (selectedStatus === "Active" ? asset.isActive : !asset.isActive);
     return matchesSearch && matchesType && matchesStatus;
   });
-
-  // Pagination Logic
-  const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedAssets = filteredAssets.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
 
   const getTypeColor = (type: string) => {
     switch (type) {
@@ -242,6 +219,12 @@ export default function AssetsPage() {
             View and verify assets registered in the system
           </p>
         </div>
+        <Button onClick={fetchData} variant="outline" size="sm">
+          <RefreshCw
+            className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+          />
+          Refresh
+        </Button>
       </div>
 
       <Card className="border-0 shadow-sm">
@@ -250,7 +233,7 @@ export default function AssetsPage() {
             <div>
               <CardTitle>Assets</CardTitle>
               <CardDescription>
-                {filteredAssets.length} assets total
+                {filteredAssets.length} assets displayed
               </CardDescription>
             </div>
           </div>
@@ -264,19 +247,10 @@ export default function AssetsPage() {
                   placeholder="Search by name, owner, or identifier..."
                   className="pl-8"
                   value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setCurrentPage(1);
-                  }}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
-              <Select
-                value={selectedType}
-                onValueChange={(val) => {
-                  setSelectedType(val);
-                  setCurrentPage(1);
-                }}
-              >
+              <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger>
                   <SelectValue placeholder="Asset Type" />
                 </SelectTrigger>
@@ -288,13 +262,7 @@ export default function AssetsPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select
-                value={selectedSector}
-                onValueChange={(val) => {
-                  setSelectedSector(val);
-                  setCurrentPage(1);
-                }}
-              >
+              <Select value={selectedSector} onValueChange={setSelectedSector}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sector" />
                 </SelectTrigger>
@@ -312,13 +280,7 @@ export default function AssetsPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Select
-                value={selectedStatus}
-                onValueChange={(val) => {
-                  setSelectedStatus(val);
-                  setCurrentPage(1);
-                }}
-              >
+              <Select value={selectedStatus} onValueChange={setSelectedStatus}>
                 <SelectTrigger>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
@@ -354,23 +316,14 @@ export default function AssetsPage() {
                       <Loader2 className="animate-spin mx-auto h-6 w-6" />
                     </TableCell>
                   </TableRow>
-                ) : paginatedAssets.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      colSpan={8}
-                      className="text-center py-10 text-muted-foreground"
-                    >
-                      No assets found matching your criteria
-                    </TableCell>
-                  </TableRow>
                 ) : (
-                  paginatedAssets.map((asset, index) => (
+                  filteredAssets.map((asset, index) => (
                     <TableRow
                       key={asset.id}
                       className="border-b hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors"
                     >
                       <TableCell className="text-muted-foreground font-medium text-sm">
-                        {startIndex + index + 1}
+                        {index + 1}
                       </TableCell>
                       <TableCell className="font-medium">
                         {asset.name}
@@ -435,39 +388,6 @@ export default function AssetsPage() {
             </Table>
           </div>
         </CardContent>
-        {/* Pagination Controls */}
-        <CardFooter className="flex items-center justify-between border-t p-4">
-          <p className="text-sm text-muted-foreground">
-            Showing {Math.min(filteredAssets.length, startIndex + 1)} to{" "}
-            {Math.min(filteredAssets.length, startIndex + itemsPerPage)} of{" "}
-            {filteredAssets.length} assets
-          </p>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              <ChevronLeft className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
-            <div className="text-sm font-medium">
-              Page {currentPage} of {totalPages || 1}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages || totalPages === 0}
-            >
-              Next
-              <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </CardFooter>
       </Card>
 
       {/* VIEW DETAILS MODAL */}
@@ -477,7 +397,7 @@ export default function AssetsPage() {
             <DialogTitle>Asset Details</DialogTitle>
           </DialogHeader>
           {selectedAsset && (
-            <div className="space-y-4 mt-4 text-left">
+            <div className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-6">
                 <div className="col-span-2 bg-muted/30 p-3 rounded-lg border">
                   <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
@@ -487,19 +407,6 @@ export default function AssetsPage() {
                     {selectedAsset.assetId}
                   </p>
                 </div>
-
-                <div className="col-span-2 bg-blue-50/50 dark:bg-blue-900/10 p-3 rounded-lg border border-blue-100 dark:border-blue-900/30">
-                  <div className="flex items-center gap-2 mb-1">
-                    <FileText className="h-3.5 w-3.5 text-blue-600" />
-                    <p className="text-xs uppercase tracking-wider text-blue-600 font-semibold">
-                      Description
-                    </p>
-                  </div>
-                  <p className="text-sm italic text-foreground/80">
-                    {selectedAsset.description}
-                  </p>
-                </div>
-
                 <div>
                   <p className="text-sm text-muted-foreground">Asset Name</p>
                   <p className="font-semibold">{selectedAsset.name}</p>
@@ -514,18 +421,10 @@ export default function AssetsPage() {
                     {getSectorLabel(selectedAsset.sector)}
                   </p>
                 </div>
-
                 <div>
                   <p className="text-sm text-muted-foreground">Owner</p>
                   <p className="font-semibold">{selectedAsset.owner}</p>
-                  <div className="flex items-center gap-2 mt-1.5 text-blue-600 dark:text-blue-400">
-                    <Contact2 className="h-4 w-4 flex-shrink-0" />
-                    <span className="text-sm font-medium leading-none">
-                      {selectedAsset.ownerContact}
-                    </span>
-                  </div>
                 </div>
-
                 <div>
                   <p className="text-sm text-muted-foreground">Location</p>
                   <p className="font-semibold">{selectedAsset.location}</p>

@@ -8,7 +8,6 @@ import {
   rejectWorkspace,
   markInsufficientData,
 } from "@/app/api/submissionsandReview.api";
-import { settingsApi } from "@/app/api/systemFee.api";
 
 import {
   Card,
@@ -82,8 +81,7 @@ export default function SubmissionsPage() {
   const [rejectionReason, setRejectionReason] = useState<string>("");
   const [insufficientReason, setInsufficientReason] = useState<string>("");
 
-  // New state for real system fee
-  const [liveFee, setLiveFee] = useState<number>(10.0);
+  const systemFeePercentage = 10.0;
 
   // --- API CALLS ---
 
@@ -91,6 +89,7 @@ export default function SubmissionsPage() {
     setIsLoading(true);
     try {
       const response = await getAllSubmissions();
+      // Supporting both {success, data} and raw array responses
       const data = response.data || response;
       if (Array.isArray(data)) {
         setSubmissions(data);
@@ -102,21 +101,8 @@ export default function SubmissionsPage() {
     }
   };
 
-  // Function to fetch real fee from backend
-  const fetchLiveFee = async () => {
-    try {
-      const response = await settingsApi.getFee();
-      if (response.success) {
-        setLiveFee(response.data.feePercentage);
-      }
-    } catch (error) {
-      console.error("Error fetching fee settings:", error);
-    }
-  };
-
   useEffect(() => {
     fetchSubmissions();
-    fetchLiveFee(); // Integrate fee fetch on mount
   }, []);
 
   const confirmApprove = async () => {
@@ -193,7 +179,9 @@ export default function SubmissionsPage() {
         <h1 className="text-3xl font-bold tracking-tight">
           Submissions & Reviews
         </h1>
-        <p className="text-muted-foreground">Manage user submissions</p>
+        <p className="text-muted-foreground">
+          Manage real-time user submissions from the database
+        </p>
       </div>
 
       <Card className="border-0 shadow-sm bg-card">
@@ -204,6 +192,7 @@ export default function SubmissionsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Filters - EXACT STYLES PRESERVED */}
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
             <div className="relative sm:col-span-2">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -428,7 +417,7 @@ export default function SubmissionsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Approve Modal - Updated with liveFee calculation */}
+      {/* Approve Modal */}
       <Dialog open={approveModalOpen} onOpenChange={setApproveModalOpen}>
         <DialogContent className="bg-card">
           <DialogHeader>
@@ -447,11 +436,10 @@ export default function SubmissionsPage() {
             </div>
             {approvalCredits > 0 && (
               <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 rounded text-sm text-emerald-600">
-                System will deduct {liveFee}% fee.
+                System will deduct {systemFeePercentage}% fee.
                 <br />
                 <strong>
-                  Net to user:{" "}
-                  {(approvalCredits * (1 - liveFee / 100)).toLocaleString()}{" "}
+                  Net to user: {(approvalCredits * 0.9).toLocaleString()}{" "}
                   Credits
                 </strong>
               </div>
