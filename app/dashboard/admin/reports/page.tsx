@@ -1,23 +1,23 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { useLanguage } from "@/components/global/language-provider"
+import React, { useState } from "react";
+import { useLanguage } from "@/components/global/language-provider";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
   CardDescription,
-} from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -25,18 +25,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Download, FileText, BarChart3 } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Download, FileText, BarChart3, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import api from "@/app/api/api";
+import { toast } from "sonner";
 
 export default function ReportsPage() {
-  const { t } = useLanguage()
-  const [activeReport, setActiveReport] = useState("user-activity")
-  const [startDate, setStartDate] = useState("2025-11-01")
-  const [endDate, setEndDate] = useState("2025-12-31")
-  const [selectedSector, setSelectedSector] = useState("all")
+  const { t } = useLanguage();
+  const [activeReport, setActiveReport] = useState("user-activity");
+  const [startDate, setStartDate] = useState("2025-11-01");
+  const [endDate, setEndDate] = useState("2025-12-31");
+  const [selectedSector, setSelectedSector] = useState("all");
 
   const sectors = [
     "all",
@@ -44,26 +46,52 @@ export default function ReportsPage() {
     "HYBRID_CAR_OWNER",
     "ECO_FRIENDLY_STOVES",
     "COMMERCIAL_BUILDING",
-  ]
+  ];
 
   const getSectorLabel = (sector: string) => {
     switch (sector) {
       case "FARMER":
-        return "Farmer"
+        return "Farmer";
       case "HYBRID_CAR_OWNER":
-        return "Hybrid Car Owner"
+        return "Hybrid Car Owner";
       case "ECO_FRIENDLY_STOVES":
-        return "Eco-Friendly Stoves"
+        return "Eco-Friendly Stoves";
       case "COMMERCIAL_BUILDING":
-        return "Commercial Building"
+        return "Commercial Building";
       default:
-        return sector
+        return sector;
     }
-  }
+  };
+
+  const [isExporting, setIsExporting] = useState<string | null>(null);
 
   const handleExport = (format: string) => {
-    console.log(`Exporting ${activeReport} as ${format}`)
-  }
+    console.log(`Exporting ${activeReport} as ${format}`);
+  };
+
+  const handleCsvExport = async (type: "sales" | "payments" | "users") => {
+    setIsExporting(type);
+    try {
+      const response = await api.get("/api/admin/reports/export", {
+        params: { type, format: "csv" },
+        responseType: "blob",
+      });
+      const blob = new Blob([response.data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${type}-export-${new Date().toISOString().split("T")[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success(t("export.export_success"));
+    } catch {
+      toast.error(t("export.export_error"));
+    } finally {
+      setIsExporting(null);
+    }
+  };
 
   return (
     <div className="space-y-6 w-full">
@@ -81,9 +109,7 @@ export default function ReportsPage() {
       <Card className="border-0 shadow-sm">
         <CardHeader>
           <CardTitle>Report Customization</CardTitle>
-          <CardDescription>
-            Customize your report parameters
-          </CardDescription>
+          <CardDescription>Customize your report parameters</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Date Range & Sector Filters */}
@@ -117,7 +143,9 @@ export default function ReportsPage() {
                 <SelectContent>
                   {sectors.map((sector) => (
                     <SelectItem key={sector} value={sector}>
-                      {sector === "all" ? "All Sectors" : getSectorLabel(sector)}
+                      {sector === "all"
+                        ? "All Sectors"
+                        : getSectorLabel(sector)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -133,31 +161,46 @@ export default function ReportsPage() {
 
           {/* Export Options */}
           <div className="border-t pt-4 space-y-2">
-            <p className="font-semibold text-sm">Export Options</p>
+            <p className="font-semibold text-sm">{t("export.export_csv")}</p>
             <div className="flex gap-2 flex-wrap">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleExport("CSV")}
+                onClick={() => handleCsvExport("sales")}
+                disabled={isExporting !== null}
               >
-                <Download className="w-4 h-4 mr-2" />
-                Download as CSV
+                {isExporting === "sales" ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4 mr-2" />
+                )}
+                {t("export.export_sales")}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleExport("PDF")}
+                onClick={() => handleCsvExport("payments")}
+                disabled={isExporting !== null}
               >
-                <FileText className="w-4 h-4 mr-2" />
-                Download as PDF
+                {isExporting === "payments" ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4 mr-2" />
+                )}
+                {t("export.export_payments")}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleExport("Print")}
+                onClick={() => handleCsvExport("users")}
+                disabled={isExporting !== null}
               >
-                <BarChart3 className="w-4 h-4 mr-2" />
-                Print Report
+                {isExporting === "users" ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4 mr-2" />
+                )}
+                {t("export.export_users")}
               </Button>
             </div>
           </div>
@@ -168,9 +211,13 @@ export default function ReportsPage() {
       <Tabs value={activeReport} onValueChange={setActiveReport}>
         <TabsList className="grid w-full max-w-4xl grid-cols-5">
           <TabsTrigger value="user-activity">User Activity</TabsTrigger>
-          <TabsTrigger value="credit-distribution">Credit Distribution</TabsTrigger>
+          <TabsTrigger value="credit-distribution">
+            Credit Distribution
+          </TabsTrigger>
           <TabsTrigger value="submission-status">Submission Status</TabsTrigger>
-          <TabsTrigger value="sector-performance">Sector Performance</TabsTrigger>
+          <TabsTrigger value="sector-performance">
+            Sector Performance
+          </TabsTrigger>
           <TabsTrigger value="duplicate-images">Duplicate Images</TabsTrigger>
         </TabsList>
 
@@ -187,28 +234,36 @@ export default function ReportsPage() {
               {/* Summary Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Total Users</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Users
+                  </p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     12,450
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">New Users</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    New Users
+                  </p>
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     342
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Active Users</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Active Users
+                  </p>
                   <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     10,380
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Verification Rate</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Verification Rate
+                  </p>
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                     83%
                   </p>
@@ -231,7 +286,13 @@ export default function ReportsPage() {
                     </TableHeader>
                     <TableBody>
                       {[
-                        { sector: "Farmer", total: 5200, new: 150, active: 4500, growth: 12 },
+                        {
+                          sector: "Farmer",
+                          total: 5200,
+                          new: 150,
+                          active: 4500,
+                          growth: 12,
+                        },
                         {
                           sector: "Hybrid Car Owner",
                           total: 3100,
@@ -289,21 +350,27 @@ export default function ReportsPage() {
               {/* Summary Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Total Credits Distributed</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Credits Distributed
+                  </p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     2.5M
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Average per User</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Average per User
+                  </p>
                   <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     200.8
                   </p>
                 </div>
 
                 <div className="p-4 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Total Fee Deducted</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Fee Deducted
+                  </p>
                   <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     250K
                   </p>
@@ -364,9 +431,7 @@ export default function ReportsPage() {
                           </TableCell>
                           <TableCell>{item.avg.toFixed(2)}</TableCell>
                           <TableCell>{item.percent}%</TableCell>
-                          <TableCell>
-                            {(item.fee / 1000).toFixed(0)}K
-                          </TableCell>
+                          <TableCell>{(item.fee / 1000).toFixed(0)}K</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -390,7 +455,9 @@ export default function ReportsPage() {
               {/* Summary Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div className="p-4 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Total Submissions</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Total Submissions
+                  </p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     4,250
                   </p>
@@ -411,7 +478,9 @@ export default function ReportsPage() {
                 </div>
 
                 <div className="p-4 rounded-lg border border-orange-200 dark:border-orange-800 bg-orange-50/50 dark:bg-orange-900/20">
-                  <p className="text-sm text-muted-foreground mb-1">Approval Rate</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Approval Rate
+                  </p>
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                     75%
                   </p>
@@ -433,9 +502,24 @@ export default function ReportsPage() {
                     </TableHeader>
                     <TableBody>
                       {[
-                        { status: "Approved", count: 3187, percent: 75, avgCredits: 285 },
-                        { status: "Pending", count: 450, percent: 11, avgCredits: 0 },
-                        { status: "Rejected", count: 637, percent: 15, avgCredits: 0 },
+                        {
+                          status: "Approved",
+                          count: 3187,
+                          percent: 75,
+                          avgCredits: 285,
+                        },
+                        {
+                          status: "Pending",
+                          count: 450,
+                          percent: 11,
+                          avgCredits: 0,
+                        },
+                        {
+                          status: "Rejected",
+                          count: 637,
+                          percent: 15,
+                          avgCredits: 0,
+                        },
                       ].map((item) => (
                         <TableRow key={item.status} className="border-b">
                           <TableCell className="font-medium">
@@ -443,7 +527,9 @@ export default function ReportsPage() {
                           </TableCell>
                           <TableCell>{item.count.toLocaleString()}</TableCell>
                           <TableCell>{item.percent}%</TableCell>
-                          <TableCell>{item.avgCredits.toLocaleString()}</TableCell>
+                          <TableCell>
+                            {item.avgCredits.toLocaleString()}
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -459,9 +545,7 @@ export default function ReportsPage() {
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle>Sector Performance Report</CardTitle>
-              <CardDescription>
-                Performance metrics by sector
-              </CardDescription>
+              <CardDescription>Performance metrics by sector</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="border rounded-lg overflow-hidden">
@@ -515,13 +599,17 @@ export default function ReportsPage() {
                         <TableCell className="font-medium">
                           {item.sector}
                         </TableCell>
-                        <TableCell>{item.submissions.toLocaleString()}</TableCell>
+                        <TableCell>
+                          {item.submissions.toLocaleString()}
+                        </TableCell>
                         <TableCell>
                           <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
                             {item.approval}%
                           </Badge>
                         </TableCell>
-                        <TableCell>{item.avgCredits.toLocaleString()}</TableCell>
+                        <TableCell>
+                          {item.avgCredits.toLocaleString()}
+                        </TableCell>
                         <TableCell>{item.users.toLocaleString()}</TableCell>
                         <TableCell>{item.assets.toLocaleString()}</TableCell>
                       </TableRow>
@@ -538,13 +626,13 @@ export default function ReportsPage() {
           <Card className="border-0 shadow-sm">
             <CardHeader>
               <CardTitle>Duplicate Images Report</CardTitle>
-              <CardDescription>
-                Detected duplicate submissions
-              </CardDescription>
+              <CardDescription>Detected duplicate submissions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="p-4 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-900/20">
-                <p className="text-sm text-muted-foreground mb-1">Total Duplicates Detected</p>
+                <p className="text-sm text-muted-foreground mb-1">
+                  Total Duplicates Detected
+                </p>
                 <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
                   127
                 </p>
@@ -621,5 +709,5 @@ export default function ReportsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

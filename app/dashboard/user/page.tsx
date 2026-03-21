@@ -14,35 +14,38 @@ import { getCurrentUser } from "@/lib/auth";
 import { Account } from "@/lib/dataSchemas";
 
 export default function UserDashboardHomePage() {
-    const [account, setAccount] = useState<Account>()
-  const [credits, setCredits] = useState<number>(0)
-  useEffect(() => {
-    async function userData() {
-      const user = await getCurrentUser()
-      if (!user?.id) {
-        return toast.error('User Not Found')
-      }
-      if (user?.role !== 'USER') {
-        return toast.error('UnAuthenticated User')
-      }
-      setAccount(user)
-    }
-    userData()
-  }, [])
-  useEffect(() => {
+  const [account, setAccount] = useState<Account>();
+  const [credits, setCredits] = useState<number>(0);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
 
-
-    const getWallet = async () => {
+  useEffect(() => {
+    async function fetchUserData() {
       try {
-        if (!account?.id) return;
-        const res = await WalletAPI.getWallet()
-        setCredits(res.data.totalCredits);
+        const user = await getCurrentUser();
+        if (!user?.id) {
+          return toast.error("User Not Found");
+        }
+        if (user?.role !== "USER") {
+          return toast.error("UnAuthenticated User");
+        }
+        setAccount(user);
+
+        // Fetch wallet data
+        const res = await WalletAPI.getWallet();
+        if (res.data) {
+          setCredits(res.data.totalNetCredits || 0);
+          setWalletBalance(res.data.totalNetCredits || 0);
+        }
       } catch (error) {
-        toast.error('Failed to fetch wallet data')
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to fetch wallet data");
+      } finally {
+        setIsLoading(false);
       }
     }
-    getWallet()
-  }, [account])
+    fetchUserData();
+  }, []);
   const { t } = useLanguage();
 
   return (
@@ -57,9 +60,11 @@ export default function UserDashboardHomePage() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">300</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? "..." : credits}
+            </div>
             <p className="text-xs text-muted-foreground">
-              +20.1% {t("dashboard.from_last_month")}
+              {t("dashboard.from_last_month")}
             </p>
           </CardContent>
         </Card>
@@ -71,21 +76,25 @@ export default function UserDashboardHomePage() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3,234</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? "..." : walletBalance}
+            </div>
             <p className="text-xs text-muted-foreground">
-              +4% {t("dashboard.from_last_month")}
+              {t("dashboard.from_last_month")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t("dashboard.pending_sales")}</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {t("dashboard.pending_sales")}
+            </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
+            <div className="text-2xl font-bold">-</div>
             <p className="text-xs text-muted-foreground">
-              +201 {t("dashboard.since_last_hour")}
+              {t("dashboard.since_last_hour")}
             </p>
           </CardContent>
         </Card>
@@ -97,24 +106,24 @@ export default function UserDashboardHomePage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12</div>
+            <div className="text-2xl font-bold">-</div>
             <p className="text-xs text-muted-foreground">
-              +2 {t("dashboard.new_projects")}
+              {t("dashboard.new_projects")}
             </p>
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Charts Row - Stack on mobile, side by side on larger screens */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
         <div className="lg:col-span-4">
           <CreditStats />
         </div>
         <div className="lg:col-span-3">
-          <WalletSummary  credits={credits}/>
+          <WalletSummary credits={credits} />
         </div>
       </div>
-      
+
       {/* Updates & Market - Stack on mobile, side by side on larger screens */}
       <div className="grid gap-4 grid-cols-1 lg:grid-cols-7">
         <div className="lg:col-span-3">

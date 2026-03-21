@@ -61,6 +61,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Submission } from "./submissions.types";
+import { DataPagination } from "@/components/ui/data-pagination";
 
 export default function SubmissionsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -68,6 +69,12 @@ export default function SubmissionsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedSector, setSelectedSector] = useState("all");
+
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   // Modal states
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -90,10 +97,14 @@ export default function SubmissionsPage() {
   const fetchSubmissions = async () => {
     setIsLoading(true);
     try {
-      const response = await getAllSubmissions();
+      const response = await getAllSubmissions(page, limit);
       const data = response.data || response;
       if (Array.isArray(data)) {
         setSubmissions(data);
+      }
+      if (response.total !== undefined) {
+        setTotal(response.total);
+        setTotalPages(response.totalPages || 1);
       }
     } catch (error) {
       toast.error("Failed to sync with database");
@@ -117,7 +128,7 @@ export default function SubmissionsPage() {
   useEffect(() => {
     fetchSubmissions();
     fetchLiveFee(); // Integrate fee fetch on mount
-  }, []);
+  }, [page]);
 
   const confirmApprove = async () => {
     if (!selectedSubmission) return;
@@ -148,7 +159,7 @@ export default function SubmissionsPage() {
     try {
       await markInsufficientData(
         selectedSubmission.workspaceId,
-        insufficientReason
+        insufficientReason,
       );
       toast.success("Marked as insufficient data");
       setInsufficientModalOpen(false);
@@ -277,7 +288,7 @@ export default function SubmissionsPage() {
                       <TableCell>
                         <Badge
                           className={`${getStatusColor(
-                            s.status
+                            s.status,
                           )} border-none shadow-none`}
                         >
                           {s.status.replace("_", " ")}
@@ -353,6 +364,18 @@ export default function SubmissionsPage() {
               </TableBody>
             </Table>
           </div>
+
+          {totalPages > 1 && (
+            <div className="mt-4">
+              <DataPagination
+                page={page}
+                totalPages={totalPages}
+                total={total}
+                limit={limit}
+                onPageChange={setPage}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

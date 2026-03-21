@@ -211,11 +211,16 @@ export default function Signup() {
 
       const result = await AuthAPI.register(newData);
       toast.success(t("auth.signup_success"));
-      if (result?.data.role === "ADMIN") {
-        window.location.href = "/dashboard/admin";
-      } else if (result?.data.role === "USER") {
-        window.location.href = "/dashboard/user";
-      }
+      // Registration always assigns USER role on the server
+      const roleDashboard: Record<string, string> = {
+        ADMIN: "/dashboard/admin",
+        USER: "/dashboard/user",
+        FIELD_OFFICER: "/dashboard/field-officer",
+        VERIFIER: "/dashboard/verifier",
+        BUYER: "/dashboard/buyer",
+      };
+      const route = roleDashboard[result?.data.role] ?? "/dashboard/user";
+      window.location.href = route;
     } catch (error) {
       toast.error(t("auth.signup_error"));
       console.error("Registration error:", error);
@@ -264,8 +269,8 @@ export default function Signup() {
                               step.completed
                                 ? "bg-emerald-500 border-emerald-500 text-white"
                                 : step.number === currentStep
-                                ? "border-emerald-500 bg-white text-emerald-500"
-                                : "border-slate-300 text-slate-400"
+                                  ? "border-emerald-500 bg-white text-emerald-500"
+                                  : "border-slate-300 text-slate-400"
                             }
                         `}
             >
@@ -814,7 +819,7 @@ export default function Signup() {
                                             sector.option,
                                           ]
                                         : (field.value || []).filter(
-                                            (s) => s !== sector.option
+                                            (s) => s !== sector.option,
                                           );
 
                                       field.onChange(newValue);

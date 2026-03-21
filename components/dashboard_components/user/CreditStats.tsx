@@ -1,6 +1,14 @@
-"use client"
+"use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts"
+import { useState, useEffect } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+} from "recharts";
 
 import {
   Card,
@@ -8,46 +16,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { TrendingUp } from "lucide-react"
-import { useLanguage } from "@/components/global/language-provider"
-
-const getChartData = (t: (key: string) => string) => [
-  { 
-    category: t("statistics.conservation"), 
-    credits: 120, 
-    fill: "var(--color-conservation)",
-    trend: 15,
-    description: "Credits saved through conservation efforts"
-  },
-  { 
-    category: t("statistics.total"), 
-    credits: 300, 
-    fill: "var(--color-amount)",
-    trend: 8,
-    description: "Total credits available"
-  },
-  { 
-    category: t("statistics.used"), 
-    credits: 80, 
-    fill: "var(--color-used)",
-    trend: -5,
-    description: "Credits consumed this period"
-  },
-  { 
-    category: "Available", 
-    credits: 220, 
-    fill: "var(--color-available)",
-    trend: 12,
-    description: "Remaining credits for use"
-  },
-]
+} from "@/components/ui/chart";
+import { TrendingUp, Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/global/language-provider";
+import { WalletAPI } from "@/app/api/wallet";
 
 const chartConfig = {
   credits: {
@@ -69,13 +47,59 @@ const chartConfig = {
     label: "Available",
     color: "hsl(215, 88%, 53%)", // Light blue
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 export default function CreditStats() {
-  const { t } = useLanguage()
-  const chartData = getChartData(t)
-  const totalCredits = chartData.find(item => item.credits === 300)?.credits || 0
-  const usedPercentage = ((chartData.find(item => item.credits === 80)?.credits || 0) / totalCredits * 100).toFixed(1)
+  const { t } = useLanguage();
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalCredits, setTotalCredits] = useState(0);
+  const [chartData, setChartData] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchWalletData = async () => {
+      try {
+        const res = await WalletAPI.getWallet();
+        if (res.data) {
+          const total = res.data.totalNetCredits || 0;
+          setTotalCredits(total);
+
+          // Create chart data with real values
+          setChartData([
+            {
+              category: t("statistics.total"),
+              credits: total,
+              fill: "var(--color-amount)",
+              trend: 8,
+              description: "Total credits available",
+            },
+            {
+              category: "Available",
+              credits: total,
+              fill: "var(--color-available)",
+              trend: 12,
+              description: "Remaining credits for use",
+            },
+          ]);
+        }
+      } catch (error) {
+        console.error("Error fetching wallet data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWalletData();
+  }, [t]);
+
+  if (isLoading) {
+    return (
+      <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
+        <CardContent className="flex items-center justify-center h-[300px]">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="h-full shadow-lg border-0 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50">
@@ -91,15 +115,18 @@ export default function CreditStats() {
             </CardDescription>
           </div>
           <div className="text-right">
-            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCredits}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">{t("dashboard.total_credits")}</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              {totalCredits}
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              {t("dashboard.total_credits")}
+            </div>
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-4">
         {/* Key Metrics */}
-        
 
         {/* Chart */}
         <ChartContainer config={chartConfig}>
@@ -109,8 +136,8 @@ export default function CreditStats() {
               data={chartData}
               margin={{ top: 10, right: 10, left: 10, bottom: 20 }}
             >
-              <CartesianGrid 
-                vertical={false} 
+              <CartesianGrid
+                vertical={false}
                 className="stroke-gray-200 dark:stroke-gray-700"
                 strokeDasharray="3 3"
               />
@@ -131,44 +158,47 @@ export default function CreditStats() {
                 width={40}
               />
               <ChartTooltip
-                cursor={{ fill: 'hsl(220, 13%, 91%)', opacity: 0.3 }}
+                cursor={{ fill: "hsl(220, 13%, 91%)", opacity: 0.3 }}
                 content={
-                  <ChartTooltipContent 
+                  <ChartTooltipContent
                     hideLabel={false}
                     formatter={(value, name) => [
                       <div key={name} className="flex items-center gap-2">
-                        <div 
+                        <div
                           className="w-3 h-3 rounded-full"
-                          style={{ 
-                            backgroundColor: (chartConfig[name as keyof typeof chartConfig] as any)?.color || '#999' 
+                          style={{
+                            backgroundColor:
+                              (
+                                chartConfig[
+                                  name as keyof typeof chartConfig
+                                ] as any
+                              )?.color || "#999",
                           }}
                         />
                         <span className="font-semibold">{value}</span>
                         <span>credits</span>
                       </div>,
-                      name
+                      name,
                     ]}
                     labelFormatter={(label) => {
-                      const item = chartData.find(d => d.category === label)
+                      const item = chartData.find((d) => d.category === label);
                       return (
                         <div className="text-center">
-                          <div className="font-bold text-gray-900 dark:text-gray-100">{label}</div>
+                          <div className="font-bold text-gray-900 dark:text-gray-100">
+                            {label}
+                          </div>
                           {item?.description && (
                             <div className="text-xs text-gray-500 dark:text-gray-400 max-w-[200px]">
                               {item.description}
                             </div>
                           )}
                         </div>
-                      )
+                      );
                     }}
                   />
                 }
               />
-              <Bar 
-                dataKey="credits" 
-                radius={[8, 8, 0, 0]}
-                maxBarSize={80}
-              />
+              <Bar dataKey="credits" radius={[8, 8, 0, 0]} maxBarSize={80} />
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
@@ -177,7 +207,7 @@ export default function CreditStats() {
         <div className="flex flex-wrap justify-center gap-4 mt-6 pt-4 border-t border-gray-100 dark:border-gray-700">
           {chartData.map((item) => (
             <div key={item.category} className="flex items-center gap-2">
-              <div 
+              <div
                 className="w-3 h-3 rounded-full"
                 style={{ backgroundColor: item.fill }}
               />
@@ -188,10 +218,14 @@ export default function CreditStats() {
                 ({item.credits})
               </span>
               {item.trend && (
-                <span className={`text-xs font-medium ${
-                  item.trend > 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                }`}>
-                  {item.trend > 0 ? '↑' : '↓'} {Math.abs(item.trend)}%
+                <span
+                  className={`text-xs font-medium ${
+                    item.trend > 0
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
+                  }`}
+                >
+                  {item.trend > 0 ? "↑" : "↓"} {Math.abs(item.trend)}%
                 </span>
               )}
             </div>
@@ -199,5 +233,5 @@ export default function CreditStats() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

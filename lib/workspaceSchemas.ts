@@ -1,5 +1,16 @@
 export type CreateWorkspace = {
-        files: File[],
-        sector: string
-    
-    }
+  sector: string;
+  assetId?: string;
+  workspaceName?: string;
+};
+
+export type AssignableWorkspace = {
+  id: string;
+  label: string;
+  workspaceName: string;
+  status: string;
+  sector: string;
+  assetId: string | null;
+  assetIdentifier?: string | null;
+  assetCount: number;
+};

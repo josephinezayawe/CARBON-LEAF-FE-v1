@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -28,34 +28,35 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { AlertCircle, CheckCircle2, AlertTriangle, Loader } from "lucide-react"
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { AlertCircle, CheckCircle2, AlertTriangle, Loader } from "lucide-react";
+import { creditSalesApi } from "@/app/api/creditSales.api";
+import { toast } from "sonner";
 
 interface AllocationItem {
-  userName: string
-  workspaceId: string
-  sector: string
-  creditsAvailable: number
-  creditsTaken: number
-  previouslySold: number
-  remainingAfter: number
-  amountOwed: number
+  userName: string;
+  workspaceId: string;
+  sector: string;
+  creditsAvailable: number;
+  creditsTaken: number;
+  previouslySold: number;
+  remainingAfter: number;
+  amountOwed: number;
 }
 
 interface SaleFormData {
-  buyerName: string
-  buyerContact: string
-  buyerEmail: string
-  purpose: string
-  creditsToSell: number
-  pricePerCredit: number
+  buyerName: string;
+  buyerContact: string;
+  buyerEmail: string;
+  purpose: string;
+  creditsToSell: number;
+  pricePerCredit: number;
 }
 
-const TOTAL_AVAILABLE_CREDITS = 53400
-
 export default function CreateSalePage() {
-  const [step, setStep] = useState(1)
+  const [totalAvailableCredits, setTotalAvailableCredits] = useState(0);
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<SaleFormData>({
     buyerName: "",
     buyerContact: "",
@@ -63,114 +64,165 @@ export default function CreateSalePage() {
     purpose: "",
     creditsToSell: 0,
     pricePerCredit: 210,
-  })
+  });
 
-  const [allocation, setAllocation] = useState<AllocationItem[]>([])
-  const [previewLoading, setPreviewLoading] = useState(false)
-  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false)
-  const [confirmCheckbox, setConfirmCheckbox] = useState(false)
-  const [successModalOpen, setSuccessModalOpen] = useState(false)
-  const [generatedSaleNumber, setGeneratedSaleNumber] = useState("")
+  const [allocation, setAllocation] = useState<AllocationItem[]>([]);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [confirmCheckbox, setConfirmCheckbox] = useState(false);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [generatedSaleNumber, setGeneratedSaleNumber] = useState("");
+  const [executingSale, setExecutingSale] = useState(false);
+  const [completedSaleData, setCompletedSaleData] = useState<{
+    saleNumber: string;
+    creditsToSell: number;
+    totalAmount: number;
+    userPayments: Array<{
+      userName: string;
+      amount: number;
+    }>;
+  } | null>(null);
+
+  // Fetch available credits on mount
+  useEffect(() => {
+    const fetchAvailableCredits = async () => {
+      try {
+        const response = await creditSalesApi.getAvailableCredits();
+        const data = response.data || response;
+        if (data && data.totalAvailable) {
+          setTotalAvailableCredits(data.totalAvailable);
+        }
+      } catch (error) {
+        console.error("Error fetching available credits:", error);
+      }
+    };
+    fetchAvailableCredits();
+  }, []);
 
   // Mock allocation preview data
-  const mockAllocationData: AllocationItem[] = [
-    {
-      userName: "Jean Ndayisaba",
-      workspaceId: "ws-001",
-      sector: "FARMER",
-      creditsAvailable: 3500,
-      creditsTaken: 2000,
-      previouslySold: 1500,
-      remainingAfter: 1500,
-      amountOwed: 420000,
-    },
-    {
-      userName: "Jean Ndayisaba",
-      workspaceId: "ws-002",
-      sector: "FARMER",
-      creditsAvailable: 3000,
-      creditsTaken: 3000,
-      previouslySold: 0,
-      remainingAfter: 0,
-      amountOwed: 630000,
-    },
-    {
-      userName: "Marie Uwizeyimana",
-      workspaceId: "ws-004",
-      sector: "ECO_FRIENDLY_STOVES",
-      creditsAvailable: 3200,
-      creditsTaken: 3200,
-      previouslySold: 800,
-      remainingAfter: 0,
-      amountOwed: 672000,
-    },
-    {
-      userName: "Paul Habimana",
-      workspaceId: "ws-006",
-      sector: "COMMERCIAL_BUILDING",
-      creditsAvailable: 6000,
-      creditsTaken: 2800,
-      previouslySold: 2000,
-      remainingAfter: 3200,
-      amountOwed: 588000,
-    },
-  ]
+  const mockAllocationData: AllocationItem[] = [];
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "creditsToSell" || name === "pricePerCredit" ? parseFloat(value) || 0 : value,
-    }))
-  }
+      [name]:
+        name === "creditsToSell" || name === "pricePerCredit"
+          ? parseFloat(value) || 0
+          : value,
+    }));
+  };
 
-  const handlePreviewAllocation = () => {
-    setPreviewLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      if (formData.creditsToSell <= TOTAL_AVAILABLE_CREDITS) {
-        setAllocation(
-          mockAllocationData.slice(
-            0,
-            Math.ceil((formData.creditsToSell / TOTAL_AVAILABLE_CREDITS) * 4)
-          )
-        )
+  const handlePreviewAllocation = async () => {
+    setPreviewLoading(true);
+    try {
+      const response = await creditSalesApi.previewSaleAllocation(
+        formData.creditsToSell,
+      );
+
+      // The API already returns response.data, so response itself is the data object
+      // Backend structure: { success, message, data: { totalCreditsFound, creditsNeeded, creditsShortfall, allocations, canProceed } }
+      const apiData = response.data || response;
+
+      if (apiData && apiData.allocations) {
+        // Transform backend allocation to match frontend structure
+        const transformedAllocations = apiData.allocations.map(
+          (alloc: any) => ({
+            userName: `${alloc.user.firstName} ${alloc.user.lastName}`,
+            workspaceId: alloc.workspaceId,
+            sector: "N/A", // Backend doesn't provide sector in allocation
+            creditsAvailable: alloc.totalCredits - alloc.previouslySold,
+            creditsTaken: alloc.creditsTaken,
+            previouslySold: alloc.previouslySold,
+            remainingAfter: alloc.remainingAfterSale,
+            amountOwed: alloc.creditsTaken * formData.pricePerCredit,
+          }),
+        );
+
+        setAllocation(transformedAllocations);
+
+        // Show error if insufficient credits
+        if (!apiData.canProceed) {
+          toast.error(
+            `Insufficient credits! Short by ${apiData.creditsShortfall} credits`,
+          );
+        }
       }
-      setPreviewLoading(false)
-    }, 1000)
-  }
+    } catch (error: any) {
+      toast.error(
+        error.response?.data?.message || "Failed to preview allocation",
+      );
+      console.error("Error previewing allocation:", error);
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
 
   const handleConfirmSale = () => {
-    setConfirmationModalOpen(true)
-  }
+    setConfirmationModalOpen(true);
+  };
 
-  const handleExecuteSale = () => {
-    const saleNumber = `SALE-${Date.now()}`
-    setGeneratedSaleNumber(saleNumber)
-    setSuccessModalOpen(true)
-    setConfirmationModalOpen(false)
-    setStep(1)
-    setFormData({
-      buyerName: "",
-      buyerContact: "",
-      buyerEmail: "",
-      purpose: "",
-      creditsToSell: 0,
-      pricePerCredit: 210,
-    })
-    setAllocation([])
-    setConfirmCheckbox(false)
-  }
+  const handleExecuteSale = async () => {
+    setExecutingSale(true);
+    try {
+      const response = await creditSalesApi.createSale({
+        buyerName: formData.buyerName,
+        buyerContact: formData.buyerContact,
+        buyerEmail: formData.buyerEmail,
+        purpose: formData.purpose,
+        creditsToSell: formData.creditsToSell,
+        pricePerCredit: formData.pricePerCredit,
+      });
 
-  const totalSaleAmount = formData.creditsToSell * formData.pricePerCredit
-  const creditsTaken = allocation.reduce((sum, item) => sum + item.creditsTaken, 0)
-  const allocationComplete = creditsTaken === formData.creditsToSell
-  const shortfall = formData.creditsToSell - creditsTaken
+      const data = response.data || response;
 
-  const affectedUsers = new Set(allocation.map((item) => item.userName)).size
-  const affectedWorkspaces = allocation.length
+      // Store the completed sale data before resetting form
+      setCompletedSaleData({
+        saleNumber: data.sale?.saleNumber || `SALE-${Date.now()}`,
+        creditsToSell: data.summary?.totalCredits || formData.creditsToSell,
+        totalAmount:
+          data.summary?.totalAmount ||
+          formData.creditsToSell * formData.pricePerCredit,
+        userPayments: data.userPayments || [],
+      });
+
+      setGeneratedSaleNumber(data.sale?.saleNumber || `SALE-${Date.now()}`);
+      toast.success("Sale created successfully");
+      setSuccessModalOpen(true);
+      setConfirmationModalOpen(false);
+
+      // Reset form
+      setStep(1);
+      setFormData({
+        buyerName: "",
+        buyerContact: "",
+        buyerEmail: "",
+        purpose: "",
+        creditsToSell: 0,
+        pricePerCredit: 210,
+      });
+      setAllocation([]);
+      setConfirmCheckbox(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to create sale");
+      console.error("Error creating sale:", error);
+    } finally {
+      setExecutingSale(false);
+    }
+  };
+
+  const totalSaleAmount = formData.creditsToSell * formData.pricePerCredit;
+  const creditsTaken = allocation.reduce(
+    (sum, item) => sum + item.creditsTaken,
+    0,
+  );
+  const allocationComplete = creditsTaken === formData.creditsToSell;
+  const shortfall = formData.creditsToSell - creditsTaken;
+
+  const affectedUsers = new Set(allocation.map((item) => item.userName)).size;
+  const affectedWorkspaces = allocation.length;
 
   return (
     <div className="space-y-6">
@@ -287,10 +339,10 @@ export default function CreateSalePage() {
                   placeholder="0"
                   required
                   min="0"
-                  max={TOTAL_AVAILABLE_CREDITS}
+                  max={totalAvailableCredits}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  Max available: {TOTAL_AVAILABLE_CREDITS.toLocaleString()}
+                  Max available: {totalAvailableCredits.toLocaleString()}
                 </p>
               </div>
               <div>
@@ -314,19 +366,28 @@ export default function CreateSalePage() {
               <h4 className="font-semibold">Sale Preview</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Credits to Sell</p>
+                  <p className="text-sm text-muted-foreground">
+                    Credits to Sell
+                  </p>
                   <p className="font-semibold">
                     {formData.creditsToSell.toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Price Per Credit</p>
-                  <p className="font-semibold">RWF{formData.pricePerCredit.toLocaleString()}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Price Per Credit
+                  </p>
+                  <p className="font-semibold">
+                    RWF{formData.pricePerCredit.toLocaleString()}
+                  </p>
                 </div>
                 <div className="col-span-2 border-t pt-3">
-                  <p className="text-sm text-muted-foreground">Total Sale Amount</p>
+                  <p className="text-sm text-muted-foreground">
+                    Total Sale Amount
+                  </p>
                   <p className="text-2xl font-bold text-blue-600">
-                    RWF{totalSaleAmount.toLocaleString("en-RW", {
+                    RWF
+                    {totalSaleAmount.toLocaleString("en-RW", {
                       maximumFractionDigits: 2,
                     })}
                   </p>
@@ -340,10 +401,12 @@ export default function CreateSalePage() {
               </Button>
               <Button
                 onClick={() => {
-                  handlePreviewAllocation()
-                  setStep(3)
+                  handlePreviewAllocation();
+                  setStep(3);
                 }}
-                disabled={formData.creditsToSell <= 0 || formData.pricePerCredit <= 0}
+                disabled={
+                  formData.creditsToSell <= 0 || formData.pricePerCredit <= 0
+                }
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 Next: Preview Allocation
@@ -382,7 +445,9 @@ export default function CreateSalePage() {
                           <TableHead className="text-right">
                             Credits Available
                           </TableHead>
-                          <TableHead className="text-right">Credits to Take</TableHead>
+                          <TableHead className="text-right">
+                            Credits to Take
+                          </TableHead>
                           <TableHead className="text-right">
                             Previously Sold
                           </TableHead>
@@ -429,7 +494,8 @@ export default function CreateSalePage() {
                 ) : (
                   <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
                     <p className="text-yellow-800 dark:text-yellow-200">
-                      No allocation preview generated. Click "Generate Preview" to proceed.
+                      No allocation preview generated. Click "Generate Preview"
+                      to proceed.
                     </p>
                   </div>
                 )}
@@ -439,7 +505,9 @@ export default function CreateSalePage() {
                   <h4 className="font-semibold">Allocation Summary</h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-muted-foreground">Credits Found</p>
+                      <p className="text-sm text-muted-foreground">
+                        Credits Found
+                      </p>
                       <p className="font-semibold">
                         {creditsTaken.toLocaleString()} of{" "}
                         {formData.creditsToSell.toLocaleString()}
@@ -515,7 +583,9 @@ export default function CreateSalePage() {
         <Card className="border-0 shadow-sm">
           <CardHeader>
             <CardTitle>Step 4: Review & Confirm</CardTitle>
-            <CardDescription>Final review before executing the sale</CardDescription>
+            <CardDescription>
+              Final review before executing the sale
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Sale Summary Card */}
@@ -531,7 +601,9 @@ export default function CreateSalePage() {
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Price Per Credit</p>
+                <p className="text-sm text-muted-foreground">
+                  Price Per Credit
+                </p>
                 <p className="font-semibold">RWF{formData.pricePerCredit}</p>
               </div>
               <div>
@@ -545,7 +617,9 @@ export default function CreateSalePage() {
                 <p className="font-semibold">{affectedUsers}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Workspaces Affected</p>
+                <p className="text-sm text-muted-foreground">
+                  Workspaces Affected
+                </p>
                 <p className="font-semibold">{affectedWorkspaces}</p>
               </div>
             </div>
@@ -559,7 +633,9 @@ export default function CreateSalePage() {
                     <TableRow className="bg-gray-50/50 dark:bg-gray-800/50">
                       <TableHead>User Name</TableHead>
                       <TableHead className="text-right">Credits Sold</TableHead>
-                      <TableHead className="text-right">Amount to Receive (RWF)</TableHead>
+                      <TableHead className="text-right">
+                        Amount to Receive (RWF)
+                      </TableHead>
                       <TableHead className="text-center">Workspaces</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -577,11 +653,11 @@ export default function CreateSalePage() {
                               .filter((i) => i.userName === item.userName)
                               .reduce((sum, i) => sum + i.amountOwed, 0),
                             workspaces: allocation.filter(
-                              (i) => i.userName === item.userName
+                              (i) => i.userName === item.userName,
                             ).length,
                           },
-                        ])
-                      ).values()
+                        ]),
+                      ).values(),
                     ).map((item) => (
                       <TableRow key={item.userName}>
                         <TableCell className="font-medium">
@@ -622,13 +698,14 @@ export default function CreateSalePage() {
       )}
 
       {/* Confirmation Modal */}
-      <Dialog open={confirmationModalOpen} onOpenChange={setConfirmationModalOpen}>
+      <Dialog
+        open={confirmationModalOpen}
+        onOpenChange={setConfirmationModalOpen}
+      >
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Credit Sale</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone
-            </DialogDescription>
+            <DialogDescription>This action cannot be undone</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -642,15 +719,16 @@ export default function CreateSalePage() {
                 <span className="font-semibold">
                   RWF{totalSaleAmount.toLocaleString()}
                 </span>{" "}
-                affecting <span className="font-semibold">{affectedUsers}</span> users.
+                affecting <span className="font-semibold">{affectedUsers}</span>{" "}
+                users.
               </p>
             </div>
 
             <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-              <p className="text-sm font-semibold">Sale Number (Auto-generated)</p>
-              <p className="font-mono text-sm mt-1">
-                SALE-{Date.now()}
+              <p className="text-sm font-semibold">
+                Sale Number (Auto-generated)
               </p>
+              <p className="font-mono text-sm mt-1">SALE-{Date.now()}</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -676,10 +754,17 @@ export default function CreateSalePage() {
             </Button>
             <Button
               onClick={handleExecuteSale}
-              disabled={!confirmCheckbox}
+              disabled={!confirmCheckbox || executingSale}
               className="bg-red-600 hover:bg-red-700"
             >
-              Proceed
+              {executingSale ? (
+                <>
+                  <Loader className="h-4 w-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Proceed"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -700,22 +785,26 @@ export default function CreateSalePage() {
             <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg space-y-3">
               <div>
                 <p className="text-sm text-muted-foreground">Sale Number</p>
-                <p className="font-mono font-semibold">{generatedSaleNumber}</p>
+                <p className="font-mono font-semibold">
+                  {completedSaleData?.saleNumber || generatedSaleNumber}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Status</p>
                 <Badge className="bg-green-600">COMPLETED</Badge>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Credits Sold</p>
+                <p className="text-sm text-muted-foreground">
+                  Total Credits Sold
+                </p>
                 <p className="font-semibold">
-                  {formData.creditsToSell.toLocaleString()}
+                  {completedSaleData?.creditsToSell?.toLocaleString() || 0}
                 </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Amount</p>
                 <p className="font-bold text-lg text-green-600">
-                  RWF{totalSaleAmount.toLocaleString()}
+                  RWF{completedSaleData?.totalAmount?.toLocaleString() || 0}
                 </p>
               </div>
             </div>
@@ -723,25 +812,21 @@ export default function CreateSalePage() {
             <div className="space-y-2">
               <p className="text-sm font-semibold">Affected Users:</p>
               <div className="space-y-1">
-                {Array.from(
-                  new Map(
-                    allocation.map((item) => [
-                      item.userName,
-                      {
-                        amount: allocation
-                          .filter((i) => i.userName === item.userName)
-                          .reduce((sum, i) => sum + i.amountOwed, 0),
-                      },
-                    ])
-                  ).values()
-                ).map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm">
-                    <span>{allocation[idx]?.userName}</span>
-                    <span className="font-semibold">
-                      RWF{item.amount.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
+                {completedSaleData?.userPayments &&
+                completedSaleData.userPayments.length > 0 ? (
+                  completedSaleData.userPayments.map((payment, idx) => (
+                    <div key={idx} className="flex justify-between text-sm">
+                      <span>{payment.userName}</span>
+                      <span className="font-semibold">
+                        RWF{payment.amount.toLocaleString()}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No user payment details available
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -757,5 +842,5 @@ export default function CreateSalePage() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

@@ -4,8 +4,10 @@ import api from "./api";
 /**
  * Admin: Fetch all submissions for the dashboard table
  */
-export const getAllSubmissions = async () => {
-  const response = await api.get("/api/admin/submissions");
+export const getAllSubmissions = async (page = 1, limit = 20) => {
+  const response = await api.get("/api/admin/submissions", {
+    params: { page, limit },
+  });
   return response.data;
 };
 
@@ -16,13 +18,13 @@ export const getAllSubmissions = async () => {
  */
 export const approveWorkspace = async (
   workspaceId: string,
-  credits: number
+  credits: number,
 ) => {
   const response = await api.patch(
     `/api/admin/workspace/${workspaceId}/approve`,
     {
       credits,
-    }
+    },
   );
   return response.data;
 };
@@ -37,7 +39,7 @@ export const rejectWorkspace = async (workspaceId: string, reason: string) => {
     `/api/admin/workspace/${workspaceId}/reject`,
     {
       reason,
-    }
+    },
   );
   return response.data;
 };
@@ -49,13 +51,13 @@ export const rejectWorkspace = async (workspaceId: string, reason: string) => {
  */
 export const markInsufficientData = async (
   workspaceId: string,
-  reason: string
+  reason: string,
 ) => {
   const response = await api.patch(
     `/api/admin/workspace/${workspaceId}/insufficient`,
     {
       reason,
-    }
+    },
   );
   return response.data;
 };
@@ -72,7 +74,7 @@ export const getAllDuplicates = async () => {
 export const confirmDuplicateStatus = async (duplicateId: string) => {
   // Assuming the backend uses a PATCH or POST to update the flag status
   const response = await api.patch(
-    `/api/admin/duplicates/${duplicateId}/confirm`
+    `/api/admin/duplicates/${duplicateId}/confirm`,
   );
   return response.data;
 };
@@ -83,7 +85,7 @@ export const confirmDuplicateStatus = async (duplicateId: string) => {
  */
 export const markAsFalsePositive = async (duplicateId: string) => {
   const response = await api.patch(
-    `/api/admin/duplicates/${duplicateId}/false-positive`
+    `/api/admin/duplicates/${duplicateId}/false-positive`,
   );
   return response.data;
 };

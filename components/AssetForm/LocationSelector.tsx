@@ -53,9 +53,41 @@ export default function LocationSelector({
     village: value.village,
   });
 
+  React.useEffect(() => {
+    const incomingIsEmpty =
+      !value.province &&
+      !value.district &&
+      !value.sector &&
+      !value.cell &&
+      !value.village;
+
+    const currentHasValues =
+      !!location.province ||
+      !!location.district ||
+      !!location.sector ||
+      !!location.cell ||
+      !!location.village;
+
+    if (incomingIsEmpty && currentHasValues) {
+      setProvince("");
+    }
+  }, [
+    value.province,
+    value.district,
+    value.sector,
+    value.cell,
+    value.village,
+    location.province,
+    location.district,
+    location.sector,
+    location.cell,
+    location.village,
+    setProvince,
+  ]);
+
   const handleLocationChange = (
     field: keyof RwandaLocationState,
-    val: string
+    val: string,
   ) => {
     if (field === "province") setProvince(val);
     else if (field === "district") setDistrict(val);
@@ -71,10 +103,12 @@ export default function LocationSelector({
     label: string,
     fieldOptions: string[],
     parentField?: keyof RwandaLocationState,
-    parentValue?: string
+    parentValue?: string,
   ) => {
     // Only check parent if this field has a parent dependency
-    const isParentEmpty = parentField ? (parentValue === "" || !parentValue) : false;
+    const isParentEmpty = parentField
+      ? parentValue === "" || !parentValue
+      : false;
     const isDisabled = disabled || isParentEmpty || isLoadingOptions;
     const hasError = isSubmitted && errors[field];
 
@@ -105,8 +139,8 @@ export default function LocationSelector({
                 isLoadingOptions
                   ? t("general.loading")
                   : isParentEmpty && parentField
-                  ? t(`auth.select_${parentField}`)
-                  : t(`auth.select_${field}`)
+                    ? t(`auth.select_${parentField}`)
+                    : t(`auth.select_${field}`)
               }
             />
             {isLoadingOptions && (
@@ -159,7 +193,7 @@ export default function LocationSelector({
           "District",
           options.districts,
           "province",
-          location.province
+          location.province,
         )}
 
         {renderSelect(
@@ -167,7 +201,7 @@ export default function LocationSelector({
           "Sector",
           options.sectors,
           "district",
-          location.district
+          location.district,
         )}
 
         {renderSelect("cell", "Cell", options.cells, "sector", location.sector)}
@@ -177,7 +211,7 @@ export default function LocationSelector({
           "Village",
           options.villages,
           "cell",
-          location.cell
+          location.cell,
         )}
       </div>
     </div>

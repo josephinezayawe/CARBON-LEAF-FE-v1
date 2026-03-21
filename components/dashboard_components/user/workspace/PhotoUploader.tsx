@@ -52,7 +52,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a land parcel to enable",
       readyMessage: "Ready to upload for",
     },
-    "HYBRID_CAR_OWNER": {
+    HYBRID_CAR_OWNER: {
       selectionLabel: "Select Vehicle",
       selectionPlaceholder: "Choose a registered vehicle...",
       selectionTooltip: "Choose vehicle for photos",
@@ -61,7 +61,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a vehicle to enable",
       readyMessage: "Ready to upload for",
     },
-    "ECO_FRIENDLY_STOVES": {
+    ECO_FRIENDLY_STOVES: {
       selectionLabel: "Select Stove",
       selectionPlaceholder: "Choose a registered stove...",
       selectionTooltip: "Choose stove for photos",
@@ -70,7 +70,7 @@ const getSectorConfig = (sector: Sector) => {
       selectToEnable: "Select a stove to enable",
       readyMessage: "Ready to upload for",
     },
-    "COMMERCIAL_BUILDING": {
+    COMMERCIAL_BUILDING: {
       selectionLabel: "Select Building",
       selectionPlaceholder: "Choose a registered building...",
       selectionTooltip: "Choose building for photos",
@@ -82,6 +82,13 @@ const getSectorConfig = (sector: Sector) => {
   };
   return configs[sector];
 };
+
+const formatSectorName = (sector: Sector) =>
+  sector
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
 export default function PhotoUploader({
   upiList = [],
@@ -127,11 +134,11 @@ export default function PhotoUploader({
       if (!selectedUPI) return;
 
       const files = Array.from(e.dataTransfer.files).filter((file) =>
-        file.type.startsWith("image/")
+        file.type.startsWith("image/"),
       );
       setPhotos((prev) => [...prev, ...files]);
     },
-    [selectedUPI]
+    [selectedUPI],
   );
 
   const removePhoto = (index: number) => {
@@ -156,35 +163,40 @@ export default function PhotoUploader({
       return;
     }
 
+    const selectedAsset = registeredItems.find(
+      (item) => item.upi === selectedUPI,
+    );
+    if (!selectedAsset) {
+      toast.error("Selected asset not found");
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
 
-    const data = new FormData();
-    photos.forEach((photo) => {
-      data.append("images", photo);
+    const result = await Workspace.create({
+      sector,
+      assetId: selectedAsset.id,
+      workspaceName: `${formatSectorName(sector)} - ${selectedUPI}`,
     });
-    data.append("sector", sector);
-    data.append("upi", selectedUPI);
 
-    const result = await Workspace.create(data);
-    
     if (result.success) {
-      // Simulate upload progress
       for (let i = 0; i <= 100; i += 10) {
         await new Promise((resolve) => setTimeout(resolve, 200));
         setUploadProgress(i);
       }
-      toast.success("Photos Uploaded Successfully");
+      toast.success("Workspace created successfully");
       setPhotos([]);
+      setSelectedUPI(null);
       setUploadProgress(0);
       onUploadSuccess?.();
     } else {
-      toast.error("Photos Upload Failed");
+      toast.error("Workspace creation failed");
       toast.error(result.message);
       setIsUploading(false);
       setUploadProgress(0);
     }
-    
+
     setIsUploading(false);
   };
 
@@ -241,7 +253,7 @@ export default function PhotoUploader({
           !selectedUPI && "opacity-50 cursor-not-allowed",
           isDragging
             ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20"
-            : "border-gray-300 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 bg-gray-50/50 dark:bg-gray-900/50"
+            : "border-gray-300 dark:border-gray-700 hover:border-emerald-400 dark:hover:border-emerald-600 bg-gray-50/50 dark:bg-gray-900/50",
         )}
       >
         <input
@@ -260,7 +272,7 @@ export default function PhotoUploader({
             "w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors",
             isDragging
               ? "bg-emerald-100 dark:bg-emerald-900/50"
-              : "bg-gray-100 dark:bg-gray-800"
+              : "bg-gray-100 dark:bg-gray-800",
           )}
         >
           <CloudUpload
@@ -268,7 +280,7 @@ export default function PhotoUploader({
               "w-8 h-8 transition-colors",
               isDragging
                 ? "text-emerald-600 dark:text-emerald-400"
-                : "text-gray-400"
+                : "text-gray-400",
             )}
           />
         </div>
@@ -378,10 +390,7 @@ export default function PhotoUploader({
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  {t("workspace.submit")} {photos.length}{" "}
-                  {photos.length === 1
-                    ? t("workspace.photo_singular")
-                    : t("workspace.photo_plural")}
+                  Create Workspace
                 </>
               )}
             </Button>
@@ -400,10 +409,31 @@ export default function PhotoUploader({
 
       {/* Empty State */}
       {photos.length === 0 && selectedUPI && (
-        <div className="text-center py-8 text-muted-foreground text-sm">
-          <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
-          {config.readyMessage}{" "}
-          <span className="font-semibold text-foreground">{selectedUPI}</span>
+        <div className="text-center py-8 text-muted-foreground text-sm space-y-4">
+          <div>
+            <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-emerald-500" />
+            {config.readyMessage}{" "}
+            <span className="font-semibold text-foreground">{selectedUPI}</span>
+          </div>
+          <div className="flex items-center justify-center gap-3">
+            <Button
+              onClick={handleSubmit}
+              disabled={isUploading}
+              className="h-11 px-6 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all"
+            >
+              {isUploading ? (
+                <>
+                  <div className="w-4 h-4 mr-2 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  {t("workspace.uploading")}
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4 mr-2" />
+                  Create Workspace
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       )}
     </div>

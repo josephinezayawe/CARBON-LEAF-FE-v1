@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import WalletSummary from "@/components/dashboard_components/user/WalletSummary";
 import WalletAccountSetup from "@/components/dashboard_components/user/WalletAccountSetup";
 import WalletTransactions from "@/components/dashboard_components/user/WalletTransactions";
+import EnhancedFinancialDashboard from "@/components/dashboard_components/user/EnhancedFinancialDashboard";
 import { useEffect, useState } from "react";
 import { Account } from "@/lib/dataSchemas";
 import { getCurrentUser } from "@/lib/auth";
@@ -14,36 +15,34 @@ import { WalletAPI } from "@/app/api/wallet";
 // import WalletBalance from "@/components/dashboard_components/user/WalletBalance";
 
 export default function WalletPage() {
-  const [account, setAccount] = useState<Account>()
-  const [credits, setCredits] = useState<number>(0)
+  const [account, setAccount] = useState<Account>();
+  const [credits, setCredits] = useState<number>(0);
   useEffect(() => {
     async function userData() {
-      const user = await getCurrentUser()
+      const user = await getCurrentUser();
       if (!user?.id) {
-        return toast.error('User Not Found')
+        return toast.error("User Not Found");
       }
-      if (user?.role !== 'USER') {
-        return toast.error('UnAuthenticated User')
+      if (user?.role !== "USER") {
+        return toast.error("UnAuthenticated User");
       }
-      setAccount(user)
+      setAccount(user);
     }
-    userData()
-  }, [])
+    userData();
+  }, []);
   const { t } = useLanguage();
   useEffect(() => {
-
-
     const getWallet = async () => {
       try {
         if (!account?.id) return;
-        const res = await WalletAPI.getWallet()
-        setCredits(res.data.totalCredits);
+        const res = await WalletAPI.getWallet();
+        setCredits(res.data.totalNetCredits || 0);
       } catch (error) {
-        toast.error('Failed to fetch wallet data')
+        toast.error("Failed to fetch wallet data");
       }
-    }
-    getWallet()
-  }, [account])
+    };
+    getWallet();
+  }, [account]);
   return (
     <div className="space-y-8">
       {/* Header Section */}
@@ -85,6 +84,9 @@ export default function WalletPage() {
         <WalletAccountSetup />
         <WalletSummary credits={credits} />
       </div>
+
+      {/* Enhanced Financial Dashboard */}
+      <EnhancedFinancialDashboard />
 
       {/* Transactions & Account Setup */}
       <div className="grid gap-6 lg:grid-cols-1">

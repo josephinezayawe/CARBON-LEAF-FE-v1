@@ -29,7 +29,10 @@ import PendingApprovalsWidget from "@/components/dashboard_components/admin/Pend
 import CreditMarketStanding from "@/components/dashboard_components/admin/CreditMarketStanding";
 import SystemHealthWidget from "@/components/dashboard_components/admin/SystemHealthWidget";
 import AdminQuickActions from "@/components/dashboard_components/admin/AdminQuickActions";
+import SystemFeesWidget from "@/components/dashboard_components/admin/SystemFeesWidget";
 import { UsersAPI } from "@/app/api/users";
+import { CreditsAPI } from "@/app/api/credits";
+import { getAllSubmissions } from "@/app/api/submissionsandReview.api";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -62,13 +65,37 @@ const headerVariants: Variants = {
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<any[]>([]);
+  const [creditsInSystem, setCreditsInSystem] = useState<number>(0);
+  const [pendingVerifications, setPendingVerifications] = useState<number>(0);
   const { t } = useLanguage();
+
   useEffect(() => {
-    async function allUsers() {
-      const result = await UsersAPI.getAllUsers();
-      setUsers(result);
+    async function fetchData() {
+      try {
+        // Fetch all users
+        const result = await UsersAPI.getAllUsers();
+        setUsers(result);
+
+        // Fetch system credits
+        const creditsData = await CreditsAPI.getSystemCredits();
+        if (creditsData?.totalAvailable !== undefined) {
+          setCreditsInSystem(creditsData.totalAvailable);
+        }
+
+        // Fetch pending submissions
+        const submissionsData = await getAllSubmissions();
+        const data = submissionsData.data || submissionsData;
+        if (Array.isArray(data)) {
+          const pending = data.filter(
+            (s: any) => s.status === "PENDING_ANALYSIS",
+          ).length;
+          setPendingVerifications(pending);
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard data:", error);
+      }
     }
-    allUsers();
+    fetchData();
   }, []);
   const stats: Array<{
     icon: LucideIcon;
@@ -89,17 +116,17 @@ export default function AdminDashboard() {
     },
     {
       icon: TrendingUp,
-      label: t("admin.credits_in_system"),
-      value: 2500000,
+      label: "Available Credits",
+      value: creditsInSystem,
       change: "+8.2%",
-      period: t("admin.this_week"),
+      period: "Ready for sale",
       color: "emerald",
       isLarge: true,
     },
     {
       icon: AlertCircle,
       label: t("admin.pending_verifications"),
-      value: 127,
+      value: pendingVerifications,
       change: "",
       period: t("admin.awaiting_approval"),
       color: "amber",
@@ -172,6 +199,9 @@ export default function AdminDashboard() {
 
           {/* Credits On Sale */}
           <CreditsOnSaleWidget />
+
+          {/* System Fees */}
+          <SystemFeesWidget />
         </motion.div>
       </motion.div>
 

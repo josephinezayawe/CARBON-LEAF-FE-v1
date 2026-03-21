@@ -5,6 +5,12 @@ import PhotoUploader from "@/components/dashboard_components/user/workspace/Phot
 import UploadSummary from "@/components/dashboard_components/user/workspace/UploadSummary";
 import PhotoGallery from "@/components/dashboard_components/user/workspace/PhotoGallery";
 import UPIRegistration from "@/components/dashboard_components/user/workspace/UPIRegistration";
+import UserBaselineTab from "@/components/dashboard_components/user/workspace/UserBaselineTab";
+import UserMonitoringTab from "@/components/dashboard_components/user/workspace/UserMonitoringTab";
+import UserAllocationTab from "@/components/dashboard_components/user/workspace/UserAllocationTab";
+import UserMethodologyTab from "@/components/dashboard_components/user/workspace/UserMethodologyTab";
+import UserMarketplaceTab from "@/components/dashboard_components/user/workspace/UserMarketplaceTab";
+import UserVerificationApproval from "@/components/dashboard_components/user/workspace/UserVerificationApproval";
 import { AssetForm } from "@/components/AssetForm";
 import AssetsList, { Asset } from "@/components/AssetForm/AssetsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +24,11 @@ import {
   Car,
   Flame,
   Building2,
+  Gauge,
+  Activity,
+  DollarSign,
+  BookOpen,
+  Store,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -35,7 +46,11 @@ import { SettingsAPI } from "@/app/api/settings";
 interface UserSector {
   id: string;
   userId: string;
-  sector: "FARMER" | "HYBRID_CAR_OWNER" | "ECO_FRIENDLY_STOVES" | "COMMERCIAL_BUILDING";
+  sector:
+    | "FARMER"
+    | "HYBRID_CAR_OWNER"
+    | "ECO_FRIENDLY_STOVES"
+    | "COMMERCIAL_BUILDING";
 }
 
 interface RegisteredUPI {
@@ -53,26 +68,33 @@ interface UploadedPhoto {
 }
 
 // Map backend sector values to display info
-const SECTOR_DISPLAY_MAP: Record<string, { label: string; description: string; icon: React.ComponentType<{ className?: string }> }> = {
-  "FARMER": { 
-    label: "Farmer", 
+const SECTOR_DISPLAY_MAP: Record<
+  string,
+  {
+    label: string;
+    description: string;
+    icon: React.ComponentType<{ className?: string }>;
+  }
+> = {
+  FARMER: {
+    label: "Farmer",
     description: "Agricultural land management",
-    icon: Trees 
+    icon: Trees,
   },
-  "HYBRID_CAR_OWNER": { 
-    label: "Hybrid Car Owner", 
+  HYBRID_CAR_OWNER: {
+    label: "Hybrid Car Owner",
     description: "Vehicle emissions tracking",
-    icon: Car 
+    icon: Car,
   },
-  "ECO_FRIENDLY_STOVES": { 
-    label: "Eco Friendly Stoves", 
+  ECO_FRIENDLY_STOVES: {
+    label: "Eco Friendly Stoves",
     description: "Clean cooking solutions",
-    icon: Flame 
+    icon: Flame,
   },
-  "COMMERCIAL_BUILDING": { 
-    label: "Commercial Building", 
+  COMMERCIAL_BUILDING: {
+    label: "Commercial Building",
     description: "Building emissions management",
-    icon: Building2 
+    icon: Building2,
   },
 };
 
@@ -93,7 +115,7 @@ export default function WorkspacePage() {
         const res = await SettingsAPI.getUserSectors();
         const userSectors = Array.isArray(res.data) ? res.data : [];
         setSectors(userSectors);
-        
+
         // Set first sector as selected, or FARMER as fallback
         if (userSectors.length > 0) {
           setSelectedSector(userSectors[0].sector as SectorType);
@@ -131,7 +153,7 @@ export default function WorkspacePage() {
             url,
             uploadedAt: ws.uploadDate ?? "",
             upi: ws.userId,
-          })) ?? []
+          })) ?? [],
       );
 
       // FIXED: Proper state update
@@ -156,14 +178,19 @@ export default function WorkspacePage() {
   };
 
   const handleCreateAsset = async (payload: Record<string, any>) => {
-    // The API already returned the created asset, so we just add it to the list
+    const safeName = payload.name ?? payload.assetType ?? "Unnamed asset";
+    const safeDescription = payload.description ?? "No description provided";
+    const safeLocation = [payload.cell, payload.village, payload.district]
+      .filter(Boolean)
+      .join(", ");
+
     const newAsset: Asset = {
       id: payload.id,
-      name: payload.name,
+      name: safeName,
       sector: payload.sector as SectorType,
-      assetType: payload.assetType,
-      description: payload.description,
-      location: `${payload.cell}, ${payload.village}, ${payload.district}`,
+      assetType: payload.assetType ?? "Asset",
+      description: safeDescription,
+      location: safeLocation || "Location not provided",
       createdAt: payload.createdAt || new Date().toISOString(),
       data: payload,
     };
@@ -173,29 +200,43 @@ export default function WorkspacePage() {
     toast.success(`Asset "${newAsset.name}" created successfully`);
   };
 
-  // Load user assets on mount
+  // Load user assets for the selected sector
   useEffect(() => {
     const loadUserAssets = async () => {
       try {
-        const result = await Workspace.getAssets("FARMER");
+        const result = await Workspace.getAssets(selectedSector);
         if (!result.success) {
           console.error("Failed to load assets:", result.message);
           return;
         }
 
         const assetsData = Array.isArray(result.data) ? result.data : [];
-        
+
         // Transform API response to Asset interface
-        const transformedAssets: Asset[] = assetsData.map((apiAsset: any) => ({
-          id: apiAsset.id,
-          name: apiAsset.name,
-          sector: apiAsset.sector as SectorType,
-          assetType: apiAsset.assetType,
-          description: apiAsset.description,
-          location: `${apiAsset.cell}, ${apiAsset.village}, ${apiAsset.district}`,
-          createdAt: apiAsset.createdAt,
-          data: apiAsset,
-        }));
+        const transformedAssets: Asset[] = assetsData.map((apiAsset: any) => {
+          const safeName =
+            apiAsset.name ?? apiAsset.assetType ?? "Unnamed asset";
+          const safeDescription =
+            apiAsset.description ?? "No description provided";
+          const safeLocation = [
+            apiAsset.cell,
+            apiAsset.village,
+            apiAsset.district,
+          ]
+            .filter(Boolean)
+            .join(", ");
+
+          return {
+            id: apiAsset.id,
+            name: safeName,
+            sector: apiAsset.sector as SectorType,
+            assetType: apiAsset.assetType ?? "Asset",
+            description: safeDescription,
+            location: safeLocation || "Location not provided",
+            createdAt: apiAsset.createdAt ?? new Date().toISOString(),
+            data: apiAsset,
+          };
+        });
 
         setAssets(transformedAssets);
         console.log("Loaded assets:", transformedAssets);
@@ -206,8 +247,8 @@ export default function WorkspacePage() {
     };
 
     loadUserAssets();
-  }, []);
-  
+  }, [selectedSector]);
+
   const handleDeleteAsset = (id: string) => {
     setAssets(assets.filter((a) => a.id !== id));
     if (selectedAsset?.id === id) {
@@ -294,7 +335,7 @@ export default function WorkspacePage() {
                 sectors.map((userSector) => {
                   const sectorInfo = SECTOR_DISPLAY_MAP[userSector.sector];
                   if (!sectorInfo) return null;
-                  
+
                   const Icon = sectorInfo.icon;
                   return (
                     <SelectItem
@@ -330,6 +371,9 @@ export default function WorkspacePage() {
         totalPhotos={uploadedPhotos.length}
         sector={selectedSector}
       />
+
+      {/* Verification Approval Card */}
+      <UserVerificationApproval />
 
       {/* Main Content Tabs */}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
@@ -368,6 +412,46 @@ export default function WorkspacePage() {
                   </Badge>
                 )}
               </TabsTrigger>
+              <TabsTrigger
+                value="baseline"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
+              >
+                <Gauge className="w-4 h-4" />
+                <span className="hidden sm:inline">Baseline</span>
+                <span className="sm:hidden">Base</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="monitoring"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
+              >
+                <Activity className="w-4 h-4" />
+                <span className="hidden sm:inline">Monitoring</span>
+                <span className="sm:hidden">Monitor</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="allocation"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
+              >
+                <DollarSign className="w-4 h-4" />
+                <span className="hidden sm:inline">Allocation</span>
+                <span className="sm:hidden">Alloc</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="methodology"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="hidden sm:inline">Methodology</span>
+                <span className="sm:hidden">Method</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="marketplace"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 data-[state=active]:text-emerald-600 dark:data-[state=active]:text-emerald-400 data-[state=active]:shadow-sm gap-2"
+              >
+                <Store className="w-4 h-4" />
+                <span className="hidden sm:inline">Marketplace</span>
+                <span className="sm:hidden">Market</span>
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -402,7 +486,7 @@ export default function WorkspacePage() {
             >
               {(() => {
                 const sectorAssets = assets.filter(
-                  (a) => a.sector === selectedSector
+                  (a) => a.sector === selectedSector,
                 );
 
                 return sectorAssets.length === 0 ? (
@@ -448,6 +532,41 @@ export default function WorkspacePage() {
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"
             >
               <PhotoGallery />
+            </TabsContent>
+
+            <TabsContent
+              value="baseline"
+              className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            >
+              <UserBaselineTab />
+            </TabsContent>
+
+            <TabsContent
+              value="monitoring"
+              className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            >
+              <UserMonitoringTab />
+            </TabsContent>
+
+            <TabsContent
+              value="allocation"
+              className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            >
+              <UserAllocationTab />
+            </TabsContent>
+
+            <TabsContent
+              value="methodology"
+              className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            >
+              <UserMethodologyTab />
+            </TabsContent>
+
+            <TabsContent
+              value="marketplace"
+              className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+            >
+              <UserMarketplaceTab />
             </TabsContent>
           </div>
         </Tabs>

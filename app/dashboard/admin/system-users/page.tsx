@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getAllUsers } from "@/app/api/systemUsers.api";
+import { getAllUsers, changeUserRole } from "@/app/api/systemUsers.api";
 import { useLanguage } from "@/components/global/language-provider";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -54,6 +55,7 @@ import {
   Phone,
   Wallet,
   Briefcase,
+  ShieldCheck,
 } from "lucide-react";
 import {
   BarChart,
@@ -65,6 +67,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { SystemUser, sectors } from "./systemUsers.types";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { DataPagination } from "@/components/ui/data-pagination";
 
 export default function SystemUsersPage() {
   const { t } = useLanguage();
@@ -72,17 +77,39 @@ export default function SystemUsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSector, setSelectedSector] = useState("all");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 20;
 
   // States for Dialog
   const [selectedUser, setSelectedUser] = useState<SystemUser | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // States for Change Role Dialog
+  const [roleDialogUser, setRoleDialogUser] = useState<SystemUser | null>(null);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [newRole, setNewRole] = useState("");
+  const [roleChangeReason, setRoleChangeReason] = useState("");
+  const [isChangingRole, setIsChangingRole] = useState(false);
+
+  const allRoles = [
+    { key: "USER", label: "User" },
+    { key: "ADMIN", label: "Admin" },
+    { key: "FIELD_OFFICER", label: "Field Officer" },
+    { key: "VERIFIER", label: "Verifier" },
+    { key: "BUYER", label: "Buyer" },
+  ] as const;
+
   useEffect(() => {
     const fetchUsers = async () => {
+      setIsLoading(true);
       try {
-        const response = await getAllUsers();
+        const response = await getAllUsers(page, limit);
         if (response.success && Array.isArray(response.data)) {
           setUsers(response.data);
+          setTotal(response.total ?? 0);
+          setTotalPages(response.totalPages ?? 1);
         }
       } catch (error) {
         console.error("Failed to fetch users:", error);
@@ -91,11 +118,49 @@ export default function SystemUsersPage() {
       }
     };
     fetchUsers();
-  }, []);
+  }, [page]);
 
   const handleViewDetails = (user: SystemUser) => {
     setSelectedUser(user);
     setIsDialogOpen(true);
+  };
+
+  const handleOpenRoleDialog = (user: SystemUser) => {
+    setRoleDialogUser(user);
+    setNewRole(user.role ?? "USER");
+    setRoleChangeReason("");
+    setIsRoleDialogOpen(true);
+  };
+
+  const handleChangeRole = async () => {
+    if (!roleDialogUser || !newRole) return;
+    if (newRole === roleDialogUser.role) {
+      toast.info("Role is already set to this value");
+      return;
+    }
+    setIsChangingRole(true);
+    try {
+      await changeUserRole(
+        roleDialogUser.id,
+        newRole,
+        roleChangeReason || undefined,
+      );
+      toast.success(
+        `Role changed to ${newRole} for ${roleDialogUser.firstName} ${roleDialogUser.lastName}`,
+      );
+      // Update local state
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === roleDialogUser.id ? { ...u, role: newRole } : u,
+        ),
+      );
+      setIsRoleDialogOpen(false);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message ?? "Failed to change role");
+      console.error("Role change error:", error);
+    } finally {
+      setIsChangingRole(false);
+    }
   };
 
   const filteredUsers = users.filter((user) => {
@@ -117,7 +182,7 @@ export default function SystemUsersPage() {
 
   const statsBySector = sectors.map((s) => {
     const count = users.filter((u) =>
-      u.userSectors?.some((us) => us.sector === s.key)
+      u.userSectors?.some((us) => us.sector === s.key),
     ).length;
     return {
       name: s.label,
@@ -294,6 +359,7 @@ export default function SystemUsersPage() {
                 <TableHeader className="bg-muted/50">
                   <TableRow>
                     <TableHead>Name</TableHead>
+                    <TableHead>Role</TableHead>
                     <TableHead>NID (Masked)</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Sector</TableHead>
@@ -312,10 +378,24 @@ export default function SystemUsersPage() {
                       <TableCell className="font-medium">
                         {user.firstName} {user.lastName}
                       </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            user.role === "ADMIN" ? "default" : "secondary"
+                          }
+                          className={
+                            user.role === "ADMIN"
+                              ? "bg-purple-100 text-purple-700 border-purple-200"
+                              : "text-xs"
+                          }
+                        >
+                          {user.role ?? "USER"}
+                        </Badge>
+                      </TableCell>
                       <TableCell className="text-xs font-mono text-muted-foreground">
                         {user.nid
                           ? `${user.nid.substring(0, 4)}...${user.nid.slice(
-                              -4
+                              -4,
                             )}`
                           : "N/A"}
                       </TableCell>
@@ -346,7 +426,7 @@ export default function SystemUsersPage() {
                       </TableCell>
                       <TableCell className="font-semibold text-emerald-600">
                         {Number(
-                          user.wallet?.totalCredits || 0
+                          user.wallet?.totalCredits || 0,
                         ).toLocaleString()}
                       </TableCell>
                       <TableCell className="text-center font-medium">
@@ -370,6 +450,13 @@ export default function SystemUsersPage() {
                             >
                               <Eye className="h-4 w-4 mr-2" /> View Details
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onClick={() => handleOpenRoleDialog(user)}
+                            >
+                              <ShieldCheck className="h-4 w-4 mr-2" /> Change
+                              Role
+                            </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer">
                               <Edit2 className="h-4 w-4 mr-2" /> Edit User
                             </DropdownMenuItem>
@@ -385,6 +472,14 @@ export default function SystemUsersPage() {
                 </TableBody>
               </Table>
             )}
+
+            <DataPagination
+              page={page}
+              totalPages={totalPages}
+              total={total}
+              limit={limit}
+              onPageChange={setPage}
+            />
           </div>
         </CardContent>
       </Card>
@@ -461,7 +556,7 @@ export default function SystemUsersPage() {
                   </p>
                   <p className="text-lg font-bold text-emerald-600">
                     {Number(
-                      selectedUser.wallet?.totalCredits || 0
+                      selectedUser.wallet?.totalCredits || 0,
                     ).toLocaleString()}
                   </p>
                 </div>
@@ -479,6 +574,80 @@ export default function SystemUsersPage() {
           <div className="flex justify-end pt-2">
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
               Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change Role Dialog */}
+      <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+        <DialogContent className="sm:max-w-[420px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-emerald-600" />
+              Change User Role
+            </DialogTitle>
+            <DialogDescription>
+              Update role for{" "}
+              <span className="font-semibold">
+                {roleDialogUser?.firstName} {roleDialogUser?.lastName}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label>Current Role</Label>
+              <Badge variant="outline" className="text-sm">
+                {roleDialogUser?.role ?? "USER"}
+              </Badge>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newRole">New Role</Label>
+              <Select value={newRole} onValueChange={setNewRole}>
+                <SelectTrigger id="newRole">
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {allRoles.map((r) => (
+                    <SelectItem key={r.key} value={r.key}>
+                      {r.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="roleReason">Reason (optional)</Label>
+              <Textarea
+                id="roleReason"
+                placeholder="Why is this role being changed?"
+                value={roleChangeReason}
+                onChange={(e) => setRoleChangeReason(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsRoleDialogOpen(false)}
+              disabled={isChangingRole}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleChangeRole}
+              disabled={isChangingRole || newRole === roleDialogUser?.role}
+              className="bg-emerald-600 hover:bg-emerald-700"
+            >
+              {isChangingRole ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : null}
+              Confirm Change
             </Button>
           </div>
         </DialogContent>

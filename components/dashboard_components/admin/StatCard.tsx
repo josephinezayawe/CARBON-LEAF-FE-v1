@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { motion } from "framer-motion"
-import { LucideIcon } from "lucide-react"
-import { AnimatedNumber } from "./AnimatedNumber"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { motion } from "framer-motion";
+import { LucideIcon } from "lucide-react";
+import { AnimatedNumber } from "./AnimatedNumber";
 
 interface StatCardProps {
-  icon: LucideIcon
-  label: string
-  value: number
-  change?: string
-  period?: string
-  color: "blue" | "emerald" | "amber" | "green"
-  isLarge?: boolean
+  icon: LucideIcon;
+  label: string;
+  value: number;
+  change?: string;
+  period?: string;
+  color: "blue" | "emerald" | "amber" | "green";
+  isLarge?: boolean;
 }
 
 const colorConfig = {
@@ -52,7 +52,7 @@ const colorConfig = {
     change: "text-green-600 dark:text-green-400",
     glow: "shadow-green-500/20",
   },
-}
+};
 
 export function StatCard({
   icon: Icon,
@@ -63,7 +63,7 @@ export function StatCard({
   color,
   isLarge,
 }: StatCardProps) {
-  const config = colorConfig[color]
+  const config = colorConfig[color];
 
   return (
     <motion.div
@@ -75,7 +75,9 @@ export function StatCard({
         className={`border ${config.border} shadow-lg hover:shadow-2xl bg-gradient-to-br ${config.bg} transition-all duration-300 overflow-hidden relative group`}
       >
         {/* Animated glow effect on hover */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${config.bg} opacity-0 group-hover:opacity-50 blur-2xl transition-opacity duration-500 -z-10`} />
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${config.bg} opacity-0 group-hover:opacity-50 blur-2xl transition-opacity duration-500 -z-10`}
+        />
 
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -91,26 +93,16 @@ export function StatCard({
         </CardHeader>
 
         <CardContent>
-          <div className={`text-3xl font-black bg-gradient-to-r ${config.text} bg-clip-text text-transparent`}>
-            {isLarge ? (
-              value >= 1000000 ? (
-                <span>
-                  <AnimatedNumber value={Math.floor(value / 1000000)} />M
-                </span>
-              ) : value >= 1000 ? (
-                <span>
-                  <AnimatedNumber value={Math.floor(value / 1000)} />K
-                </span>
-              ) : (
-                <AnimatedNumber value={value} />
-              )
-            ) : (
-              <AnimatedNumber value={value} />
-            )}
+          <div
+            className={`text-3xl font-black bg-gradient-to-r ${config.text} bg-clip-text text-transparent`}
+          >
+            <AnimatedNumber value={value} />
           </div>
 
           {change && (
-            <p className={`text-xs font-medium ${config.change} mt-1 flex items-center gap-1`}>
+            <p
+              className={`text-xs font-medium ${config.change} mt-1 flex items-center gap-1`}
+            >
               <motion.span
                 animate={{ y: [0, -2, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -135,5 +127,5 @@ export function StatCard({
         </CardContent>
       </Card>
     </motion.div>
-  )
+  );
 }

@@ -48,8 +48,14 @@ export default function SignIn() {
       toast.success(t("auth.signin_success"));
 
       // Navigate based on role
-      const route =
-        result?.data.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/user";
+      const roleDashboard: Record<string, string> = {
+        ADMIN: "/dashboard/admin",
+        USER: "/dashboard/user",
+        FIELD_OFFICER: "/dashboard/field-officer",
+        VERIFIER: "/dashboard/verifier",
+        BUYER: "/dashboard/buyer",
+      };
+      const route = roleDashboard[result?.data.role] ?? "/dashboard/user";
       return (window.location.href = route);
       // router.push(route)
     } catch (error) {
@@ -237,7 +243,7 @@ export default function SignIn() {
         <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
           <div className="text-center">
             <a
-              href="#"
+              href="/forgot-password"
               className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
             >
               {t("auth.forgot_password")}
