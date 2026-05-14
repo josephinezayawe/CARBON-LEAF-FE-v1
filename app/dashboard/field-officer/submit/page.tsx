@@ -387,18 +387,21 @@ export default function SubmitFieldDataPage() {
     [assignableWorkspaces, workspaceId],
   );
 
-  const formatWorkspaceOption = useCallback((workspace: AssignableWorkspace) => {
-    if (workspace.label?.trim()) return workspace.label;
+  const formatWorkspaceOption = useCallback(
+    (workspace: AssignableWorkspace) => {
+      if (workspace.label?.trim()) return workspace.label;
 
-    const parts = [
-      workspace.workspaceName,
-      workspace.assetIdentifier ?? "No asset linked",
-      workspace.sector,
-      workspace.status,
-    ].filter(Boolean);
+      const parts = [
+        workspace.workspaceName,
+        workspace.assetIdentifier ?? "No asset linked",
+        workspace.sector,
+        workspace.status,
+      ].filter(Boolean);
 
-    return parts.join(" - ");
-  }, []);
+      return parts.join(" - ");
+    },
+    [],
+  );
 
   const getAssetIdentifier = useCallback(
     (asset: WorkspaceAsset, selectedSector: string): string => {
