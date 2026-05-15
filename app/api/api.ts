@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4040",
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://5.189.168.75:4040",
     withCredentials: true,
 });
 
