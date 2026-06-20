@@ -162,13 +162,20 @@ export default function UserMethodologyTab() {
       if (res.success) {
         toast.success(t("methodology_tab.link_success"));
         setSelectDialogOpen(false);
-        setSelectedMethodologyId("");
+        // TASK-13: Reset selection AFTER workspace has refreshed, not before
         await loadWorkspace();
+        setSelectedMethodologyId("");
       } else {
-        toast.error(res.message);
+        // TASK-13: Show specific reason from API, not generic message
+        toast.error(res.message || t("methodology_tab.link_error"));
       }
-    } catch {
-      toast.error(t("methodology_tab.link_error"));
+    } catch (err: any) {
+      // TASK-13: Show specific error message from API response
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("methodology_tab.link_error");
+      toast.error(msg);
     } finally {
       setIsLinking(false);
     }

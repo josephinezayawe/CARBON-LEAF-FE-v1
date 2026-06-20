@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useLanguage } from "@/components/global/language-provider"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
-import { Save, AlertCircle } from "lucide-react"
+import { Save, AlertCircle, Loader2 } from "lucide-react"
+import { settingsApi } from "@/app/api/systemFee.api"
 import {
   Table,
   TableBody,
@@ -53,11 +54,33 @@ const mockUpdateHistory = [
 
 export default function SettingsPage() {
   const { t } = useLanguage()
-  const [currentFeePercentage] = useState(10.0)
+  // TASK-21: Load real fee from backend
+  const [currentFeePercentage, setCurrentFeePercentage] = useState(10.0)
+  const [settingId, setSettingId] = useState<string | null>(null)
   const [newFeePercentage, setNewFeePercentage] = useState(10.0)
   const [previewGrossCredits, setPreviewGrossCredits] = useState(1000)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Load fee percentage from backend on mount
+  useEffect(() => {
+    const loadFee = async () => {
+      try {
+        const data = await settingsApi.getFee()
+        if (data?.data?.percentage !== undefined) {
+          setCurrentFeePercentage(data.data.percentage)
+          setNewFeePercentage(data.data.percentage)
+        }
+        if (data?.data?.id) {
+          setSettingId(data.data.id)
+        }
+      } catch (err) {
+        console.error("Failed to load fee setting:", err)
+      }
+    }
+    loadFee()
+  }, [])
 
   // Calculate fee and net credits
   const feeAmount = (previewGrossCredits * newFeePercentage) / 100
@@ -76,16 +99,35 @@ export default function SettingsPage() {
     setIsUpdateDialogOpen(true)
   }
 
-  const handleConfirmUpdate = () => {
+  const handleConfirmUpdate = async () => {
     // Validate fee percentage
     if (newFeePercentage < 0 || newFeePercentage > 100) {
       toast.error("Fee percentage must be between 0 and 100")
       return
     }
 
-    toast.success("Fee percentage updated successfully")
-    setIsUpdateDialogOpen(false)
-    setIsEditMode(false)
+    if (!settingId) {
+      toast.error("Settings ID not loaded. Please refresh and try again.")
+      return
+    }
+
+    // TASK-21: Actually call the API with the correct settingId
+    setIsSaving(true)
+    try {
+      const result = await settingsApi.updateFee(newFeePercentage, settingId)
+      if (result?.success === false) {
+        toast.error(result?.message || "Failed to update fee")
+        return
+      }
+      setCurrentFeePercentage(newFeePercentage)
+      toast.success("Fee percentage updated successfully")
+      setIsUpdateDialogOpen(false)
+      setIsEditMode(false)
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || err?.message || "Failed to update fee")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -317,8 +359,10 @@ export default function SettingsPage() {
             </Button>
             <Button
               onClick={handleConfirmUpdate}
+              disabled={isSaving}
               className="bg-emerald-600 hover:bg-emerald-700"
             >
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
               Update Fee Percentage
             </Button>
           </DialogFooter>

@@ -15,17 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AuthAPI } from "../api/authAPI";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 import { useLanguage } from "@/components/global/language-provider";
-import { useAuth } from "@/context/authContext";
 import { useTheme } from "@/components/global/theme-provider";
 import { Sun, Moon } from "lucide-react";
 
 export default function SignIn() {
-  const router = useRouter();
-  const { lang, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +34,7 @@ export default function SignIn() {
     },
   });
 
-  const { t } = useLanguage();
+  const { lang, setLanguage, t } = useLanguage();
 
   const onSubmit = async (data: LoginData) => {
     setIsLoading(true);
@@ -229,12 +225,13 @@ export default function SignIn() {
 
           {/* Additional Links */}
           <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
-            <div className="text-center">
+            <div className="text-center text-sm text-slate-600 dark:text-slate-400">
+              {t("auth.signin_no_account")}{" "}
               <a
                 href="/signup"
-                className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
+                className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
               >
-                {t("auth.signin_button")}
+                {t("auth.signup_create")}
               </a>
             </div>
           </div>

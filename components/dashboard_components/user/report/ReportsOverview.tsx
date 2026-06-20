@@ -20,6 +20,33 @@ const uploadActivity = [
 
 export default function ReportsOverview() {
   const { t } = useLanguage();
+
+  // TASK-14: Fix report download button
+  const handleDownloadReport = () => {
+    const lines: string[] = [];
+    lines.push("=== Carbon Credit Report ===");
+    lines.push(`Generated: ${new Date().toLocaleString()}`);
+    lines.push("");
+    lines.push("--- Sales History ---");
+    lines.push("Date,Credits Sold,Amount,Status");
+    salesData.forEach((s) =>
+      lines.push(`${s.date},${s.credits},${s.amount},${s.status}`)
+    );
+    lines.push("");
+    lines.push("--- Upload Activity ---");
+    lines.push("Date,Photos,Land Reference,Status");
+    uploadActivity.forEach((u) =>
+      lines.push(`${u.date},${u.photos},${u.land},${u.status}`)
+    );
+
+    const blob = new Blob([lines.join("\n")], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `carbon_report_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   
   return (
     <div className="space-y-6">
@@ -139,7 +166,7 @@ export default function ReportsOverview() {
 
                       {/* Download Report Button */}
                       <div className="flex justify-center">
-                      <Button className="h-12 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25">
+                      <Button onClick={handleDownloadReport} className="h-12 px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg shadow-blue-500/25">
                       <Download className="w-5 h-5 mr-2" />
                       {t("reports.download_report")}
                       </Button>

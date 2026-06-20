@@ -171,9 +171,12 @@ export default function UserAllocationTab() {
         toast.success(t("allocation.created"));
       }
       setDialogOpen(false);
-    } catch (err: unknown) {
+    } catch (err: any) {
+      // TASK-12: Show specific revenue allocation error message
       const message =
-        err instanceof Error ? err.message : t("allocation.save_error");
+        err?.response?.data?.message ||
+        (err instanceof Error ? err.message : null) ||
+        t("allocation.save_error");
       toast.error(message);
     } finally {
       setSaving(false);
