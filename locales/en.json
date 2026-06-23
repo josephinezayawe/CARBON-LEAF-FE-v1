@@ -374,6 +374,7 @@
     "signin_welcome": "Welcome Back",
     "signin_subtitle": "Sign in to your account to continue",
     "signin_button": "Sign In",
+    "signin_no_account": "Don't have an account?",
     "signin_signing": "Signing In...",
     "signin_success": "Welcome back! Signed in successfully.",
     "signin_error": "Unable to sign in. Please check your credentials.",

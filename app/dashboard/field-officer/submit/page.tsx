@@ -346,6 +346,7 @@ export default function SubmitFieldDataPage() {
   const [gpsLat, setGpsLat] = useState("");
   const [gpsLng, setGpsLng] = useState("");
   const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState(false);
   const [notes, setNotes] = useState("");
   const [measurements, setMeasurements] = useState<
     Record<string, string | boolean>
@@ -1055,6 +1056,7 @@ export default function SubmitFieldDataPage() {
   const captureGPS = useCallback(() => {
     if (!navigator.geolocation) {
       toast.error(t("field_officer.geolocation_not_supported"));
+      setGpsError(true);
       return;
     }
     setGpsLoading(true);
@@ -1063,11 +1065,13 @@ export default function SubmitFieldDataPage() {
         setGpsLat(pos.coords.latitude.toFixed(6));
         setGpsLng(pos.coords.longitude.toFixed(6));
         setGpsLoading(false);
+        setGpsError(false);
         toast.success(t("field_officer.gps_captured"));
       },
       (err) => {
         setGpsLoading(false);
-        toast.error(`GPS error: ${err.message}`);
+        setGpsError(true);
+        toast.error(`GPS error: ${err.message}. Please enter coordinates manually.`);
       },
       { enableHighAccuracy: true, timeout: 15000 },
     );
@@ -1511,7 +1515,40 @@ export default function SubmitFieldDataPage() {
                     : t("field_officer.capture_location")}
                 </Button>
 
-                {gpsLat && gpsLng ? (
+                {gpsError && (
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg text-sm text-amber-800 dark:text-amber-300">
+                    <p className="font-semibold mb-2">GPS Capture Failed</p>
+                    <p className="text-xs mb-3">Please enter the coordinates manually below:</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                          Latitude
+                        </Label>
+                        <Input 
+                          type="number" 
+                          step="any" 
+                          placeholder="e.g. -1.9403" 
+                          value={gpsLat} 
+                          onChange={(e) => setGpsLat(e.target.value)} 
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <Label className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+                          Longitude
+                        </Label>
+                        <Input 
+                          type="number" 
+                          step="any" 
+                          placeholder="e.g. 29.8739" 
+                          value={gpsLng} 
+                          onChange={(e) => setGpsLng(e.target.value)} 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {gpsLat && gpsLng && !gpsError ? (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs text-muted-foreground uppercase tracking-wide">

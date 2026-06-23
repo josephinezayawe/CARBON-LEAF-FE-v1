@@ -61,6 +61,35 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  // TASK-6: Session timeout on inactivity (30 minutes)
+  useEffect(() => {
+    if (!user) return; // Only track inactivity if logged in
+
+    const timeoutDuration = 30 * 60 * 1000; // 30 minutes
+    let inactivityTimer: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        toast.error("Session expired due to inactivity");
+        signOut();
+      }, timeoutDuration);
+    };
+
+    // Events to track user activity
+    const events = ["mousemove", "keydown", "scroll", "click", "touchstart"];
+    
+    events.forEach(event => window.addEventListener(event, resetTimer));
+    
+    // Initialize timer
+    resetTimer();
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      events.forEach(event => window.removeEventListener(event, resetTimer));
+    };
+  }, [user]);
+
   const role = user?.role ?? null;
 
   return (

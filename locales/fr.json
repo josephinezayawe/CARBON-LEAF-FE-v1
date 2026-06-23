@@ -374,6 +374,7 @@
     "signin_welcome": "Bienvenue",
     "signin_subtitle": "Connectez-vous à votre compte pour continuer",
     "signin_button": "Se connecter",
+    "signin_no_account": "Vous n'avez pas de compte?",
     "signin_signing": "Connexion en cours...",
     "signin_success": "Bienvenue! Connecté avec succès.",
     "signin_error": "Impossible de se connecter. Veuillez vérifier vos identifiants.",

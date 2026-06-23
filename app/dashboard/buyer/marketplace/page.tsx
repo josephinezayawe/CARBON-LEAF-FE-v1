@@ -362,6 +362,17 @@ export default function MarketplacePage() {
                 </div>
               </div>
 
+              {/* TASK-16: Payment specifications */}
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-sm text-amber-800 dark:text-amber-300">
+                <p className="font-semibold mb-1">Payment Instructions</p>
+                <ul className="list-disc pl-4 space-y-1 text-xs">
+                  <li>Pay via MoMo: <strong>*182*8*1*123456#</strong></li>
+                  <li>Bank Transfer: <strong>BK 00040-06912345-12</strong></li>
+                  <li>Use <strong>{selectedListing?.saleNumber}</strong> as the payment reference.</li>
+                  <li>After confirmation, credits will be assigned to your portfolio upon verification.</li>
+                </ul>
+              </div>
+
               <DialogFooter>
                 <Button variant="outline" onClick={() => setStep(1)}>
                   <ArrowLeft className="size-4 mr-2" />

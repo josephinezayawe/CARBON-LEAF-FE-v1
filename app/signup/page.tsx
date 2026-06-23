@@ -25,7 +25,6 @@ import {
 import { useState } from "react";
 import { AuthAPI } from "../api/authAPI";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import {
   Eye,
   EyeOff,
@@ -37,7 +36,6 @@ import {
   Check,
 } from "lucide-react";
 import { useLanguage } from "@/components/global/language-provider";
-import { useAuth } from "@/context/authContext";
 import { useTheme } from "@/components/global/theme-provider";
 import { Sun, Moon } from "lucide-react";
 
@@ -152,8 +150,6 @@ export default function Signup() {
     { option: "ECO_FRIENDLY_STOVES", value: "ECO_FRIENDLY STOVES" },
     { option: "COMMERCIAL_BUILDING", value: "COMMERCIAL BUILDING" },
   ];
-  const router = useRouter();
-  const { lang, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -161,6 +157,7 @@ export default function Signup() {
   const [currentStep, setCurrentStep] = useState<FormStep>(1);
 
   const form = useForm<RegisterData>({
+    mode: "onBlur",
     resolver: zodResolver(RegisterDataSchema),
     defaultValues: {
       firstName: "",
@@ -198,17 +195,60 @@ export default function Signup() {
     { number: 4, title: "Security", completed: currentStep > 4 },
   ];
 
-  const { t } = useLanguage();
+  const { lang, setLanguage, t } = useLanguage();
+
+  // TASK-9: Password strength meter logic
+  const watchPassword = form.watch("password", "");
+  const getPasswordStrength = (pass: string) => {
+    let score = 0;
+    if (!pass) return { score: 0, label: "", color: "bg-slate-200" };
+    if (pass.length >= 8) score += 1;
+    if (/[A-Z]/.test(pass)) score += 1;
+    if (/[0-9]/.test(pass)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1;
+    
+    switch (score) {
+      case 0:
+      case 1: return { score, label: "Weak", color: "bg-red-500 w-1/4" };
+      case 2: return { score, label: "Fair", color: "bg-orange-500 w-2/4" };
+      case 3: return { score, label: "Strong", color: "bg-yellow-500 w-3/4" };
+      case 4: return { score, label: "Very Strong", color: "bg-emerald-500 w-full" };
+      default: return { score: 0, label: "", color: "bg-slate-200 w-0" };
+    }
+  };
+  const strength = getPasswordStrength(watchPassword);
+
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === "object" && value !== null;
+
+  const getErrorMessage = (error: unknown) => {
+    if (
+      isRecord(error) &&
+      isRecord(error.response) &&
+      isRecord(error.response.data) &&
+      typeof error.response.data.message === "string"
+    ) {
+      return error.response.data.message;
+    }
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return t("auth.signup_error");
+  };
 
   const onSubmit = async (data: RegisterData) => {
     if (data.password !== data.confirmPassword) {
       toast.error(t("auth.password_mismatch"));
       return;
     }
-    try {
-      const { confirmPassword, ...newData } = data;
-      console.log(newData);
 
+    setIsLoading(true);
+
+    try {
+      const newData: Partial<RegisterData> = { ...data };
+      delete newData.confirmPassword;
       const result = await AuthAPI.register(newData);
       toast.success(t("auth.signup_success"));
       // Registration always assigns USER role on the server
@@ -222,7 +262,24 @@ export default function Signup() {
       const route = roleDashboard[result?.data.role] ?? "/dashboard/user";
       window.location.href = route;
     } catch (error) {
-      toast.error(t("auth.signup_error"));
+      const errorMsg = getErrorMessage(error);
+      toast.error(errorMsg);
+
+      if (
+        isRecord(error) &&
+        isRecord(error.response) &&
+        isRecord(error.response.data) &&
+        isRecord(error.response.data.errors)
+      ) {
+        Object.entries(error.response.data.errors).forEach(([key, message]) => {
+          if (typeof message === "string") {
+            form.setError(key as keyof RegisterData, {
+              type: "server",
+              message,
+            });
+          }
+        });
+      }
       console.error("Registration error:", error);
     } finally {
       setIsLoading(false);
@@ -377,9 +434,12 @@ export default function Signup() {
           <div className="mx-auto w-12 h-12 bg-gradient-to-br from-emerald-600 to-green-600 rounded-xl flex items-center justify-center shadow-lg mb-4">
             <UserPlus className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-br from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-extrabold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent drop-shadow-sm">
             {t("auth.signup_title")}
           </h1>
+          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-xs font-semibold uppercase tracking-wider">
+            Registration Portal
+          </div>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
             {t("auth.signup_step")
               .replace("{current}", currentStep.toString())
@@ -903,6 +963,19 @@ export default function Signup() {
                               </button>
                             </div>
                           </FormControl>
+                          {watchPassword && (
+                            <div className="mt-2 space-y-1">
+                              <div className="flex justify-between items-center text-xs">
+                                <span className="text-slate-500">Password Strength</span>
+                                <span className={`font-medium ${strength.score < 3 ? "text-red-500" : "text-emerald-500"}`}>
+                                  {strength.label}
+                                </span>
+                              </div>
+                              <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div className={`h-full transition-all duration-300 ${strength.color}`}></div>
+                              </div>
+                            </div>
+                          )}
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}

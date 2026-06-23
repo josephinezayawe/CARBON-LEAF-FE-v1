@@ -163,8 +163,13 @@ export default function UserBaselineTab() {
       setBaseline(created);
       setIsCreating(false);
       toast.success(t("baseline.create_success"));
-    } catch {
-      toast.error(t("baseline.create_error"));
+    } catch (err: any) {
+      // TASK-11: Show specific reason for baseline creation failure
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("baseline.create_error");
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -195,8 +200,13 @@ export default function UserBaselineTab() {
       setBaseline(updated);
       setIsEditing(false);
       toast.success(t("baseline.update_success"));
-    } catch {
-      toast.error(t("baseline.update_error"));
+    } catch (err: any) {
+      // TASK-11: Show specific reason for baseline update failure
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("baseline.update_error");
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -211,8 +221,13 @@ export default function UserBaselineTab() {
       setBaseline(updated);
       setSubmitDialogOpen(false);
       toast.success(t("baseline.submit_success"));
-    } catch {
-      toast.error(t("baseline.submit_error"));
+    } catch (err: any) {
+      // TASK-11: Show specific reason for baseline submission failure
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("baseline.submit_error");
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -226,8 +241,13 @@ export default function UserBaselineTab() {
       const updated = await reviseBaseline(workspace.id);
       setBaseline(updated);
       toast.success(t("baseline.revise_success"));
-    } catch {
-      toast.error(t("baseline.revise_error"));
+    } catch (err: any) {
+      // TASK-11: Show specific reason for baseline revision failure
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        t("baseline.revise_error");
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
