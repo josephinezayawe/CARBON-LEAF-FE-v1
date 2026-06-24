@@ -1,256 +1,143 @@
 /**
  * Rwanda Administrative Divisions Data
- * Hierarchical structure: Province → District → Sector → Cell → Village
+ * Wraps the rwanda-geo-structure npm package to provide complete location data.
+ * All inputs are normalized to exact casing required by the underlying library.
  */
 
-export interface RwandaCell {
-  name: string;
+import * as rwandaGeo from 'rwanda-geo-structure';
+
+// ─── Province mapping ────────────────────────────────────────────────────────
+// Library returns: ['East', 'Kigali', 'North', 'South', 'West']
+// We display:      ['Eastern Province', 'Kigali City', 'Northern Province', 'Southern Province', 'Western Province']
+
+const DISPLAY_TO_LIB_PROVINCE: Record<string, string> = {
+  'eastern province': 'East',
+  'kigali city': 'Kigali',
+  'northern province': 'North',
+  'southern province': 'South',
+  'western province': 'West',
+  // Also accept the library's own short names
+  'east': 'East',
+  'kigali': 'Kigali',
+  'north': 'North',
+  'south': 'South',
+  'west': 'West',
+};
+
+const LIB_TO_DISPLAY_PROVINCE: Record<string, string> = {
+  'East': 'Eastern Province',
+  'Kigali': 'Kigali City',
+  'North': 'Northern Province',
+  'South': 'Southern Province',
+  'West': 'Western Province',
+};
+
+// ─── Build case-insensitive lookup caches ────────────────────────────────────
+// Because the library is strictly case-sensitive at EVERY level we cache exact
+// names once on first use and match against lower-cased keys.
+
+type DistrictCache = Record<string, string[]>;           // libProvince → exact district names
+type SectorCache   = Record<string, string[]>;           // libProvince|district → exact sector names
+type CellCache     = Record<string, string[]>;           // libProvince|district|sector → exact cell names
+type VillageCache  = Record<string, string[]>;           // libProvince|district|sector|cell → exact village names
+
+// Maps from lowercased name → exact cased name
+type NameMap = Record<string, string>;
+
+const districtNameMap: Record<string, NameMap> = {};    // libProvince → { lower → exact }
+const sectorNameMap: Record<string, NameMap>   = {};    // libProvince|district → { lower → exact }
+const cellNameMap: Record<string, NameMap>     = {};    // libProvince|district|sector → { lower → exact }
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function toLibProvince(province: string): string {
+  if (!province) return '';
+  return DISPLAY_TO_LIB_PROVINCE[province.trim().toLowerCase()] || province.trim();
 }
 
-export interface RwandaSector {
-  name: string;
-  cells: RwandaCell[];
+/** Return the exact district name as stored in the library, case-insensitively. */
+function resolveDistrict(libProvince: string, district: string): string {
+  if (!district) return '';
+  const key = libProvince;
+  if (!districtNameMap[key]) {
+    const exact = rwandaGeo.getDistrictsByProvince(libProvince) || [];
+    districtNameMap[key] = {};
+    for (const d of exact) districtNameMap[key][d.toLowerCase()] = d;
+  }
+  return districtNameMap[key][district.trim().toLowerCase()] || district.trim();
 }
 
-export interface RwandaDistrict {
-  name: string;
-  sectors: RwandaSector[];
+/** Return the exact sector name as stored in the library, case-insensitively. */
+function resolveSector(libProvince: string, exactDistrict: string, sector: string): string {
+  if (!sector) return '';
+  const key = `${libProvince}|${exactDistrict}`;
+  if (!sectorNameMap[key]) {
+    const exact = rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) || [];
+    sectorNameMap[key] = {};
+    for (const s of exact) sectorNameMap[key][s.toLowerCase()] = s;
+  }
+  return sectorNameMap[key][sector.trim().toLowerCase()] || sector.trim();
 }
 
-export interface RwandaProvince {
-  name: string;
-  districts: RwandaDistrict[];
+/** Return the exact cell name as stored in the library, case-insensitively. */
+function resolveCell(libProvince: string, exactDistrict: string, exactSector: string, cell: string): string {
+  if (!cell) return '';
+  const key = `${libProvince}|${exactDistrict}|${exactSector}`;
+  if (!cellNameMap[key]) {
+    const exact = rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) || [];
+    cellNameMap[key] = {};
+    for (const c of exact) cellNameMap[key][c.toLowerCase()] = c;
+  }
+  return cellNameMap[key][cell.trim().toLowerCase()] || cell.trim();
 }
 
-export const RWANDA_ADMINISTRATIVE_DIVISIONS: RwandaProvince[] = [
-  {
-    name: "Kigali City",
-    districts: [
-      {
-        name: "Gasabo",
-        sectors: [
-          {
-            name: "Kacyiru",
-            cells: [
-              { name: "Kabeza" },
-              { name: "Gatsata" },
-              { name: "Kigobe" },
-              { name: "Nyagahanga" },
-            ],
-          },
-          {
-            name: "Kimihurura",
-            cells: [
-              { name: "Biryogo" },
-              { name: "Kacyiru" },
-              { name: "Gisozi" },
-            ],
-          },
-        ],
-      },
-      {
-        name: "Nyarugenge",
-        sectors: [
-          {
-            name: "Nyamirambo",
-            cells: [
-              { name: "Gikondo" },
-              { name: "Nyamirambo" },
-              { name: "Rwezamenyo" },
-            ],
-          },
-          {
-            name: "Kigali",
-            cells: [
-              { name: "Gitega" },
-              { name: "Kigali" },
-              { name: "Muhima" },
-            ],
-          },
-        ],
-      },
-      {
-        name: "Kicukiro",
-        sectors: [
-          {
-            name: "Gahanga",
-            cells: [
-              { name: "Gahanga" },
-              { name: "Niboye" },
-              { name: "Kigarama" },
-            ],
-          },
-          {
-            name: "Kagarama",
-            cells: [
-              { name: "Kigarama" },
-              { name: "Kagarama" },
-              { name: "Nyarutarama" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Northern Province",
-    districts: [
-      {
-        name: "Musanze",
-        sectors: [
-          {
-            name: "Musanze",
-            cells: [
-              { name: "Muhoza" },
-              { name: "Buhunga" },
-              { name: "Busogo" },
-            ],
-          },
-          {
-            name: "Kinigi",
-            cells: [
-              { name: "Kinigi" },
-              { name: "Kundara" },
-              { name: "Cyuve" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Southern Province",
-    districts: [
-      {
-        name: "Huye",
-        sectors: [
-          {
-            name: "Ngoma",
-            cells: [
-              { name: "Ngoma" },
-              { name: "Muganza" },
-              { name: "Gikundamvura" },
-            ],
-          },
-          {
-            name: "Huye",
-            cells: [
-              { name: "Cyangugu" },
-              { name: "Huye" },
-              { name: "Ngoma" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Eastern Province",
-    districts: [
-      {
-        name: "Rwamagana",
-        sectors: [
-          {
-            name: "Mwurire",
-            cells: [
-              { name: "Mwurire" },
-              { name: "Gishari" },
-              { name: "Nyarurama" },
-            ],
-          },
-          {
-            name: "Nyakariro",
-            cells: [
-              { name: "Nyakariro" },
-              { name: "Gasharu" },
-              { name: "Rurenge" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    name: "Western Province",
-    districts: [
-      {
-        name: "Rubavu",
-        sectors: [
-          {
-            name: "Gisenyi",
-            cells: [
-              { name: "Gisenyi" },
-              { name: "Kamuha" },
-              { name: "Busasamana" },
-            ],
-          },
-          {
-            name: "Nyundo",
-            cells: [
-              { name: "Nyundo" },
-              { name: "Mugongi" },
-              { name: "Mabayi" },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-];
+// ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
- * Get all provinces
+ * Get all provinces (display names)
  */
 export function getProvinces(): string[] {
-  return RWANDA_ADMINISTRATIVE_DIVISIONS.map((p) => p.name);
+  return rwandaGeo.getProvinces().map(p => LIB_TO_DISPLAY_PROVINCE[p] || p);
 }
 
 /**
  * Get districts for a given province
  */
 export function getDistrictsByProvince(province: string): string[] {
-  const prov = RWANDA_ADMINISTRATIVE_DIVISIONS.find((p) => p.name === province);
-  return prov?.districts.map((d) => d.name) || [];
+  const libProvince = toLibProvince(province);
+  if (!libProvince) return [];
+  return rwandaGeo.getDistrictsByProvince(libProvince) || [];
 }
 
 /**
  * Get sectors for a given district (within a province)
  */
-export function getSectorsByDistrict(
-  province: string,
-  district: string
-): string[] {
-  const prov = RWANDA_ADMINISTRATIVE_DIVISIONS.find((p) => p.name === province);
-  const dist = prov?.districts.find((d) => d.name === district);
-  return dist?.sectors.map((s) => s.name) || [];
+export function getSectorsByDistrict(province: string, district: string): string[] {
+  const libProvince    = toLibProvince(province);
+  const exactDistrict  = resolveDistrict(libProvince, district);
+  if (!libProvince || !exactDistrict) return [];
+  return rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) || [];
 }
 
 /**
  * Get cells for a given sector (within a district and province)
  */
-export function getCellsBySector(
-  province: string,
-  district: string,
-  sector: string
-): string[] {
-  const prov = RWANDA_ADMINISTRATIVE_DIVISIONS.find((p) => p.name === province);
-  const dist = prov?.districts.find((d) => d.name === district);
-  const sect = dist?.sectors.find((s) => s.name === sector);
-  return sect?.cells.map((c) => c.name) || [];
+export function getCellsBySector(province: string, district: string, sector: string): string[] {
+  const libProvince   = toLibProvince(province);
+  const exactDistrict = resolveDistrict(libProvince, district);
+  const exactSector   = resolveSector(libProvince, exactDistrict, sector);
+  if (!libProvince || !exactDistrict || !exactSector) return [];
+  return rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) || [];
 }
 
 /**
- * Get villages for a given cell (villages are the cells themselves)
- * In the Rwanda administrative hierarchy, cells serve as the smallest unit
+ * Get villages for a given cell
  */
-export function getVillagesByCell(
-  province: string,
-  district: string,
-  sector: string,
-  cell: string
-): string[] {
-  // In this system, each cell is treated as a village
-  // Return the cell name as a single village option
-  const cells = getCellsBySector(province, district, sector);
-  return cells.includes(cell) ? [cell] : [];
+export function getVillagesByCell(province: string, district: string, sector: string, cell: string): string[] {
+  const libProvince   = toLibProvince(province);
+  const exactDistrict = resolveDistrict(libProvince, district);
+  const exactSector   = resolveSector(libProvince, exactDistrict, sector);
+  const exactCell     = resolveCell(libProvince, exactDistrict, exactSector, cell);
+  if (!libProvince || !exactDistrict || !exactSector || !exactCell) return [];
+  return rwandaGeo.getVillagesByCell(libProvince, exactDistrict, exactSector, exactCell) || [];
 }
