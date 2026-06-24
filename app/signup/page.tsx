@@ -38,108 +38,19 @@ import {
 import { useLanguage } from "@/components/global/language-provider";
 import { useTheme } from "@/components/global/theme-provider";
 import { Sun, Moon } from "lucide-react";
+import {
+  getProvinces,
+  getDistrictsByProvince,
+  getSectorsByDistrict,
+  getCellsBySector,
+  getVillagesByCell,
+} from "@/lib/rwanda-data";
 
-// Rwanda hierarchy (simplified, expand as needed)
-const rwandaAdministrativeDivisions = [
-  {
-    province: "Kigali City",
-    districts: [
-      {
-        district: "Gasabo",
-        sectors: [
-          {
-            sector: "Kacyiru",
-            cells: ["Kabeza", "Gatsata", "Kigobe", "Nyagahanga"],
-          },
-          {
-            sector: "Kimihurura",
-            cells: ["Biryogo", "Kacyiru", "Gisozi"],
-          },
-        ],
-      },
-      {
-        district: "Nyarugenge",
-        sectors: [
-          {
-            sector: "Nyamirambo",
-            cells: ["Gikondo", "Nyamirambo", "Rwezamenyo"],
-          },
-          {
-            sector: "Kigali",
-            cells: ["Gitega", "Kigali", "Muhima"],
-          },
-        ],
-      },
-      {
-        district: "Kicukiro",
-        sectors: [
-          {
-            sector: "Gahanga",
-            cells: ["Gahanga", "Niboye", "Kigarama"],
-          },
-          {
-            sector: "Kagarama",
-            cells: ["Kigarama", "Kagarama", "Nyarutarama"],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    province: "Northern Province",
-    districts: [
-      {
-        district: "Musanze",
-        sectors: [
-          {
-            sector: "Musanze",
-            cells: ["Muhoza", "Buhunga", "Busogo"],
-          },
-          {
-            sector: "Kinigi",
-            cells: ["Kinigi", "Kundara", "Cyuve"],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    province: "Southern Province",
-    districts: [
-      {
-        district: "Huye",
-        sectors: [
-          { sector: "Ngoma", cells: ["Ngoma", "Muganza", "Gikundamvura"] },
-          { sector: "Huye", cells: ["Cyangugu", "Huye", "Ngoma"] },
-        ],
-      },
-    ],
-  },
-  {
-    province: "Eastern Province",
-    districts: [
-      {
-        district: "Rwamagana",
-        sectors: [
-          { sector: "Mwurire", cells: ["Mwurire", "Gishari", "Nyarurama"] },
-          { sector: "Nyakariro", cells: ["Nyakariro", "Gasharu", "Rurenge"] },
-        ],
-      },
-    ],
-  },
-  {
-    province: "Western Province",
-    districts: [
-      {
-        district: "Rubavu",
-        sectors: [
-          { sector: "Gisenyi", cells: ["Gisenyi", "Kamuha", "Busasamana"] },
-          { sector: "Nyundo", cells: ["Nyundo", "Mugongi", "Mabayi"] },
-        ],
-      },
-    ],
-  },
-];
+// All 30 districts, 416 sectors, 2,149 cells, 14,837 villages loaded from rwanda-data
+const ALL_PROVINCES = getProvinces();
+
+
+
 
 type FormStep = 1 | 2 | 3 | 4;
 
@@ -180,13 +91,11 @@ export default function Signup() {
   const [selectedSector, setSelectedSector] = useState("");
   const [selectedCell, setSelectedCell] = useState("");
 
-  const districts =
-    rwandaAdministrativeDivisions.find((p) => p.province === selectedProvince)
-      ?.districts || [];
-  const sectors =
-    districts.find((d) => d.district === selectedDistrict)?.sectors || [];
-  const cells = sectors.find((s) => s.sector === selectedSector)?.cells || [];
-  const villages = cells;
+  // Derived lists — all complete from the rwanda-data library
+  const districts = selectedProvince ? getDistrictsByProvince(selectedProvince) : [];
+  const sectors = selectedProvince && selectedDistrict ? getSectorsByDistrict(selectedProvince, selectedDistrict) : [];
+  const cells = selectedProvince && selectedDistrict && selectedSector ? getCellsBySector(selectedProvince, selectedDistrict, selectedSector) : [];
+  const villages = selectedProvince && selectedDistrict && selectedSector && selectedCell ? getVillagesByCell(selectedProvince, selectedDistrict, selectedSector, selectedCell) : [];
 
   const steps = [
     { number: 1, title: "Personal Info", completed: currentStep > 1 },
@@ -603,12 +512,12 @@ export default function Signup() {
                               <SelectContent>
                                 <SelectGroup>
                                   <SelectLabel>Province</SelectLabel>
-                                  {rwandaAdministrativeDivisions.map((p) => (
+                                  {ALL_PROVINCES.map((p) => (
                                     <SelectItem
-                                      key={p.province}
-                                      value={p.province}
+                                      key={p}
+                                      value={p}
                                     >
-                                      {p.province}
+                                      {p}
                                     </SelectItem>
                                   ))}
                                 </SelectGroup>
@@ -655,10 +564,10 @@ export default function Signup() {
                                   <SelectLabel>District</SelectLabel>
                                   {districts.map((d) => (
                                     <SelectItem
-                                      key={d.district}
-                                      value={d.district}
+                                      key={d}
+                                      value={d}
                                     >
-                                      {d.district}
+                                      {d}
                                     </SelectItem>
                                   ))}
                                 </SelectGroup>
@@ -701,8 +610,8 @@ export default function Signup() {
                                 <SelectGroup>
                                   <SelectLabel>Sector</SelectLabel>
                                   {sectors.map((s) => (
-                                    <SelectItem key={s.sector} value={s.sector}>
-                                      {s.sector}
+                                    <SelectItem key={s} value={s}>
+                                      {s}
                                     </SelectItem>
                                   ))}
                                 </SelectGroup>
