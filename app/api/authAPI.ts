@@ -12,11 +12,7 @@ export const AuthAPI = {
             return result.data
         } catch (error) {
             throw new Error(error as string)
-
-            // console.log(error)
-
         }
-
     },
     login: async (data: any) => {
         try {            
@@ -25,7 +21,30 @@ export const AuthAPI = {
         } catch (error) {
             throw new Error(error as string)
         }
-
+    },
+    loginVerify: async (data: { contact: string, otp: string }) => {
+        try {            
+            const result = await api.post('/api/auth/login-verify', data)
+            return result.data
+        } catch (error) {
+            throw new Error(error as string)
+        }
+    },
+    verifyEmail: async (data: { contact: string, otp: string }) => {
+        try {
+            const result = await api.post('/api/auth/verify-email', data)
+            return result.data
+        } catch (error) {
+            throw new Error(error as string)
+        }
+    },
+    resendOtp: async (data: { contact: string }) => {
+        try {
+            const result = await api.post('/api/auth/resend-otp', data)
+            return result.data
+        } catch (error) {
+            throw new Error(error as string)
+        }
     },
     logout: async () => {
         try {
@@ -35,7 +54,5 @@ export const AuthAPI = {
         catch (error) {
             throw new Error(error as string)
         }
-
     }
-
 }

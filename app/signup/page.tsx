@@ -39,6 +39,12 @@ import { useLanguage } from "@/components/global/language-provider";
 import { useTheme } from "@/components/global/theme-provider";
 import { Sun, Moon } from "lucide-react";
 import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp";
+import {
   getProvinces,
   getDistrictsByProvince,
   getSectorsByDistrict,
@@ -52,7 +58,7 @@ const ALL_PROVINCES = getProvinces();
 
 
 
-type FormStep = 1 | 2 | 3 | 4;
+type FormStep = 1 | 2 | 3 | 4 | 5;
 
 export default function Signup() {
   const conservationSectors = [
@@ -66,6 +72,8 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [currentStep, setCurrentStep] = useState<FormStep>(1);
+  const [otp, setOtp] = useState("");
+  const [registeredContact, setRegisteredContact] = useState("");
 
   const form = useForm<RegisterData>({
     mode: "onBlur",
@@ -102,6 +110,7 @@ export default function Signup() {
     { number: 2, title: "Location", completed: currentStep > 2 },
     { number: 3, title: "Conservation", completed: currentStep > 3 },
     { number: 4, title: "Security", completed: currentStep > 4 },
+    { number: 5, title: "Verify", completed: currentStep > 5 },
   ];
 
   const { lang, setLanguage, t } = useLanguage();
@@ -159,17 +168,11 @@ export default function Signup() {
       const newData: Partial<RegisterData> = { ...data };
       delete newData.confirmPassword;
       const result = await AuthAPI.register(newData);
-      toast.success(t("auth.signup_success"));
-      // Registration always assigns USER role on the server
-      const roleDashboard: Record<string, string> = {
-        ADMIN: "/dashboard/admin",
-        USER: "/dashboard/user",
-        FIELD_OFFICER: "/dashboard/field-officer",
-        VERIFIER: "/dashboard/verifier",
-        BUYER: "/dashboard/buyer",
-      };
-      const route = roleDashboard[result?.data.role] ?? "/dashboard/user";
-      window.location.href = route;
+      toast.success(t("auth.signup_success") || "Registration successful! Please verify your email/phone.");
+      
+      // Move to OTP step
+      setRegisteredContact(data.contact);
+      setCurrentStep(5);
     } catch (error) {
       const errorMsg = getErrorMessage(error);
       toast.error(errorMsg);
@@ -194,13 +197,43 @@ export default function Signup() {
       setIsLoading(false);
     }
   };
+
+  const onOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) {
+      toast.error(t("auth.otp_length_error") || "Please enter a 6-digit code");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const result = await AuthAPI.verifyEmail({ contact: registeredContact, otp });
+      toast.success(t("auth.otp_verified") || "Verified successfully!");
+      
+      const roleDashboard: Record<string, string> = {
+        ADMIN: "/dashboard/admin",
+        USER: "/dashboard/user",
+        FIELD_OFFICER: "/dashboard/field-officer",
+        VERIFIER: "/dashboard/verifier",
+        BUYER: "/dashboard/buyer",
+      };
+      const route = roleDashboard[result?.data?.role || "USER"] ?? "/dashboard/user";
+      window.location.href = route;
+    } catch (error) {
+      toast.error(t("auth.otp_error") || "Invalid verification code");
+      console.error("OTP Verification error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const nextStep = async () => {
     // Validate current step before proceeding
     const fields = getStepFields(currentStep);
     const isValid = await form.trigger(fields);
 
     if (isValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, 4) as FormStep);
+      setCurrentStep((prev) => Math.min(prev + 1, 5) as FormStep);
     }
   };
 
@@ -930,7 +963,78 @@ export default function Signup() {
                 </div>
               )}
 
+              {/* Step 5: OTP Verification */}
+              {currentStep === 5 && (
+                <div className="space-y-6 animate-in fade-in duration-300">
+                  <div className="text-center mb-6">
+                    <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <Check className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200">
+                      {t("auth.otp_title") || "Verify Your Account"}
+                    </h2>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      {t("auth.otp_subtitle") || "We sent a 6-digit code to your email/phone."}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col items-center justify-center space-y-4">
+                    <InputOTP maxLength={6} value={otp} onChange={(val) => setOtp(val)}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                      </InputOTPGroup>
+                      <InputOTPSeparator />
+                      <InputOTPGroup>
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Button
+                      type="button"
+                      onClick={onOtpSubmit}
+                      className="w-full h-11 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold shadow-lg transition-all duration-200 disabled:opacity-50"
+                      disabled={isLoading || otp.length !== 6}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          {t("auth.otp_verifying") || "Verifying..."}
+                        </>
+                      ) : (
+                        t("auth.otp_verify") || "Verify Code"
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="w-full"
+                      onClick={async () => {
+                        setIsLoading(true);
+                        try {
+                          await AuthAPI.resendOtp({ contact: registeredContact });
+                          toast.success("OTP resent successfully!");
+                        } catch (e) {
+                          toast.error("Failed to resend OTP");
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }}
+                      disabled={isLoading}
+                    >
+                      Resend Code
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Navigation Buttons */}
+              {currentStep !== 5 && (
               <div className="flex justify-between pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
                 <Button
                   type="button"
@@ -974,6 +1078,7 @@ export default function Signup() {
                   </>
                 )}
               </div>
+              )}
             </form>
           </Form>
 
