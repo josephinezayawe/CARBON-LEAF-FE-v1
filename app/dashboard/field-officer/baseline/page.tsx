@@ -144,7 +144,8 @@ export default function FieldOfficerBaselinePage() {
             {t("baseline.info_title")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Field Officers review baseline status and continue uploading evidence.
+            Field Officers review baseline status and continue uploading
+            evidence.
           </p>
         </div>
 
@@ -244,11 +245,7 @@ export default function FieldOfficerBaselinePage() {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>{t("baseline.year_label")}</Label>
-                  <Input
-                    type="number"
-                    value={baseline.baselineYear}
-                    disabled
-                  />
+                  <Input type="number" value={baseline.baselineYear} disabled />
                 </div>
 
                 <div className="space-y-2">
