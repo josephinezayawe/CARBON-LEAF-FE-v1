@@ -60,7 +60,7 @@ function resolveDistrict(libProvince: string, district: string): string {
   if (!district) return '';
   const key = libProvince;
   if (!districtNameMap[key]) {
-    const exact = rwandaGeo.getDistrictsByProvince(libProvince) || [];
+    const exact = (rwandaGeo.getDistrictsByProvince(libProvince) as string[]) || [];
     districtNameMap[key] = {};
     for (const d of exact) districtNameMap[key][d.toLowerCase()] = d;
   }
@@ -72,7 +72,7 @@ function resolveSector(libProvince: string, exactDistrict: string, sector: strin
   if (!sector) return '';
   const key = `${libProvince}|${exactDistrict}`;
   if (!sectorNameMap[key]) {
-    const exact = rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) || [];
+    const exact = (rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) as string[]) || [];
     sectorNameMap[key] = {};
     for (const s of exact) sectorNameMap[key][s.toLowerCase()] = s;
   }
@@ -84,7 +84,7 @@ function resolveCell(libProvince: string, exactDistrict: string, exactSector: st
   if (!cell) return '';
   const key = `${libProvince}|${exactDistrict}|${exactSector}`;
   if (!cellNameMap[key]) {
-    const exact = rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) || [];
+    const exact = (rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) as string[]) || [];
     cellNameMap[key] = {};
     for (const c of exact) cellNameMap[key][c.toLowerCase()] = c;
   }
@@ -97,7 +97,7 @@ function resolveCell(libProvince: string, exactDistrict: string, exactSector: st
  * Get all provinces (display names)
  */
 export function getProvinces(): string[] {
-  return rwandaGeo.getProvinces().map(p => LIB_TO_DISPLAY_PROVINCE[p] || p);
+  return (rwandaGeo.getProvinces() as string[]).map((p: string) => LIB_TO_DISPLAY_PROVINCE[p] || p);
 }
 
 /**
@@ -106,7 +106,7 @@ export function getProvinces(): string[] {
 export function getDistrictsByProvince(province: string): string[] {
   const libProvince = toLibProvince(province);
   if (!libProvince) return [];
-  return rwandaGeo.getDistrictsByProvince(libProvince) || [];
+  return (rwandaGeo.getDistrictsByProvince(libProvince) as string[]) || [];
 }
 
 /**
@@ -116,7 +116,7 @@ export function getSectorsByDistrict(province: string, district: string): string
   const libProvince    = toLibProvince(province);
   const exactDistrict  = resolveDistrict(libProvince, district);
   if (!libProvince || !exactDistrict) return [];
-  return rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) || [];
+  return (rwandaGeo.getSectorsByDistrict(libProvince, exactDistrict) as string[]) || [];
 }
 
 /**
@@ -127,7 +127,7 @@ export function getCellsBySector(province: string, district: string, sector: str
   const exactDistrict = resolveDistrict(libProvince, district);
   const exactSector   = resolveSector(libProvince, exactDistrict, sector);
   if (!libProvince || !exactDistrict || !exactSector) return [];
-  return rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) || [];
+  return (rwandaGeo.getCellsBySector(libProvince, exactDistrict, exactSector) as string[]) || [];
 }
 
 /**
@@ -139,5 +139,5 @@ export function getVillagesByCell(province: string, district: string, sector: st
   const exactSector   = resolveSector(libProvince, exactDistrict, sector);
   const exactCell     = resolveCell(libProvince, exactDistrict, exactSector, cell);
   if (!libProvince || !exactDistrict || !exactSector || !exactCell) return [];
-  return rwandaGeo.getVillagesByCell(libProvince, exactDistrict, exactSector, exactCell) || [];
+  return (rwandaGeo.getVillagesByCell(libProvince, exactDistrict, exactSector, exactCell) as string[]) || [];
 }

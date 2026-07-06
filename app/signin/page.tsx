@@ -20,11 +20,20 @@ import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 import { useLanguage } from "@/components/global/language-provider";
 import { useTheme } from "@/components/global/theme-provider";
 import { Sun, Moon } from "lucide-react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+} from "@/components/ui/input-otp";
 
 export default function SignIn() {
   const { theme, toggleTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [requiresOtp, setRequiresOtp] = useState(false);
+  const [contactForOtp, setContactForOtp] = useState("");
+  const [otp, setOtp] = useState("");
 
   const form = useForm<LoginData>({
     resolver: zodResolver(LoginDataSchema),
@@ -36,27 +45,56 @@ export default function SignIn() {
 
   const { lang, setLanguage, t } = useLanguage();
 
+  const handleSuccessfulLogin = (result: any) => {
+    toast.success(t("auth.signin_success") || "Signed in successfully");
+    const roleDashboard: Record<string, string> = {
+      ADMIN: "/dashboard/admin",
+      USER: "/dashboard/user",
+      FIELD_OFFICER: "/dashboard/field-officer",
+      VERIFIER: "/dashboard/verifier",
+      BUYER: "/dashboard/buyer",
+    };
+    const route = roleDashboard[result?.data?.role] ?? "/dashboard/user";
+    window.location.href = route;
+  };
+
   const onSubmit = async (data: LoginData) => {
     setIsLoading(true);
 
     try {
       const result = await AuthAPI.login(data);
-      toast.success(t("auth.signin_success"));
+      
+      if (result?.data?.requireOtp) {
+        setRequiresOtp(true);
+        setContactForOtp(result.data.contact);
+        toast.success(t("auth.otp_sent") || "Verification code sent!");
+        setIsLoading(false);
+        return;
+      }
 
-      // Navigate based on role
-      const roleDashboard: Record<string, string> = {
-        ADMIN: "/dashboard/admin",
-        USER: "/dashboard/user",
-        FIELD_OFFICER: "/dashboard/field-officer",
-        VERIFIER: "/dashboard/verifier",
-        BUYER: "/dashboard/buyer",
-      };
-      const route = roleDashboard[result?.data.role] ?? "/dashboard/user";
-      return (window.location.href = route);
-      // router.push(route)
+      handleSuccessfulLogin(result);
     } catch (error) {
-      toast.error(t("auth.signin_error"));
+      toast.error(t("auth.signin_error") || "Failed to sign in");
       console.error("Sign in error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length !== 6) {
+      toast.error(t("auth.otp_length_error") || "Please enter a 6-digit code");
+      return;
+    }
+    
+    setIsLoading(true);
+    try {
+      const result = await AuthAPI.loginVerify({ contact: contactForOtp, otp });
+      handleSuccessfulLogin(result);
+    } catch (error) {
+      toast.error(t("auth.otp_error") || "Invalid verification code");
+      console.error("OTP Verification error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -127,15 +165,16 @@ export default function SignIn() {
             <LogIn className="w-6 h-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold bg-gradient-to-br from-slate-800 to-slate-600 dark:from-slate-100 dark:to-slate-300 bg-clip-text text-transparent">
-            {t("auth.signin_welcome")}
+            {requiresOtp ? (t("auth.otp_title") || "Enter Verification Code") : t("auth.signin_welcome")}
           </h1>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
-            {t("auth.signin_subtitle")}
+            {requiresOtp ? (t("auth.otp_subtitle") || "We sent a 6-digit code to your phone/email") : t("auth.signin_subtitle")}
           </p>
         </div>
 
         {/* Form Card */}
         <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 dark:border-slate-800/60 shadow-xl shadow-slate-200/20 dark:shadow-slate-900/20 p-8">
+          {!requiresOtp ? (
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -222,30 +261,83 @@ export default function SignIn() {
               </Button>
             </form>
           </Form>
+          ) : (
+            <form onSubmit={onOtpSubmit} className="space-y-6">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <InputOTP maxLength={6} value={otp} onChange={(val) => setOtp(val)}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
 
-          {/* Additional Links */}
-          <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
-            <div className="text-center text-sm text-slate-600 dark:text-slate-400">
-              {t("auth.signin_no_account")}{" "}
-              <a
-                href="/signup"
-                className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
-              >
-                {t("auth.signup_create")}
-              </a>
-            </div>
-          </div>
-        </div>
+              <div className="space-y-3">
+                <Button
+                  type="submit"
+                  className="w-full h-11 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold shadow-lg transition-all duration-200 disabled:opacity-50"
+                  disabled={isLoading || otp.length !== 6}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      {t("auth.otp_verifying") || "Verifying..."}
+                    </>
+                  ) : (
+                    t("auth.otp_verify") || "Verify Code"
+                  )}
+                </Button>
+                
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => {
+                    setRequiresOtp(false);
+                    setOtp("");
+                  }}
+                  disabled={isLoading}
+                >
+                  Back to login
+                </Button>
+              </div>
+            </form>
+          )}
 
-        <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
-          <div className="text-center">
-            <a
-              href="/forgot-password"
-              className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
-            >
-              {t("auth.forgot_password")}
-            </a>
-          </div>
+          {!requiresOtp && (
+            <>
+              {/* Additional Links */}
+              <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
+                <div className="text-center text-sm text-slate-600 dark:text-slate-400">
+                  {t("auth.signin_no_account")}{" "}
+                  <a
+                    href="/signup"
+                    className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
+                  >
+                    {t("auth.signup_create")}
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-6 border-t border-slate-200/60 dark:border-slate-800/60">
+                <div className="text-center">
+                  <a
+                    href="/forgot-password"
+                    className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium"
+                  >
+                    {t("auth.forgot_password")}
+                  </a>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
