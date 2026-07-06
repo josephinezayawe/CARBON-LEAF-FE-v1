@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@devrw/rwanda-location':
+        specifier: ^1.1.2
+        version: 1.1.2
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.68.0(react@19.2.1))
@@ -149,6 +152,15 @@ importers:
       recharts:
         specifier: ^2.15.4
         version: 2.15.4(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      rwanda:
+        specifier: ^3.0.0
+        version: 3.0.2
+      rwanda-geo:
+        specifier: ^1.4.6
+        version: 1.4.6
+      rwanda-geo-structure:
+        specifier: ^1.4.0
+        version: 1.4.0
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
@@ -181,8 +193,8 @@ importers:
         specifier: ^19
         version: 19.2.3(@types/react@19.2.7)
       baseline-browser-mapping:
-        specifier: ^2.8.32
-        version: 2.9.2
+        specifier: ^2.10.42
+        version: 2.10.42
       eslint:
         specifier: ^9
         version: 9.39.1(jiti@2.6.1)
@@ -278,6 +290,10 @@ packages:
 
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
+
+  '@devrw/rwanda-location@1.1.2':
+    resolution: {integrity: sha512-nSbjt9ww80HR9iUUlqfJrKVdUEA3QxC7omK34jkopez2ZSVqJNsPJnxzds60KvKpdzwA/0uhGtQB88GZA0StCg==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
 
   '@emnapi/core@1.7.1':
     resolution: {integrity: sha512-o1uhUASyo921r2XtHYOHy7gdkGLge8ghBEQHMWmyJFoXlpU58kIrhhN3w26lpQb6dspetweapMn2CSNwQ8I4wg==}
@@ -1629,8 +1645,9 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  baseline-browser-mapping@2.9.2:
-    resolution: {integrity: sha512-PxSsosKQjI38iXkmb3d0Y32efqyA0uW4s41u4IVBsLlWLhCiYNpH/AfNOVWRqCQBlD8TFJTz6OUWNd4DFJCnmw==}
+  baseline-browser-mapping@2.10.42:
+    resolution: {integrity: sha512-c/jurFrDLyui7o1J86yLkRu4LMsTYcBohveus7/I2Hzdn9KIP2bdJPTue/lR1KH46enoPbD77GKeSYNdyPoD3Q==}
+    engines: {node: '>=6.0.0'}
     hasBin: true
 
   brace-expansion@1.1.12:
@@ -2832,6 +2849,17 @@ packages:
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
+  rwanda-geo-structure@1.4.0:
+    resolution: {integrity: sha512-zOTfiIoWnwgRCSnU/pBORxntLdpNYN485w18w99eXSxdR0OBAlYzOIKS0+7yxkLG5CE3lShq4HA5rcYjh5rKDg==}
+
+  rwanda-geo@1.4.6:
+    resolution: {integrity: sha512-q9idfwMKnZYGis/dHPKwc4PONbXhHZuSGpBNBbNNb7xir3M982Xwg0LQ1jxeTJmbUVNOJeDfx0PMC9KRnPRNXg==}
+    engines: {node: '>=16.0.0'}
+
+  rwanda@3.0.2:
+    resolution: {integrity: sha512-cSShh2YZ3q6FCPEc9WvGUmMRSb5dwYaQtTCIZgaCyWAqUtJRdwjH5a/hzre7vaatVzkp608ZphQhMrj14epmdQ==}
+    engines: {node: 20.19.0}
+
   safe-array-concat@1.1.3:
     resolution: {integrity: sha512-AURm5f0jYEOydBj7VQlVvDrjeFgthDdEF5H1dP+6mNpoXOMo1quQqJ4wvJDyRZ9+pO3kGWoOdmV08cSv2aJV6Q==}
     engines: {node: '>=0.4'}
@@ -3255,6 +3283,8 @@ snapshots:
       '@babel/helper-validator-identifier': 7.28.5
 
   '@date-fns/tz@1.4.1': {}
+
+  '@devrw/rwanda-location@1.1.2': {}
 
   '@emnapi/core@1.7.1':
     dependencies:
@@ -4593,7 +4623,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  baseline-browser-mapping@2.9.2: {}
+  baseline-browser-mapping@2.10.42: {}
 
   brace-expansion@1.1.12:
     dependencies:
@@ -4610,7 +4640,7 @@ snapshots:
 
   browserslist@4.28.1:
     dependencies:
-      baseline-browser-mapping: 2.9.2
+      baseline-browser-mapping: 2.10.42
       caniuse-lite: 1.0.30001759
       electron-to-chromium: 1.5.266
       node-releases: 2.0.27
@@ -5915,6 +5945,12 @@ snapshots:
   run-parallel@1.2.0:
     dependencies:
       queue-microtask: 1.2.3
+
+  rwanda-geo-structure@1.4.0: {}
+
+  rwanda-geo@1.4.6: {}
+
+  rwanda@3.0.2: {}
 
   safe-array-concat@1.1.3:
     dependencies:
