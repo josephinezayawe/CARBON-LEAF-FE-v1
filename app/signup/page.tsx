@@ -140,13 +140,15 @@ export default function Signup() {
     typeof value === "object" && value !== null;
 
   const getErrorMessage = (error: unknown) => {
-    if (
-      isRecord(error) &&
-      isRecord(error.response) &&
-      isRecord(error.response.data) &&
-      typeof error.response.data.message === "string"
-    ) {
-      return error.response.data.message;
+    if (isRecord(error) && isRecord(error.response) && isRecord(error.response.data)) {
+      const data = error.response.data;
+      if (Array.isArray(data.errors) && data.errors.length > 0) {
+        return (data.errors as Array<{ message: string }>)
+          .map((e) => e.message)
+          .join("; ");
+      }
+      if (typeof data.error === "string") return data.error;
+      if (typeof data.message === "string") return data.message;
     }
 
     if (error instanceof Error) {
@@ -181,16 +183,18 @@ export default function Signup() {
         isRecord(error) &&
         isRecord(error.response) &&
         isRecord(error.response.data) &&
-        isRecord(error.response.data.errors)
+        Array.isArray(error.response.data.errors)
       ) {
-        Object.entries(error.response.data.errors).forEach(([key, message]) => {
-          if (typeof message === "string") {
-            form.setError(key as keyof RegisterData, {
-              type: "server",
-              message,
-            });
+        (error.response.data.errors as Array<{ field: string; message: string }>).forEach(
+          ({ field, message }) => {
+            if (field && message) {
+              form.setError(field as keyof RegisterData, {
+                type: "server",
+                message,
+              });
+            }
           }
-        });
+        );
       }
       console.error("Registration error:", error);
     } finally {

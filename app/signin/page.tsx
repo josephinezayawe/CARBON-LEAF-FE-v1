@@ -73,8 +73,9 @@ export default function SignIn() {
       }
 
       handleSuccessfulLogin(result);
-    } catch (error) {
-      toast.error(t("auth.signin_error") || "Failed to sign in");
+    } catch (error: any) {
+      const msg = error?.message || t("auth.signin_error") || "Failed to sign in";
+      toast.error(msg);
       console.error("Sign in error:", error);
     } finally {
       setIsLoading(false);
@@ -92,8 +93,9 @@ export default function SignIn() {
     try {
       const result = await AuthAPI.loginVerify({ contact: contactForOtp, otp });
       handleSuccessfulLogin(result);
-    } catch (error) {
-      toast.error(t("auth.otp_error") || "Invalid verification code");
+    } catch (error: any) {
+      const msg = error?.message || t("auth.otp_error") || "Invalid verification code";
+      toast.error(msg);
       console.error("OTP Verification error:", error);
     } finally {
       setIsLoading(false);
