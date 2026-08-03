@@ -165,7 +165,7 @@ export default function LandingPage() {
             >
               <Image
                 src="/images/logos/CARBON-LEAF-LOGO.png"
-                alt="Carbon Leaf Logo"
+                alt="Carbon Leafs Logo"
                 width={100}
                 height={100}
                 className="object-contain p-1"
@@ -668,7 +668,7 @@ export default function LandingPage() {
               <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shadow-md border border-emerald-100 overflow-hidden">
                 <Image
                   src="/images/logos/CARBON-LEAF-LOGO.png"
-                  alt="Carbon Leaf Logo"
+                  alt="Carbon Leafs Logo"
                   width={40}
                   height={40}
                   className="object-contain p-1"

@@ -106,7 +106,7 @@ export function VerifierSidebar() {
                 {!isCollapsed && (
                   <div className="flex flex-col">
                     <span className="font-bold text-lg bg-gradient-to-r from-indigo-600 to-slate-600 bg-clip-text text-transparent">
-                      Carbon Leaf
+                      Carbon Leafs
                     </span>
                     <Badge className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 w-full justify-center">
                       <Shield className="w-3 h-3 mr-1" />
@@ -282,7 +282,7 @@ export function VerifierSidebar() {
         {!isCollapsed && (
           <div className="mt-3 pt-3 border-t border-border/30">
             <div className="flex items-center justify-between text-[10px] text-muted-foreground/60 px-1">
-              <span>© 2025 Carbon Leaf</span>
+              <span>© 2025 Carbon Leafs</span>
             </div>
           </div>
         )}

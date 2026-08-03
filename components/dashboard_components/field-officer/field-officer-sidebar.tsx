@@ -280,7 +280,7 @@ export function FieldOfficerSidebar() {
         {!isCollapsed && (
           <div className="mt-3 pt-3 border-t border-border/30">
             <div className="flex items-center justify-between text-[10px] text-muted-foreground/60 px-1">
-              <span>© 2025 Carbon Leaf</span>
+              <span>© 2025 Carbon Leafs</span>
             </div>
           </div>
         )}
