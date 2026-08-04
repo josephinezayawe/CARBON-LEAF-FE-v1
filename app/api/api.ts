@@ -1,12 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: process.env.NEXT_PUBLIC_API_URL || "https://carbonleafs.com/api",
     withCredentials: true,
 });
 
 api.interceptors.request.use(
     (config) => {
+        // If you store token in localStorage, keep this; otherwise cookies handle it via withCredentials: true
         const token = typeof window !== "undefined"
             ? localStorage.getItem("accessToken")
             : null;
@@ -25,10 +26,14 @@ api.interceptors.response.use(
     (error) => {
         console.error("API Error:", error);
 
+        const requestUrl = error.config?.url || "";
+        const isAuthRoute = requestUrl.includes("auth/login") || requestUrl.includes("auth/register") || requestUrl.includes("auth/verify");
 
-        if (error.response?.status === 401) {
-
-            window.location.href = '/signup'
+        // Do not trigger page redirects on failed login/signup requests
+        if (error.response?.status === 401 && !isAuthRoute) {
+            if (typeof window !== "undefined" && window.location.pathname !== "/signup") {
+                window.location.href = "/signup";
+            }
         }
 
         return Promise.reject(error);
