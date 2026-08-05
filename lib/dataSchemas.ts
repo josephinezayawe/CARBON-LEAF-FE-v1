@@ -19,7 +19,9 @@ export const RegisterDataSchema = z
     lastName: z.string().min(1, "Last Name can't be empty"),
     contact: z.union([PhoneSchema, EmailSchema]),
     password: z.string(),
-    nid: z.string(),
+    nid: z
+      .string()
+      .regex(/^\d{16}$/, "NID must be exactly 16 digits"),
     conservationSectors: z
       .array(z.string())
       .min(1, "Select at least one sector"),
