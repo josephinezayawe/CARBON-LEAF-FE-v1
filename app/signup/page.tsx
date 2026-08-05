@@ -486,6 +486,8 @@ export default function Signup() {
                             <Input
                               placeholder={t("auth.enter_nid")}
                               {...field}
+                              maxLength={16}
+                              inputMode="numeric"
                               className="h-11 bg-white/50 dark:bg-slate-800/50 border-slate-300 dark:border-slate-700 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                             />
                           </FormControl>
