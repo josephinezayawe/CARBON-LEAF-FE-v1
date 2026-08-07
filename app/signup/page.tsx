@@ -140,13 +140,31 @@ export default function Signup() {
     typeof value === "object" && value !== null;
 
   const getErrorMessage = (error: unknown) => {
-    if (
+    const data =
       isRecord(error) &&
       isRecord(error.response) &&
-      isRecord(error.response.data) &&
-      typeof error.response.data.message === "string"
-    ) {
-      return error.response.data.message;
+      isRecord(error.response.data)
+        ? error.response.data
+        : null;
+
+    if (data) {
+      // Backend field-level validation errors (array of { field, message })
+      if (Array.isArray(data.errors) && data.errors.length > 0) {
+        const first = data.errors[0];
+        if (isRecord(first) && typeof first.message === "string") {
+          return first.message;
+        }
+      }
+
+      // Backend AppError format
+      if (typeof data.error === "string" && data.error.length > 0) {
+        return data.error;
+      }
+
+      // Backend generic message format
+      if (typeof data.message === "string") {
+        return data.message;
+      }
     }
 
     if (error instanceof Error) {
@@ -165,9 +183,8 @@ export default function Signup() {
     setIsLoading(true);
 
     try {
-      const newData: Partial<RegisterData> = { ...data };
-      delete newData.confirmPassword;
-      const result = await AuthAPI.register(newData);
+      const { confirmPassword, ...payload } = data;
+      const result = await AuthAPI.register(payload);
       toast.success(t("auth.signup_success") || "Registration successful! Please verify your email/phone.");
       
       // Move to OTP step
@@ -177,17 +194,19 @@ export default function Signup() {
       const errorMsg = getErrorMessage(error);
       toast.error(errorMsg);
 
-      if (
+      const data =
         isRecord(error) &&
         isRecord(error.response) &&
-        isRecord(error.response.data) &&
-        isRecord(error.response.data.errors)
-      ) {
-        Object.entries(error.response.data.errors).forEach(([key, message]) => {
-          if (typeof message === "string") {
-            form.setError(key as keyof RegisterData, {
+        isRecord(error.response.data)
+          ? error.response.data
+          : null;
+
+      if (data && Array.isArray(data.errors)) {
+        data.errors.forEach((err) => {
+          if (isRecord(err) && typeof err.field === "string" && typeof err.message === "string") {
+            form.setError(err.field as keyof RegisterData, {
               type: "server",
-              message,
+              message: err.message,
             });
           }
         });
