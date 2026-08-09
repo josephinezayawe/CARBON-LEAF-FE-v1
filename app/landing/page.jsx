@@ -747,17 +747,17 @@ export default function LandingPage() {
                   {t("landing.about_us")}
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a
                   href="#"
                   className="hover:text-emerald-600 transition-colors block"
                 >
                   {t("landing.privacy_policy")}
                 </a>
-              </li>
+              </li> */}
               <li>
                 <a
-                  href="#"
+                  href="/terms"
                   className="hover:text-emerald-600 transition-colors block"
                 >
                   {t("landing.terms_service")}

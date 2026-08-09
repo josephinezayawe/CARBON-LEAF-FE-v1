@@ -74,6 +74,7 @@ export default function Signup() {
   const [currentStep, setCurrentStep] = useState<FormStep>(1);
   const [otp, setOtp] = useState("");
   const [registeredContact, setRegisteredContact] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const form = useForm<RegisterData>({
     mode: "onBlur",
@@ -180,6 +181,11 @@ export default function Signup() {
       return;
     }
 
+    if (!acceptedTerms) {
+      toast.error(t("auth.terms_agree_error"));
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -252,6 +258,10 @@ export default function Signup() {
     const isValid = await form.trigger(fields);
 
     if (isValid) {
+      if (currentStep === 4 && !acceptedTerms) {
+        toast.error(t("auth.terms_agree_error"));
+        return;
+      }
       setCurrentStep((prev) => Math.min(prev + 1, 5) as FormStep);
     }
   };
@@ -981,6 +991,66 @@ export default function Signup() {
                       )}
                     />
                   </div>
+
+                  {/* Terms & Conditions */}
+                  <label
+                    className={`relative flex items-start gap-3 p-4 rounded-xl cursor-pointer border-2 transition-all duration-200 ${
+                      acceptedTerms
+                        ? "border-emerald-500 dark:border-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/40 shadow-md shadow-emerald-200/50 dark:shadow-emerald-900/30"
+                        : "border-slate-200 dark:border-slate-700 bg-white/40 dark:bg-slate-800/30 hover:border-emerald-300 dark:hover:border-emerald-600 hover:shadow-sm hover:shadow-emerald-100/50 dark:hover:shadow-emerald-900/20"
+                    }`}
+                  >
+                    <div
+                      className={`
+                        flex items-center justify-center w-5 h-5 rounded-md border-2 flex-shrink-0 transition-all duration-200
+                        ${
+                          acceptedTerms
+                            ? "bg-emerald-500 border-emerald-500 dark:bg-emerald-400 dark:border-emerald-400"
+                            : "border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"
+                        }
+                    `}
+                    >
+                      {acceptedTerms && (
+                        <svg
+                          className="w-3 h-3 text-white dark:text-emerald-900"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
+
+                    <input
+                      type="checkbox"
+                      checked={acceptedTerms}
+                      onChange={(e) => setAcceptedTerms(e.target.checked)}
+                      className="sr-only"
+                    />
+
+                    <div className="flex-1 flex flex-col gap-0.5">
+                      <span className="text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        {t("auth.terms_agree")}{" "}
+                        <a
+                          href="/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-semibold underline underline-offset-2"
+                        >
+                          {t("auth.terms_service")}
+                        </a>{" "}
+                        {t("auth.required")}
+                      </span>
+                      <span className="text-xs text-slate-500 dark:text-slate-500">
+                        By creating an account you confirm you have read and
+                        agree to the CarbonLeafs Terms &amp; Conditions of Use.
+                      </span>
+                    </div>
+                  </label>
                 </div>
               )}
 

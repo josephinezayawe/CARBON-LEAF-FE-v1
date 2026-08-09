@@ -441,7 +441,21 @@
     "select_sector": "Select Sector",
     "select_cell": "Select Cell",
     "select_village": "Select Village",
-    "by_continuing": "By continuing, you agree to our Terms of Service"
+    "by_continuing": "By continuing, you agree to our Terms of Service",
+    "by_continuing_1": "By continuing, you agree to our",
+    "terms_service": "Terms of Service",
+    "terms_agree": "I have read and agree to the",
+    "terms_agree_error": "You must accept the Terms and Conditions to continue."
+  },
+  "terms": {
+    "title": "Terms & Conditions of Use",
+    "badge": "Legal",
+    "subtitle": "Please read these terms carefully before using CarbonLeafs.",
+    "back_to_signup": "Back to Sign Up",
+    "back_to_signin": "Back to Sign In",
+    "effective_date": "Effective Date: 15/08/2026",
+    "last_updated": "Last Updated: 08/08/2026",
+    "copyright": "© {year} Phina Forge Ltd. All Rights Reserved"
   },
   "admin": {
     "welcome": "Welcome to Admin Dashboard",

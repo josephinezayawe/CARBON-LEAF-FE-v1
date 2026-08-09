@@ -344,7 +344,13 @@ export default function SignIn() {
       {/* Footer */}
       <div className="absolute bottom-6 text-center">
         <p className="text-xs text-slate-500 dark:text-slate-500">
-          {t("auth.by_continuing")}
+          {t("auth.by_continuing_1")}{" "}
+          <a
+            href="/terms"
+            className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors font-medium underline underline-offset-2"
+          >
+            {t("auth.terms_service")}
+          </a>
         </p>
       </div>
     </div>

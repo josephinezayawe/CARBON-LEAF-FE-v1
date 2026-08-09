@@ -419,7 +419,21 @@
     "select_sector": "Hitamo Umurenge",
     "select_cell": "Hitamo Akagari",
     "select_village": "Hitamo Umudugudu",
-    "by_continuing": "Urakomeza wemera Amabwiriza yacu yo Gukoresha"
+    "by_continuing": "Urakomeza wemera Amabwiriza yacu",
+    "by_continuing_1": "Urakomeza wemera",
+    "terms_service": "Amabwiriza yo Gukoresha",
+    "terms_agree": "Nasomye kandi nemera",
+    "terms_agree_error": "Usabwa kwemera Amabwiriza kugira ngo ukomeze."
+  },
+  "terms": {
+    "title": "Amabwiriza yo Gukoresha",
+    "badge": "Itegeko",
+    "subtitle": "Usome neza aya mabwiriza mbere yo gukoresha CarbonLeafs.",
+    "back_to_signup": "Subira Kwiyandikisha",
+    "back_to_signin": "Subira Kwinjira",
+    "effective_date": "Itariki ikurikizwa: 15/08/2026",
+    "last_updated": "Bivuguruwe ku ya: 08/08/2026",
+    "copyright": "© {year} Phina Forge Ltd. Uburenganzira bwose burazigengwa"
   },
   "admin": {
     "welcome": "Murakaza neza mu Biro by'Ubuyobozi",
