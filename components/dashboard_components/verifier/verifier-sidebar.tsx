@@ -97,7 +97,7 @@ export function VerifierSidebar() {
                 >
                   <Image
                     src="/images/carbon_logo.png"
-                    alt="CarbonLeaf"
+                    alt="CarbonLeafs"
                     width={isCollapsed ? 20 : 26}
                     height={isCollapsed ? 20 : 26}
                     className="brightness-0 invert"

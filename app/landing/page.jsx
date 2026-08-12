@@ -675,7 +675,7 @@ export default function LandingPage() {
                 />
               </div>
               <span className="font-bold text-xl text-slate-900">
-                CarbonLeaf
+                CarbonLeafs
               </span>
             </div>
             <p className="text-slate-500 max-w-sm leading-relaxed mb-6">
@@ -776,7 +776,7 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-400 text-sm">
-          <p>© {new Date().getFullYear()} CarbonLeaf. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} CarbonLeafs. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-emerald-600 transition-colors">
               <Twitter className="w-5 h-5" />

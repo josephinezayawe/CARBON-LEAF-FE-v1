@@ -779,7 +779,7 @@
   },
   "landing": {
     "live_marketplace": "Place de marché en direct v2.0",
-    "hero_title": "Carborn Leaf Verdissement — l'avenir.",
+    "hero_title": "CarbornLeafs Verdissement — l'avenir.",
     "hero_description": "Une plateforme numérique qui permet aux micro-projets de crédits carbone (petites fermes, ménages, coopératives, utilisateurs de réchauds propres, planteurs d'arbres, utilisateurs de biogaz, utilisateurs d'énergie solaire) de mesurer, vérifier, agréger et vendre des crédits carbone via un site Web ou une application mobile.",
     "start_planting": "Commencer à planter",
     "learn_how": "Apprendre comment ça marche",
@@ -793,7 +793,7 @@
     "log_in": "Se connecter",
     "get_started": "Commencer",
     "pricing": "Tarification",
-    "what_makes_different": "Ce qui rend CarbonLeaf différent",
+    "what_makes_different": "Ce qui rend CarbonLeafs différent",
     "bridge_gap": "Nous comblons le fossé entre les petits gestionnaires des terres et les marchés du carbone mondiaux grâce à une technologie qui garantit la transparence.",
     "nature_backed": "Soutenu par la nature",
     "nature_backed_desc": "Les crédits sont générés à partir de modèles de séquestration réels et vérifiés et d'audits sur le terrain, pas seulement des estimations.",
@@ -823,7 +823,7 @@
     "privacy_policy": "Politique de confidentialité",
     "terms_service": "Conditions de service",
     "contact": "Contact",
-    "copyright": "© {year} CarbonLeaf. Tous droits réservés.",
+    "copyright": "© {year} CarbonLeafs. Tous droits réservés.",
     "live_project": "Projet en direct",
     "riverbank_reforestation": "Reboisement des rives",
     "trees": "Arbres"
