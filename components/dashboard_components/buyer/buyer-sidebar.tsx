@@ -119,7 +119,7 @@ export function BuyerSidebar() {
                 {!isCollapsed && (
                   <div className="flex flex-col">
                     <span className="font-bold text-lg bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                      Carbon Leafs
+                      CarbonLeafs
                     </span>
                     <Badge className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 w-full justify-center">
                       <ShoppingCart className="w-3 h-3 mr-1" />

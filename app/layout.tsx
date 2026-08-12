@@ -5,8 +5,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/authContext";
 
 export const metadata = {
-  title: "Carbon Leafs",
-  description: "Carbon Leafs - Sustainable Solutions",
+  title: "CarbonLeafs",
+  description: "CarbonLeafs - Sustainable Solutions",
   icons: {
     icon: "/images/logos/Favicon_CARBON LEAF.svg",
   },
